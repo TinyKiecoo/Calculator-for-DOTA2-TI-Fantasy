@@ -6,6 +6,8 @@
 
 <p align="center">
   An open-source calculator for Dota 2 TI Fantasy predictions.
+  <br>
+  Using data from <strong>Esports World Cup 2026</strong> to predict the Fantasy Score of <strong>TI 2026</strong>.
 </p>
 
 <p align="center">
