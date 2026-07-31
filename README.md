@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  Open the calculator: <a href="https://www.candyworks.site"><strong>www.candyworks.site</strong></a>.
+  Open the calculator: <a href="https://tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy"><strong>tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy</strong></a>.
 </p>
 
 ---
@@ -18,7 +18,7 @@
 
 | Site | Address |
 | --- | --- |
-| Primary | [tinykiecoo.github.io/Calculator-for-Carnival-Candyworks](https://tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy/) |
+| Primary | [tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy](https://tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy/) |
 
 > [!NOTE]
 > These are the only deployments maintained by the author. Similar-looking tools hosted elsewhere may be third-party redeployments.
