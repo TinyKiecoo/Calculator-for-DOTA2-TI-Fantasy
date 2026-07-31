@@ -5,7 +5,6 @@
   const engine = window.FantasyEngine;
   const bannerGrid = document.getElementById("banner-grid");
   const totalScore = document.getElementById("total-score");
-  const totalBreakdown = document.getElementById("total-breakdown");
   const loadError = document.getElementById("load-error");
   const pageShell = document.getElementById("page-shell");
   const modalBackdrop = document.getElementById("modal-backdrop");
@@ -435,15 +434,6 @@
       : null;
 
     totalScore.textContent = engine.formatScore(combined);
-    totalBreakdown.textContent = engine.bannerRoles
-      .map(
-        (role) =>
-          `${roleNames[role]} ${engine.formatScore(
-            view.selected[role] ? view.selected[role].score : null,
-          )}`,
-      )
-      .join(" · ");
-
     restoreFocus(focusRequest);
   }
 
