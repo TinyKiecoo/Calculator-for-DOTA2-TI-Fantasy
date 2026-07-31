@@ -25,6 +25,7 @@
       backToTop: "返回梦幻挑战顶部",
       brandName: "梦幻挑战",
       pageHeading: "开源的 Dota 2 梦幻挑战计算器",
+      accuracyNote: "计算结果可能不准确，数据仅供参考。",
       pageActions: "页面操作",
       githubRepository: "GitHub",
       githubAria: "在新标签页打开 GitHub 仓库",
@@ -65,6 +66,7 @@
       knownLimitations: "已知限制",
       limitationLotus: "莲花采集没有可靠公开字段，因此保存为 null，而不是 0。",
       lotusDataMissingAlert: "“采集莲花”数据缺失，当前无法计算该项得分。",
+      madstoneDataCaveatAlert: "已有中立物品是收集的狂石可能未被计算，计算数据低于真实数据",
       limitationProxy: "狂石与观察者为 OpenDota 回放事件代理值。",
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
@@ -105,6 +107,7 @@
       backToTop: "Back to the Fantasy Challenge top",
       brandName: "FANTASY",
       pageHeading: "Open-source Dota 2 Fantasy Challenge Calculator",
+      accuracyNote: "Results may be inaccurate and are for reference only.",
       pageActions: "Page actions",
       githubRepository: "GitHub",
       githubAria: "Open the GitHub repository in a new tab",
@@ -145,6 +148,7 @@
       knownLimitations: "Known Limitations",
       limitationLotus: "Lotus collection has no reliable public field, so it is stored as null rather than 0.",
       lotusDataMissingAlert: "Data for “Lotuses Grabbed” is unavailable, so this score cannot currently be calculated.",
+      madstoneDataCaveatAlert: "Madstones collected as neutral items may not have been counted, so the calculated value may be lower than the actual value.",
       limitationProxy: "Madstone and Watcher values are proxies derived from OpenDota replay events.",
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
@@ -835,6 +839,8 @@
 
     if (field === "stat" && select.value === "lotuses_collected") {
       window.alert(text("lotusDataMissingAlert"));
+    } else if (field === "stat" && select.value === "madstone_collected") {
+      window.alert(text("madstoneDataCaveatAlert"));
     }
 
     render({ type: "select", role, index, field });

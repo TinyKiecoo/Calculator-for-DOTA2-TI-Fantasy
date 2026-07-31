@@ -147,14 +147,38 @@ a:focus-visible {
   filter: drop-shadow(0 0 13px rgba(214, 161, 55, .18));
 }
 
+.subtitle-row {
+  min-width: 0;
+  margin-top: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px 10px;
+}
+
 .challenge-title h1 {
-  margin: 3px 0 0;
+  margin: 0;
   color: #bfb29b;
   font-family: var(--display-font);
   font-size: 14px;
   font-weight: 400;
   letter-spacing: .16em;
   text-shadow: 0 2px 18px rgba(234, 204, 135, .12);
+}
+
+.accuracy-note {
+  color: #a99777;
+  font-size: .68rem;
+  letter-spacing: .06em;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.accuracy-note::before {
+  margin-right: 10px;
+  color: rgba(200, 166, 79, .66);
+  content: "·";
 }
 
 .topbar-actions {
@@ -960,6 +984,10 @@ html[lang="en"] .stat-select {
     text-align: left;
   }
 
+  .subtitle-row {
+    justify-content: flex-start;
+  }
+
   .event-script {
     width: min(100%, 300px);
   }
@@ -1048,13 +1076,29 @@ html[lang="en"] .stat-select {
     width: min(82vw, 310px);
   }
 
+  .subtitle-row {
+    margin-top: 6px;
+    justify-content: center;
+    gap: 4px;
+  }
+
   .challenge-title h1 {
     max-width: 32rem;
-    margin-top: 6px;
     padding: 0 8px;
     font-size: .78rem;
     letter-spacing: .1em;
     line-height: 1.45;
+  }
+
+  .accuracy-note {
+    width: 100%;
+    padding: 0 12px;
+    font-size: .66rem;
+    white-space: normal;
+  }
+
+  .accuracy-note::before {
+    display: none;
   }
 
   .topbar-actions {
