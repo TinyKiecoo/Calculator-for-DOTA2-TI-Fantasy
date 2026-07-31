@@ -54,7 +54,7 @@
       emblemPennant: "{role}徽标挂幅",
       bannerScore: "{role}战旗积分",
       dataKicker: "DATA NOTES",
-      dataLead: "页面直接读取随仓库保存的经典 JavaScript 数据文件，不使用网络请求、API 密钥或服务器。",
+      dataLead: "本页面使用 Esports World Cup 2026 的数据来计算梦幻挑战的积分。",
       tournamentSnapshot: "赛事快照",
       leagueId: "联赛 ID",
       parsedMatches: "已解析比赛",
@@ -68,7 +68,6 @@
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
       dataSourcesBody: "OpenDota Explorer 与联赛比赛接口用于回放解析数据；Liquipedia 用于核对 EWC 2026 赛事范围。",
-      constructionAlert: "本站仍在建设中，欢迎稍后再来查看 :) ",
       roles: { core: "核心", mid: "中单", support: "辅助" },
       colors: { red: "红色", blue: "蓝色", green: "绿色" },
       qualityLabels: {
@@ -134,7 +133,7 @@
       emblemPennant: "{role} emblem pennant",
       bannerScore: "{role} banner score",
       dataKicker: "DATA NOTES",
-      dataLead: "This page reads classic JavaScript data files stored with the repository. It uses no network requests, API keys, or server.",
+      dataLead: "This page uses data from Esport World Cup 2026 to calculate Fantasy Score.",
       tournamentSnapshot: "Tournament Snapshot",
       leagueId: "League ID",
       parsedMatches: "Parsed matches",
@@ -148,7 +147,6 @@
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
       dataSourcesBody: "OpenDota Explorer and league match endpoints provide replay-parsed data; Liquipedia is used to verify the EWC 2026 tournament scope.",
-      constructionAlert: "This site is still under construction. Please come back later :) ",
       roles: { core: "Core", mid: "Mid", support: "Support" },
       colors: { red: "Red", blue: "Blue", green: "Green" },
       qualityLabels: {
@@ -909,8 +907,4 @@
     bannerGrid.hidden = true;
     loadError.hidden = false;
   }
-
-  window.addEventListener("load", () => {
-    alert(text("constructionAlert"));
-  });
 })();

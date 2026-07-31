@@ -212,7 +212,7 @@ a:focus-visible {
   display: block;
   margin: 0 0 3px;
   color: var(--gold-bright);
-  font-family: var(--display-font);
+  font-family: 'Reaver';
   font-size: 1.65rem;
   line-height: 1;
 }
@@ -307,7 +307,7 @@ a:focus-visible {
   color: #16120d;
   font-family: "KaiTi", "STKaiti", var(--display-font);
   font-size: 1.85rem;
-  font-weight: 400;
+  font-weight: 700;
 }
 
 .selected-roster {
