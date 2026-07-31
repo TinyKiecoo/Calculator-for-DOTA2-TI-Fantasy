@@ -935,6 +935,364 @@ html[lang="en"] .stat-select {
   }
 }
 
+
+
+/* Tablet and small-laptop layout: avoid the former fixed 1110px canvas. */
+@media (min-width: 901px) and (max-width: 1180px) {
+  html,
+  body {
+    min-width: 0;
+  }
+
+  .topbar,
+  .banner-grid {
+    width: calc(100% - 32px);
+  }
+
+  .topbar {
+    min-height: 150px;
+    grid-template-columns: 170px minmax(0, 1fr);
+    gap: 12px 20px;
+  }
+
+  .challenge-title {
+    justify-items: start;
+    text-align: left;
+  }
+
+  .event-script {
+    width: min(100%, 300px);
+  }
+
+  .topbar-actions {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    justify-items: stretch;
+  }
+
+  .topbar nav {
+    justify-self: start;
+  }
+
+  .total-score {
+    justify-self: end;
+  }
+
+  .banner-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px 12px;
+  }
+
+  .banner-column:last-child {
+    width: calc((100% - 12px) / 2);
+    grid-column: 1 / -1;
+    justify-self: center;
+  }
+}
+
+/* Mobile layout: stack the three war banners and let each banner flow vertically. */
+@media (max-width: 900px) {
+  html {
+    min-width: 0;
+    font-size: 14px;
+  }
+
+  body {
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .fantasy-app {
+    overflow: clip;
+    background:
+      radial-gradient(circle at 50% -8%, rgba(137, 91, 28, .24), transparent 28rem),
+      linear-gradient(180deg, rgba(4, 3, 2, .28), rgba(4, 3, 2, .74)),
+      url("fantasy-assets/ti2026_background_png.png") center top / auto 100vh scroll,
+      #080604;
+  }
+
+  .page-shell {
+    padding-bottom: 28px;
+  }
+
+  .topbar,
+  .banner-grid {
+    width: min(100% - 24px, 560px);
+  }
+
+  .topbar {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 14px;
+    padding: 18px 0 16px;
+    text-align: center;
+  }
+
+  .brand {
+    justify-self: center;
+  }
+
+  .brand strong {
+    font-size: clamp(1.65rem, 7vw, 2rem);
+  }
+
+  .challenge-title {
+    width: 100%;
+  }
+
+  .event-script {
+    width: min(82vw, 310px);
+  }
+
+  .challenge-title h1 {
+    max-width: 32rem;
+    margin-top: 6px;
+    padding: 0 8px;
+    font-size: .78rem;
+    letter-spacing: .1em;
+    line-height: 1.45;
+  }
+
+  .topbar-actions {
+    width: 100%;
+    min-width: 0;
+    justify-self: stretch;
+    justify-items: center;
+    gap: 10px;
+  }
+
+  .topbar nav {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+
+  .topbar nav button,
+  .topbar nav a {
+    min-height: 44px;
+    padding: 12px 10px;
+  }
+
+  .total-score {
+    width: min(100%, 320px);
+    min-width: 0;
+    text-align: center;
+  }
+
+  .total-score strong {
+    font-size: 1.75rem;
+  }
+
+  .banner-grid {
+    margin-top: 16px;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .banner-column {
+    width: 100%;
+  }
+
+  .war-banner {
+    width: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  .banner-heading {
+    width: 100%;
+    min-height: 0;
+    padding: 34px 18px 16px;
+  }
+
+  .banner-heading h2 {
+    font-size: clamp(1.65rem, 8vw, 2rem);
+  }
+
+  .selected-roster {
+    max-width: min(100%, 330px);
+    font-size: .9rem;
+  }
+
+  .score-method {
+    margin-top: 12px;
+  }
+
+  .score-method button {
+    min-width: 112px;
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: .72rem;
+  }
+
+  .emblem-pennant {
+    position: relative;
+    top: auto;
+    right: auto;
+    width: calc(100% - 24px);
+    height: auto;
+    margin: 0 auto;
+    padding: 10px 10px 42px;
+  }
+
+  .emblem-stack {
+    gap: 8px;
+  }
+
+  .emblem-card {
+    height: auto;
+    min-height: 82px;
+  }
+
+  .emblem-head {
+    min-height: 36px;
+    grid-template-columns: 30px minmax(0, 1fr) auto;
+    gap: 6px;
+    padding: 5px 8px 3px;
+  }
+
+  .emblem-icon,
+  .emblem-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+
+  .emblem-card select {
+    height: 24px;
+    font-size: .74rem;
+  }
+
+  .emblem-detail {
+    min-height: 24px;
+    padding: 2px 8px;
+  }
+
+  .emblem-detail select,
+  .emblem-detail output {
+    font-size: .7rem;
+  }
+
+  .emblem-multiplier {
+    min-width: 44px;
+    font-size: 1.08rem;
+  }
+
+  .leaderboard {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    width: calc(100% - 24px);
+    height: min(300px, 48vh);
+    min-height: 238px;
+    margin: 16px auto 22px;
+  }
+
+  .ranking-row {
+    min-height: 54px;
+    padding: 8px 10px;
+  }
+
+  .ranking-identity strong {
+    font-size: 15px;
+  }
+
+  .ranking-value {
+    font-size: .92rem;
+  }
+
+  .banner-score-outside {
+    min-height: 0;
+    margin-top: 10px;
+    font-size: 1.48rem;
+  }
+
+  .modal-backdrop {
+    padding: 12px;
+    align-items: end;
+  }
+
+  .modal {
+    max-height: calc(100dvh - 24px);
+    border-radius: 10px 10px 0 0;
+  }
+
+  .modal-header {
+    min-height: 72px;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+
+  .modal-header h2 {
+    font-size: 1.3rem;
+  }
+
+  .modal-header button {
+    min-height: 44px;
+    flex: 0 0 auto;
+  }
+
+  .modal-body {
+    max-height: calc(100dvh - 96px);
+    padding: 16px;
+  }
+
+  .rule-grid,
+  .data-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .rule-card,
+  .data-card {
+    padding: 14px;
+  }
+
+  .stat-table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .load-error,
+  .noscript-message {
+    width: calc(100% - 24px);
+    margin: 32px auto;
+    padding: 18px;
+  }
+}
+
+@media (max-width: 380px) {
+  .topbar,
+  .banner-grid {
+    width: calc(100% - 16px);
+  }
+
+  .topbar nav {
+    gap: 2px;
+  }
+
+  .topbar nav button,
+  .topbar nav a {
+    padding-inline: 8px;
+    font-size: .7rem;
+  }
+
+  .score-method button {
+    min-width: 98px;
+  }
+
+  .emblem-pennant,
+  .leaderboard {
+    width: calc(100% - 16px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
