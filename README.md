@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  Open the calculator: <a href="www.ti-fantasy.site"><strong>www.ti-fantasy.site</strong></a>.
+  Open the calculator: <a href="https://www.ti-fantasy.site"><strong>www.ti-fantasy.site</strong></a>.
 </p>
 
 ---
@@ -18,7 +18,7 @@
 
 | Site | Address |
 | --- | --- |
-| Primary | [www.ti-fantasy.site](https://www.ti-fantasy.site) |
+| Primary | **[www.ti-fantasy.site](https://www.ti-fantasy.site)** |
 | Alternative | [tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy](https://tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy/) |
 
 > [!NOTE]
