@@ -80,5 +80,20 @@
   <script src="data/ewc_2026_data.js"></script>
   <script src="fantasy.js"></script>
   <script src="app.js"></script>
+  <script>
+    if (window.location.hostname === "www.ti-fantasy.site") {
+      const busuanziScript = document.createElement("script");
+      busuanziScript.src = "https://cdn.busuanzi.cc/busuanzi/3.6.9/busuanzi.min.js";
+      document.head.append(busuanziScript);
+
+      fetch("https://w.saobby.com/api/visit/wb4uhqvj", {
+        method: "GET",
+        mode: "no-cors",
+        credentials: "omit",
+        cache: "no-store",
+        referrerPolicy: "origin"
+      }).catch(() => {});
+    }
+  </script>
 </body>
 </html>

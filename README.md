@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  Open the calculator: <a href="https://tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy"><strong>tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy</strong></a>.
+  Open the calculator: <a href="www.ti-fantasy.site"><strong>www.ti-fantasy.site</strong></a>.
 </p>
 
 ---
@@ -18,7 +18,8 @@
 
 | Site | Address |
 | --- | --- |
-| Primary | [tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy](https://tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy/) |
+| Primary | [www.ti-fantasy.site](https://www.ti-fantasy.site) |
+| Alternative | [tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy](https://tinykiecoo.github.io/Calculator-for-DOTA2-TI-Fantasy/) |
 
 > [!NOTE]
 > These are the only deployments maintained by the author. Similar-looking tools hosted elsewhere may be third-party redeployments.
@@ -43,6 +44,8 @@ Clone or download the repository, then open `index.html` in a modern browser.
 This is a free, open-source, non-commercial fan project and is not affiliated with Valve, Steam, or Dota 2.
 
 It uses Dota 2 / Valve-derived images, fonts, names, and UI materials. Those materials remain the property of Valve and their respective rights holders; this project's open-source license does not grant rights to them.
+
+Official deployment website uses third-party visit counters. The public counter value can be viewed [here](https://www.busuanzi.cc/count.php?search=www.ti-fantasy.site).
 
 ## License
 
