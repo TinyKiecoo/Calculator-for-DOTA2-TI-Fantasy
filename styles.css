@@ -177,7 +177,11 @@ a:focus-visible {
   gap: 4px;
 }
 
-.topbar nav button {
+.topbar nav button,
+.topbar nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 42px;
   padding: 12px 11px;
   color: #dfd1b8;
   cursor: pointer;
@@ -187,9 +191,12 @@ a:focus-visible {
   font-family: var(--display-font);
   font-size: .76rem;
   letter-spacing: .09em;
+  line-height: 1;
+  text-decoration: none;
 }
 
-.topbar nav button:hover {
+.topbar nav button:hover,
+.topbar nav a:hover {
   color: var(--gold-bright);
   border-bottom-color: var(--gold);
 }

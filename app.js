@@ -14,23 +14,279 @@
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modal-close");
 
+  const languageToggle = document.getElementById("language-toggle");
+  const LANGUAGE_STORAGE_KEY = "ti-fantasy-language";
+
+  const translations = {
+    zh: {
+      locale: "zh-CN",
+      documentTitle: "DOTA 2 TI 梦幻挑战计算器",
+      description: "开源的 DOTA 2 TI 梦幻挑战预测计算器。",
+      backToTop: "返回梦幻挑战顶部",
+      brandLabel: "梦幻挑战",
+      pageHeading: "开源的 Dota 2 梦幻挑战计算器",
+      pageActions: "页面操作",
+      githubRepository: "GitHub 仓库",
+      githubAria: "在新标签页打开 GitHub 仓库",
+      switchLanguage: "切换为英文",
+      dataNotes: "数据说明",
+      bannerGrid: "三面梦幻战旗",
+      loading: "正在载入本地赛事数据…",
+      loadErrorTitle: "本地数据未能载入",
+      loadErrorBody: "请确认 index.html、app.js、fantasy.js 与 data 文件夹保持原有相对位置。",
+      closeModal: "关闭弹窗",
+      close: "关闭 ×",
+      localSnapshot: "本地快照",
+      teamFallback: "队伍 {id}",
+      playerFallback: "选手 {id}",
+      unknown: "未知",
+      insufficientData: "数据不足",
+      waitingForData: "等待有效数据",
+      statistic: "统计数据",
+      quality: "品质",
+      trait: "特性",
+      totalTraitEffect: "自身与相邻特性的合计影响",
+      emblemAria: "{role}第 {index} 枚{color}徽标",
+      liveRanking: "{role}实时排名",
+      scoreMethod: "积分方式",
+      highestScore: "最高得分",
+      averageScore: "平均得分",
+      emblemPennant: "{role}徽标挂幅",
+      bannerScore: "{role}战旗积分",
+      dataKicker: "DATA NOTES",
+      dataLead: "页面直接读取随仓库保存的经典 JavaScript 数据文件，不使用网络请求、API 密钥或服务器。",
+      tournamentSnapshot: "赛事快照",
+      leagueId: "联赛 ID",
+      parsedMatches: "已解析比赛",
+      players: "选手",
+      generatedDate: "生成日期",
+      scoringMethodTitle: "计算口径",
+      scoringMethodBody: "最高得分逐张地图应用当前徽标倍率并取最高的一张；平均得分对全部有效地图的最终分数取算术平均。双人战旗始终要求两人来自同队，并在同一张地图上先取二人平均。",
+      knownLimitations: "已知限制",
+      limitationLotus: "莲花采集没有可靠公开字段，因此保存为 null，而不是 0。",
+      limitationProxy: "狂石与观察者为 OpenDota 回放事件代理值。",
+      limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
+      dataSources: "数据来源",
+      dataSourcesBody: "OpenDota Explorer 与联赛比赛接口用于回放解析数据；Liquipedia 用于核对 EWC 2026 赛事范围。",
+      constructionAlert: "本站仍在建设中，欢迎稍后再来查看 :) ",
+      roles: { core: "核心", mid: "中单", support: "辅助" },
+      colors: { red: "红色", blue: "蓝色", green: "绿色" },
+      qualityLabels: {
+        1: "第 1 阶", 2: "第 2 阶", 3: "第 3 阶", 4: "第 4 阶", 5: "第 5 阶",
+      },
+      traitLabels: {
+        fractal: "分形", benevolent: "仁爱", vampire: "吸血鬼", unique: "唯一", friendly: "友好",
+      },
+      stats: {
+        kills: { label: "击杀", formula: "每次 × 107" },
+        deaths: { label: "死亡", formula: "1950 − 每次 × 195" },
+        creep_score: { label: "正反补", formula: "每次 × 3" },
+        gpm: { label: "GPM", formula: "数值 × 2" },
+        madstone_collected: { label: "狂石收集数量", formula: "每块 × 13" },
+        tower_kills: { label: "摧毁防御塔", formula: "每座 × 352" },
+        observer_wards_placed: { label: "放置侦察守卫", formula: "每个 × 117" },
+        camps_stacked: { label: "堆叠野怪", formula: "每次 × 234" },
+        runes_grabbed: { label: "拾取神符", formula: "每个 × 141" },
+        watchers_taken: { label: "占领观察者", formula: "每个 × 147" },
+        smokes_used: { label: "使用诡计之雾", formula: "每次 × 293" },
+        lotuses_collected: { label: "采集莲花", formula: "每朵 × 176" },
+        roshan_kills: { label: "击杀肉山", formula: "每次 × 1172" },
+        teamfight_participation: { label: "参与团战", formula: "参团率 × 2124" },
+        stun_seconds: { label: "眩晕时间", formula: "每秒 × 10" },
+        tormentor_kills: { label: "消灭痛苦魔方", formula: "每次 × 879" },
+        first_blood: { label: "第一滴血", formula: "获得时 +1934" },
+        courier_kills: { label: "杀害信使", formula: "每次 × 703" },
+      },
+    },
+    en: {
+      locale: "en-US",
+      documentTitle: "Calculator for DOTA 2 TI Fantasy",
+      description: "An open-source calculator for DOTA 2 TI Fantasy predictions.",
+      backToTop: "Back to the Fantasy Challenge top",
+      brandLabel: "DOTA 2",
+      pageHeading: "Open-source Dota 2 Fantasy Challenge Calculator",
+      pageActions: "Page actions",
+      githubRepository: "GitHub Repository",
+      githubAria: "Open the GitHub repository in a new tab",
+      switchLanguage: "Switch to Chinese",
+      dataNotes: "Data Notes",
+      bannerGrid: "Three fantasy banners",
+      loading: "Loading local tournament data…",
+      loadErrorTitle: "Local data could not be loaded",
+      loadErrorBody: "Keep index.html, app.js, fantasy.js, and the data folder in their original relative locations.",
+      closeModal: "Close dialog",
+      close: "Close ×",
+      localSnapshot: "Local snapshot",
+      teamFallback: "Team {id}",
+      playerFallback: "Player {id}",
+      unknown: "Unknown",
+      insufficientData: "Insufficient data",
+      waitingForData: "Waiting for valid data",
+      statistic: "Statistic",
+      quality: "Quality",
+      trait: "Trait",
+      totalTraitEffect: "Combined effect of this trait and adjacent traits",
+      emblemAria: "{role}, emblem {index}, {color}",
+      liveRanking: "Live {role} ranking",
+      scoreMethod: "Scoring method",
+      highestScore: "Highest Score",
+      averageScore: "Average Score",
+      emblemPennant: "{role} emblem pennant",
+      bannerScore: "{role} banner score",
+      dataKicker: "DATA NOTES",
+      dataLead: "This page reads classic JavaScript data files stored with the repository. It uses no network requests, API keys, or server.",
+      tournamentSnapshot: "Tournament Snapshot",
+      leagueId: "League ID",
+      parsedMatches: "Parsed matches",
+      players: "Players",
+      generatedDate: "Generated",
+      scoringMethodTitle: "Scoring Method",
+      scoringMethodBody: "Highest Score applies the current emblem multipliers to every map and selects the best map. Average Score takes the arithmetic mean of all valid map scores. Two-player banners always require both players to be on the same team and average their scores within the same map first.",
+      knownLimitations: "Known Limitations",
+      limitationLotus: "Lotus collection has no reliable public field, so it is stored as null rather than 0.",
+      limitationProxy: "Madstone and Watcher values are proxies derived from OpenDota replay events.",
+      limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
+      dataSources: "Data Sources",
+      dataSourcesBody: "OpenDota Explorer and league match endpoints provide replay-parsed data; Liquipedia is used to verify the EWC 2026 tournament scope.",
+      constructionAlert: "This site is still under construction. Please come back later :) ",
+      roles: { core: "Core", mid: "Mid", support: "Support" },
+      colors: { red: "Red", blue: "Blue", green: "Green" },
+      qualityLabels: {
+        1: "Tier 1", 2: "Tier 2", 3: "Tier 3", 4: "Tier 4", 5: "Tier 5",
+      },
+      traitLabels: {
+        fractal: "Fractal", benevolent: "Benevolent", vampire: "Vampire", unique: "Unique", friendly: "Friendly",
+      },
+      stats: {
+        kills: { label: "Kills", formula: "Each × 107" },
+        deaths: { label: "Deaths", formula: "1950 − each × 195" },
+        creep_score: { label: "Last Hits & Denies", formula: "Each × 3" },
+        gpm: { label: "GPM", formula: "Value × 2" },
+        madstone_collected: { label: "Madstones Collected", formula: "Each × 13" },
+        tower_kills: { label: "Towers Destroyed", formula: "Each × 352" },
+        observer_wards_placed: { label: "Observer Wards Placed", formula: "Each × 117" },
+        camps_stacked: { label: "Camps Stacked", formula: "Each × 234" },
+        runes_grabbed: { label: "Runes Picked Up", formula: "Each × 141" },
+        watchers_taken: { label: "Watchers Captured", formula: "Each × 147" },
+        smokes_used: { label: "Smokes Used", formula: "Each × 293" },
+        lotuses_collected: { label: "Lotuses Collected", formula: "Each × 176" },
+        roshan_kills: { label: "Roshan Kills", formula: "Each × 1172" },
+        teamfight_participation: { label: "Teamfight Participation", formula: "Rate × 2124" },
+        stun_seconds: { label: "Stun Duration", formula: "Each second × 10" },
+        tormentor_kills: { label: "Tormentor Kills", formula: "Each × 879" },
+        first_blood: { label: "First Blood", formula: "+1934 when earned" },
+        courier_kills: { label: "Courier Kills", formula: "Each × 703" },
+      },
+    },
+  };
+
+  let currentLanguage = window.__TI_FANTASY_LANGUAGE__ === "zh" ? "zh" : "en";
+
+  function copy() {
+    return translations[currentLanguage];
+  }
+
+  function text(key, variables = {}) {
+    const template = copy()[key] ?? key;
+    if (typeof template !== "string") return template;
+    return template.replace(/\{(\w+)\}/g, (_, name) =>
+      Object.prototype.hasOwnProperty.call(variables, name)
+        ? String(variables[name])
+        : `{${name}}`,
+    );
+  }
+
+  function roleName(role) {
+    return copy().roles[role] || role;
+  }
+
+  function colorName(color) {
+    return copy().colors[color] || color;
+  }
+
+  function qualityLabel(quality) {
+    return copy().qualityLabels[quality] || String(quality);
+  }
+
+  function traitLabel(trait) {
+    return copy().traitLabels[trait] || trait;
+  }
+
+  function statDefinition(stat) {
+    return copy().stats[stat] || engine.statDefinitions[stat];
+  }
+
+  function detectLanguage() {
+    const preferred =
+      (navigator.languages && navigator.languages[0]) ||
+      navigator.language ||
+      "en";
+    return String(preferred).toLowerCase().startsWith("zh") ? "zh" : "en";
+  }
+
+  function saveLanguage(language) {
+    try {
+      localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
+    } catch (error) {
+      // The page still works when storage is blocked.
+    }
+  }
+
+  function applyStaticTranslations() {
+    document.documentElement.lang = currentLanguage === "zh" ? "zh-CN" : "en";
+    document.title = text("documentTitle");
+
+    document.querySelectorAll('[data-i18n]').forEach((element) => {
+      element.textContent = text(element.dataset.i18n);
+    });
+    document.querySelectorAll('[data-i18n-aria-label]').forEach((element) => {
+      element.setAttribute("aria-label", text(element.dataset.i18nAriaLabel));
+    });
+
+    document.querySelector('meta[name="description"]')?.setAttribute("content", text("description"));
+    document.querySelector('meta[property="og:title"]')?.setAttribute("content", text("documentTitle"));
+    document.querySelector('meta[property="og:description"]')?.setAttribute("content", text("description"));
+
+    languageToggle.textContent = currentLanguage === "zh" ? "English" : "中文";
+    languageToggle.setAttribute("aria-label", text("switchLanguage"));
+    languageToggle.setAttribute("title", text("switchLanguage"));
+  }
+
+  function setLanguage(language) {
+    if (language !== "zh" && language !== "en") return;
+    currentLanguage = language;
+    window.__TI_FANTASY_LANGUAGE__ = language;
+    saveLanguage(language);
+    applyStaticTranslations();
+
+    if (dataset && engine) {
+      players = normalizePlayers(dataset);
+      render();
+      if (!modalBackdrop.hidden) {
+        modalKicker.textContent = text("dataKicker");
+        modalTitle.textContent = text("dataNotes");
+        modalBody.innerHTML = dataMarkup();
+      }
+    }
+  }
+
+  applyStaticTranslations();
+
+  languageToggle.addEventListener("click", () => {
+    setLanguage(currentLanguage === "zh" ? "en" : "zh");
+  });
+
+  if (!window.__TI_FANTASY_LANGUAGE__) {
+    currentLanguage = detectLanguage();
+    saveLanguage(currentLanguage);
+    applyStaticTranslations();
+  }
+
   if (!dataset || !engine) {
     bannerGrid.hidden = true;
     loadError.hidden = false;
     return;
   }
-
-  const roleNames = {
-    core: "核心",
-    mid: "中单",
-    support: "辅助",
-  };
-
-  const colorNames = {
-    red: "红色",
-    blue: "蓝色",
-    green: "绿色",
-  };
 
   const statFieldAliases = {
     kills: "kills",
@@ -99,7 +355,7 @@
   };
 
   let modalTrigger = null;
-  const players = normalizePlayers(dataset);
+  let players = normalizePlayers(dataset);
   const meta = dataset.meta || {};
 
   function escapeHtml(value) {
@@ -128,7 +384,7 @@
       const teamId = String(
         team.teamId ?? team.id ?? team.name ?? "unknown-team",
       );
-      const teamName = team.name || team.tag || `队伍 ${teamId}`;
+      const teamName = team.name || team.tag || text("teamFallback", { id: teamId });
 
       for (const player of team.players || []) {
         if (!engine.bannerRoles.includes(player.role)) continue;
@@ -138,7 +394,7 @@
           ),
           name:
             player.name ||
-            `选手 ${player.accountId ?? player.id ?? "未知"}`,
+            text("playerFallback", { id: player.accountId ?? player.id ?? text("unknown") }),
           teamId,
           teamName,
           teamTag: team.tag,
@@ -159,10 +415,10 @@
   }
 
   function formatDate(value) {
-    if (!value) return "本地快照";
+    if (!value) return text("localSnapshot");
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return value;
-    return new Intl.DateTimeFormat("zh-CN", {
+    return new Intl.DateTimeFormat(copy().locale, {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
@@ -173,6 +429,14 @@
     const rounded = Math.round(value * 100);
     if (rounded > 0) return `+${rounded}%`;
     return `${rounded}%`;
+  }
+
+  function formatScore(value) {
+    if (value === null || !Number.isFinite(value)) return text("insufficientData");
+    return new Intl.NumberFormat(copy().locale, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 1,
+    }).format(value);
   }
 
   function statIconMarkup(stat) {
@@ -223,7 +487,7 @@
       .map((quality) =>
         optionMarkup(
           String(quality),
-          engine.qualityLabels[quality],
+          qualityLabel(quality),
           String(emblem.quality),
         ),
       )
@@ -232,7 +496,7 @@
       .map((trait) =>
         optionMarkup(
           trait,
-          engine.traitLabels[trait],
+          traitLabel(trait),
           emblem.trait,
         ),
       )
@@ -241,7 +505,7 @@
       .map((stat) =>
         optionMarkup(
           stat,
-          engine.statDefinitions[stat].label,
+          statDefinition(stat).label,
           emblem.stat,
         ),
       )
@@ -251,12 +515,16 @@
     return `
       <article
         class="emblem-card emblem-card--${emblem.color}"
-        aria-label="${roleNames[role]}第 ${index + 1} 枚${colorNames[emblem.color]}徽标"
+        aria-label="${escapeHtml(text("emblemAria", {
+          role: roleName(role),
+          index: index + 1,
+          color: colorName(emblem.color),
+        }))}"
       >
         <div class="emblem-head">
           <span class="emblem-icon" aria-hidden="true">${statIconMarkup(emblem.stat)}</span>
           <label>
-            <span class="sr-only">统计数据</span>
+            <span class="sr-only">${escapeHtml(text("statistic"))}</span>
             <select
               class="stat-select"
               data-role="${role}"
@@ -268,7 +536,7 @@
         </div>
         <div class="emblem-detail">
           <label>
-            <span class="sr-only">品质</span>
+            <span class="sr-only">${escapeHtml(text("quality"))}</span>
             <select
               data-role="${role}"
               data-index="${index}"
@@ -279,14 +547,14 @@
         </div>
         <div class="emblem-detail">
           <label>
-            <span class="sr-only">特性</span>
+            <span class="sr-only">${escapeHtml(text("trait"))}</span>
             <select
               data-role="${role}"
               data-index="${index}"
               data-field="trait"
             >${traitOptions}</select>
           </label>
-          <output title="自身与相邻特性的合计影响">${signedPercent(traitEffect)}</output>
+          <output title="${escapeHtml(text("totalTraitEffect"))}">${signedPercent(traitEffect)}</output>
         </div>
       </article>`;
   }
@@ -313,14 +581,14 @@
                 <strong>${escapeHtml(entry.label)}</strong>
                 <small>${escapeHtml(entry.subtitle)}</small>
               </span>
-              <span class="${scoreClass}">${escapeHtml(engine.formatScore(entry.score))}</span>
+              <span class="${scoreClass}">${escapeHtml(formatScore(entry.score))}</span>
             </button>
           </li>`;
       })
       .join("");
 
     return `
-      <section class="leaderboard" aria-label="${roleNames[role]}实时排名">
+      <section class="leaderboard" aria-label="${escapeHtml(text("liveRanking", { role: roleName(role) }))}">
         <ol class="ranking-list">${rows}</ol>
       </section>`;
   }
@@ -332,37 +600,39 @@
         emblemMarkup(role, emblem, index, modifiers[index]),
       )
       .join("");
+    const selectedLabel = selected ? selected.label : text("waitingForData");
+    const selectedSubtitle = selected ? selected.subtitle : "—";
 
     return `
       <section class="banner-column">
         <article class="war-banner war-banner--${role}" data-banner-role="${role}">
           <div class="banner-rope is-top" aria-hidden="true"></div>
           <header class="banner-heading">
-            <h2>${roleNames[role]}</h2>
-            <span class="selected-roster" title="${escapeHtml(selected ? selected.label : "等待有效数据")}">
-              ${escapeHtml(selected ? selected.label : "等待有效数据")}
-              <small>${escapeHtml(selected ? selected.subtitle : "—")}</small>
+            <h2>${escapeHtml(roleName(role))}</h2>
+            <span class="selected-roster" title="${escapeHtml(selectedLabel)}">
+              ${escapeHtml(selectedLabel)}
+              <small>${escapeHtml(selectedSubtitle)}</small>
             </span>
             <fieldset class="score-method">
-              <legend>积分方式</legend>
+              <legend>${escapeHtml(text("scoreMethod"))}</legend>
               <div>
                 <button
                   type="button"
                   data-score-mode="highest"
                   aria-pressed="${state.scoreMode === "highest"}"
                   class="${state.scoreMode === "highest" ? "is-active" : ""}"
-                >最高得分</button>
+                >${escapeHtml(text("highestScore"))}</button>
                 <button
                   type="button"
                   data-score-mode="average"
                   aria-pressed="${state.scoreMode === "average"}"
                   class="${state.scoreMode === "average" ? "is-active" : ""}"
-                >平均得分</button>
+                >${escapeHtml(text("averageScore"))}</button>
               </div>
             </fieldset>
           </header>
 
-          <section class="emblem-pennant" aria-label="${roleNames[role]}徽标挂幅">
+          <section class="emblem-pennant" aria-label="${escapeHtml(text("emblemPennant", { role: roleName(role) }))}">
             <div class="emblem-stack">${emblems}</div>
           </section>
 
@@ -372,8 +642,8 @@
         </article>
         <output
           class="banner-score-outside"
-          aria-label="${roleNames[role]}战旗积分"
-        >${escapeHtml(engine.formatScore(selected ? selected.score : null))}</output>
+          aria-label="${escapeHtml(text("bannerScore", { role: roleName(role) }))}"
+        >${escapeHtml(formatScore(selected ? selected.score : null))}</output>
       </section>`;
   }
 
@@ -433,107 +703,48 @@
         )
       : null;
 
-    totalScore.textContent = engine.formatScore(combined);
+    totalScore.textContent = formatScore(combined);
     restoreFocus(focusRequest);
-  }
-
-  function rulesMarkup() {
-    const qualityRows = engine.qualities
-      .map(
-        (quality) =>
-          `<li>${engine.qualityLabels[quality]}：+${Math.round(
-            engine.qualityBonus[quality] * 100,
-          )}%</li>`,
-      )
-      .join("");
-    const traitRows = engine.traits
-      .map(
-        (trait) =>
-          `<li><strong>${engine.traitLabels[trait]}</strong>：${engine.traitDescriptions[trait]}</li>`,
-      )
-      .join("");
-    const statRows = engine.statKeys
-      .map(
-        (stat) => `
-          <tr>
-            <th>${engine.statDefinitions[stat].label}</th>
-            <td>${colorNames[engine.statDefinitions[stat].color]}</td>
-            <td>${engine.statDefinitions[stat].formula}</td>
-          </tr>`,
-      )
-      .join("");
-
-    return `
-      <p class="modal-lead">
-        核心与辅助各选择同队两人并取平均，中单选择一人。最终积分为三面战旗之和。
-        每枚徽标只计算其当前选中的统计数据。最高得分取单张地图，平均得分取全部有效地图的场均。
-      </p>
-      <div class="rule-grid">
-        <section class="rule-card">
-          <h3>三面战旗</h3>
-          <p>核心：红、绿、红；中单：红、蓝、绿；辅助：蓝、绿、蓝。徽标颜色固定，数据、品质和特性可自由选择。</p>
-        </section>
-        <section class="rule-card">
-          <h3>品质加成</h3>
-          <ul>${qualityRows}</ul>
-        </section>
-        <section class="rule-card">
-          <h3>徽标特性</h3>
-          <ul>${traitRows}</ul>
-        </section>
-        <section class="rule-card">
-          <h3>倍率算法</h3>
-          <p>每枚徽标从 100% 开始，品质、自身特性和相邻特性按百分点相加。中间徽标可以同时受到两侧相邻徽标影响。</p>
-        </section>
-      </div>
-      <section class="rule-card" style="margin-top:12px">
-        <h3>统计数据与基础积分</h3>
-        <table class="stat-table">
-          <thead><tr><th>统计数据</th><th>徽标</th><th>基础积分</th></tr></thead>
-          <tbody>${statRows}</tbody>
-        </table>
-      </section>`;
   }
 
   function dataMarkup() {
     const coverage = meta.coverage || {};
     return `
       <p class="modal-lead">
-        页面直接读取随仓库保存的经典 JavaScript 数据文件，不使用网络请求、API 密钥或服务器。
+        ${escapeHtml(text("dataLead"))}
       </p>
       <div class="data-grid">
         <section class="data-card">
-          <h3>赛事快照</h3>
-          <p>联赛 ID：${escapeHtml(meta.leagueId || "19785")}</p>
-          <p>已解析比赛：${escapeHtml(coverage.parsedMatches || "—")}</p>
-          <p>选手：${escapeHtml(coverage.players || players.length)}</p>
-          <p>生成日期：${escapeHtml(formatDate(meta.generatedAt))}</p>
+          <h3>${escapeHtml(text("tournamentSnapshot"))}</h3>
+          <p>${escapeHtml(text("leagueId"))}: ${escapeHtml(meta.leagueId || "19785")}</p>
+          <p>${escapeHtml(text("parsedMatches"))}: ${escapeHtml(coverage.parsedMatches || "—")}</p>
+          <p>${escapeHtml(text("players"))}: ${escapeHtml(coverage.players || players.length)}</p>
+          <p>${escapeHtml(text("generatedDate"))}: ${escapeHtml(formatDate(meta.generatedAt))}</p>
         </section>
         <section class="data-card">
-          <h3>计算口径</h3>
-          <p>最高得分逐张地图应用当前徽标倍率并取最高的一张；平均得分对全部有效地图的最终分数取算术平均。双人战旗始终要求两人来自同队，并在同一张地图上先取二人平均。</p>
+          <h3>${escapeHtml(text("scoringMethodTitle"))}</h3>
+          <p>${escapeHtml(text("scoringMethodBody"))}</p>
         </section>
         <section class="data-card">
-          <h3>已知限制</h3>
+          <h3>${escapeHtml(text("knownLimitations"))}</h3>
           <ul>
-            <li>莲花采集没有可靠公开字段，因此保存为 null，而不是 0。</li>
-            <li>狂石与观察者为 OpenDota 回放事件代理值。</li>
-            <li>选手角色按赛事内路线与补刀数据推断。</li>
+            <li>${escapeHtml(text("limitationLotus"))}</li>
+            <li>${escapeHtml(text("limitationProxy"))}</li>
+            <li>${escapeHtml(text("limitationRoles"))}</li>
           </ul>
         </section>
         <section class="data-card">
-          <h3>数据来源</h3>
-          <p>OpenDota Explorer 与联赛比赛接口用于回放解析数据；Liquipedia 用于核对 EWC 2026 赛事范围。</p>
+          <h3>${escapeHtml(text("dataSources"))}</h3>
+          <p>${escapeHtml(text("dataSourcesBody"))}</p>
         </section>
       </div>`;
   }
 
-  function openModal(name, trigger) {
+  function openModal(trigger) {
     modalTrigger = trigger || document.activeElement;
-    const isRules = name === "rules";
-    modalKicker.textContent = isRules ? "HOW TO PLAY" : "DATA NOTES";
-    modalTitle.textContent = isRules ? "玩法介绍" : "数据说明";
-    modalBody.innerHTML = isRules ? rulesMarkup() : dataMarkup();
+    modalKicker.textContent = text("dataKicker");
+    modalTitle.textContent = text("dataNotes");
+    modalBody.innerHTML = dataMarkup();
     modalBackdrop.hidden = false;
     pageShell.setAttribute("aria-hidden", "true");
     pageShell.inert = true;
@@ -592,16 +803,10 @@
     render({ type: "ranking", role, key });
   });
 
-  document.getElementById("reset-button").addEventListener("click", () => {
-    state.config = engine.cloneDefaultConfig();
-    state.selectedKeys = {};
-    state.scoreMode = "highest";
-    render();
-  });
 
   document.querySelectorAll("[data-open-modal]").forEach((button) => {
     button.addEventListener("click", () => {
-      openModal(button.dataset.openModal, button);
+      openModal(button);
     });
   });
 
@@ -646,4 +851,8 @@
     bannerGrid.hidden = true;
     loadError.hidden = false;
   }
+
+  window.addEventListener("load", () => {
+    alert(text("constructionAlert"));
+  });
 })();

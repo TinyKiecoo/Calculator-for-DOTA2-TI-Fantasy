@@ -9,14 +9,41 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Calculator for DOTA 2 TI Fantasy">
   <meta property="og:description" content="An open-source calculator for DOTA 2 TI Fantasy predictions.">
+  <script>
+    (function () {
+      "use strict";
+      const storageKey = "ti-fantasy-language";
+      let language = null;
+
+      try {
+        const saved = localStorage.getItem(storageKey);
+        if (saved === "zh" || saved === "en") language = saved;
+      } catch (error) {
+        // localStorage can be unavailable in privacy-restricted contexts.
+      }
+
+      if (!language) {
+        const preferred = (navigator.languages && navigator.languages[0]) || navigator.language || "en";
+        language = String(preferred).toLowerCase().startsWith("zh") ? "zh" : "en";
+        try {
+          localStorage.setItem(storageKey, language);
+        } catch (error) {
+          // Continue with the detected language even if it cannot be saved.
+        }
+      }
+
+      window.__TI_FANTASY_LANGUAGE__ = language;
+      document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
+    })();
+  </script>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="fantasy-app">
     <div class="page-shell" id="page-shell">
       <header class="topbar" id="challenge">
-        <a class="brand" href="#challenge" aria-label="返回梦幻挑战顶部">
-          <span>梦幻挑战</span>
+        <a class="brand" href="#challenge" aria-label="返回梦幻挑战顶部" data-i18n-aria-label="backToTop">
+          <span data-i18n="brandLabel">梦幻挑战</span>
           <strong>FANTASY</strong>
         </a>
 
@@ -26,14 +53,20 @@
             src="fantasy-assets/ti26_script_png.png"
             alt="The International"
           >
-          <h1>开源的 Dota 2 梦幻挑战计算器</h1>
+          <h1 data-i18n="pageHeading">开源的 Dota 2 梦幻挑战计算器</h1>
         </div>
 
         <div class="topbar-actions">
-          <nav aria-label="页面操作">
-            <button type="button" data-open-modal="rules">玩法介绍</button>
-            <button type="button" id="reset-button">重置配置</button>
-            <button type="button" data-open-modal="data">数据说明</button>
+          <nav aria-label="页面操作" data-i18n-aria-label="pageActions">
+            <a
+              href="https://github.com/TinyKiecoo/Calculator-for-DOTA2-TI-Fantasy"
+              target="_blank"
+              rel="noopener noreferrer"
+              data-i18n="githubRepository"
+              data-i18n-aria-label="githubAria"
+            >GitHub 仓库</a>
+            <button type="button" id="language-toggle" aria-label="切换为英文">English</button>
+            <button type="button" data-open-modal="data" data-i18n="dataNotes">数据说明</button>
           </nav>
           <div class="total-score" aria-live="polite">
             <strong id="total-score">—</strong>
@@ -41,15 +74,14 @@
         </div>
       </header>
 
-      <main class="banner-grid" id="banner-grid" aria-label="三面梦幻战旗">
-        <p class="loading-message">正在载入本地赛事数据…</p>
+      <main class="banner-grid" id="banner-grid" aria-label="三面梦幻战旗" data-i18n-aria-label="bannerGrid">
+        <p class="loading-message" data-i18n="loading">正在载入本地赛事数据…</p>
       </main>
 
       <section class="load-error" id="load-error" hidden>
-        <strong>本地数据未能载入</strong>
-        <p>请确认 index.html、app.js、fantasy.js 与 data 文件夹保持原有相对位置。</p>
+        <strong data-i18n="loadErrorTitle">本地数据未能载入</strong>
+        <p data-i18n="loadErrorBody">请确认 index.html、app.js、fantasy.js 与 data 文件夹保持原有相对位置。</p>
       </section>
-
     </div>
   </div>
 
@@ -64,17 +96,17 @@
     >
       <header class="modal-header">
         <div>
-          <span id="modal-kicker">HOW TO PLAY</span>
-          <h2 id="modal-title">玩法介绍</h2>
+          <span id="modal-kicker">DATA NOTES</span>
+          <h2 id="modal-title" data-i18n="dataNotes">数据说明</h2>
         </div>
-        <button type="button" id="modal-close" aria-label="关闭弹窗">关闭 ×</button>
+        <button type="button" id="modal-close" aria-label="关闭弹窗" data-i18n-aria-label="closeModal" data-i18n="close">关闭 ×</button>
       </header>
       <div class="modal-body" id="modal-body"></div>
     </section>
   </div>
 
   <noscript>
-    <p class="noscript-message">此计算器需要浏览器启用 JavaScript。</p>
+    <p class="noscript-message">此计算器需要浏览器启用 JavaScript。 / This calculator requires JavaScript.</p>
   </noscript>
 
   <script src="data/ewc_2026_data.js"></script>
@@ -94,11 +126,6 @@
         referrerPolicy: "origin"
       }).catch(() => {});
     }
-  </script>
-  <script>
-      window.onload = function() {
-          alert('This site is still under construction. Please come back later :)');
-      };
   </script>
 </body>
 </html>
