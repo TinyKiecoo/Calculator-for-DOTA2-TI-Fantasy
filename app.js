@@ -23,10 +23,10 @@
       documentTitle: "DOTA 2 TI 梦幻挑战计算器",
       description: "开源的 DOTA 2 TI 梦幻挑战预测计算器。",
       backToTop: "返回梦幻挑战顶部",
-      brandLabel: "梦幻挑战",
+      brandName: "梦幻挑战",
       pageHeading: "开源的 Dota 2 梦幻挑战计算器",
       pageActions: "页面操作",
-      githubRepository: "GitHub 仓库",
+      githubRepository: "GitHub",
       githubAria: "在新标签页打开 GitHub 仓库",
       switchLanguage: "切换为英文",
       dataNotes: "数据说明",
@@ -103,10 +103,10 @@
       documentTitle: "Calculator for DOTA 2 TI Fantasy",
       description: "An open-source calculator for DOTA 2 TI Fantasy predictions.",
       backToTop: "Back to the Fantasy Challenge top",
-      brandLabel: "DOTA 2",
+      brandName: "FANTASY",
       pageHeading: "Open-source Dota 2 Fantasy Challenge Calculator",
       pageActions: "Page actions",
-      githubRepository: "GitHub Repository",
+      githubRepository: "GitHub",
       githubAria: "Open the GitHub repository in a new tab",
       switchLanguage: "Switch to Chinese",
       dataNotes: "Data Notes",
@@ -232,6 +232,19 @@
     }
   }
 
+  function applyEnglishTitleFonts(root = document) {
+    const titleElements = root.querySelectorAll(
+      ".brand strong, h1, h2, h3, .score-method legend, #modal-kicker",
+    );
+
+    titleElements.forEach((element) => {
+      const value = element.textContent.trim();
+      const isUppercaseEnglishTitle =
+        currentLanguage === "en" && /[A-Z]/.test(value) && !/[a-z]/.test(value);
+      element.classList.toggle("is-uppercase-title", isUppercaseEnglishTitle);
+    });
+  }
+
   function applyStaticTranslations() {
     document.documentElement.lang = currentLanguage === "zh" ? "zh-CN" : "en";
     document.title = text("documentTitle");
@@ -250,6 +263,7 @@
     languageToggle.textContent = currentLanguage === "zh" ? "English" : "中文";
     languageToggle.setAttribute("aria-label", text("switchLanguage"));
     languageToggle.setAttribute("title", text("switchLanguage"));
+    applyEnglishTitleFonts();
   }
 
   function setLanguage(language) {
@@ -266,6 +280,7 @@
         modalKicker.textContent = text("dataKicker");
         modalTitle.textContent = text("dataNotes");
         modalBody.innerHTML = dataMarkup();
+        applyEnglishTitleFonts(modal);
       }
     }
   }
@@ -351,7 +366,9 @@
   const state = {
     config: engine.cloneDefaultConfig(),
     selectedKeys: {},
-    scoreMode: "highest",
+    scoreMode: Object.fromEntries(
+      engine.bannerRoles.map((role) => [role, "highest"]),
+    ),
   };
 
   let modalTrigger = null;
@@ -455,7 +472,7 @@
         role,
         players,
         state.config[role],
-        state.scoreMode,
+        state.scoreMode[role],
       );
       selected[role] =
         rankings[role].find(
@@ -561,7 +578,7 @@
 
   function rankingMarkup(role, rankings, selected) {
     const rows = rankings
-      .map((entry, index) => {
+      .map((entry) => {
         const active = selected && selected.key === entry.key;
         const scoreClass =
           entry.score === null
@@ -576,7 +593,6 @@
               data-ranking-key="${escapeHtml(entry.key)}"
               aria-pressed="${active ? "true" : "false"}"
             >
-              <span class="ranking-number">${String(index + 1).padStart(2, "0")}</span>
               <span class="ranking-identity">
                 <strong>${escapeHtml(entry.label)}</strong>
                 <small>${escapeHtml(entry.subtitle)}</small>
@@ -604,11 +620,11 @@
     const selectedSubtitle = selected ? selected.subtitle : "—";
 
     return `
-      <section class="banner-column">
+      <section class="banner-column" data-banner-column-role="${role}">
         <article class="war-banner war-banner--${role}" data-banner-role="${role}">
           <div class="banner-rope is-top" aria-hidden="true"></div>
           <header class="banner-heading">
-            <h2>${escapeHtml(roleName(role))}</h2>
+            <h2>${escapeHtml(currentLanguage === "en" ? roleName(role).toUpperCase() : roleName(role))}</h2>
             <span class="selected-roster" title="${escapeHtml(selectedLabel)}">
               ${escapeHtml(selectedLabel)}
               <small>${escapeHtml(selectedSubtitle)}</small>
@@ -618,15 +634,17 @@
               <div>
                 <button
                   type="button"
+                  data-score-role="${role}"
                   data-score-mode="highest"
-                  aria-pressed="${state.scoreMode === "highest"}"
-                  class="${state.scoreMode === "highest" ? "is-active" : ""}"
+                  aria-pressed="${state.scoreMode[role] === "highest"}"
+                  class="${state.scoreMode[role] === "highest" ? "is-active" : ""}"
                 >${escapeHtml(text("highestScore"))}</button>
                 <button
                   type="button"
+                  data-score-role="${role}"
                   data-score-mode="average"
-                  aria-pressed="${state.scoreMode === "average"}"
-                  class="${state.scoreMode === "average" ? "is-active" : ""}"
+                  aria-pressed="${state.scoreMode[role] === "average"}"
+                  class="${state.scoreMode[role] === "average" ? "is-active" : ""}"
                 >${escapeHtml(text("averageScore"))}</button>
               </div>
             </fieldset>
@@ -676,12 +694,27 @@
       }
       if (
         request.type === "scoreMode" &&
+        element.dataset.scoreRole === request.role &&
         element.dataset.scoreMode === request.mode
       ) {
         element.focus();
         return;
       }
     }
+  }
+
+  function updateTotalScore(view) {
+    const allComplete = engine.bannerRoles.every(
+      (role) => view.selected[role] && view.selected[role].score !== null,
+    );
+    const combined = allComplete
+      ? engine.bannerRoles.reduce(
+          (sum, role) => sum + view.selected[role].score,
+          0,
+        )
+      : null;
+
+    totalScore.textContent = formatScore(combined);
   }
 
   function render(focusRequest) {
@@ -692,18 +725,36 @@
       )
       .join("");
 
-    const allComplete = engine.bannerRoles.every(
-      (role) =>
-        view.selected[role] && view.selected[role].score !== null,
-    );
-    const combined = allComplete
-      ? engine.bannerRoles.reduce(
-          (sum, role) => sum + view.selected[role].score,
-          0,
-        )
-      : null;
+    updateTotalScore(view);
+    applyEnglishTitleFonts(bannerGrid);
+    restoreFocus(focusRequest);
+  }
 
-    totalScore.textContent = formatScore(combined);
+  function renderScoreMode(role, focusRequest) {
+    const view = getView();
+    const currentColumn = bannerGrid.querySelector(
+      `[data-banner-column-role="${role}"]`,
+    );
+    if (!currentColumn) {
+      render(focusRequest);
+      return;
+    }
+
+    const template = document.createElement("template");
+    template.innerHTML = bannerMarkup(
+      role,
+      view.rankings[role],
+      view.selected[role],
+    ).trim();
+    const nextColumn = template.content.firstElementChild;
+    if (!nextColumn) {
+      render(focusRequest);
+      return;
+    }
+
+    currentColumn.replaceWith(nextColumn);
+    updateTotalScore(view);
+    applyEnglishTitleFonts(nextColumn);
     restoreFocus(focusRequest);
   }
 
@@ -745,6 +796,7 @@
     modalKicker.textContent = text("dataKicker");
     modalTitle.textContent = text("dataNotes");
     modalBody.innerHTML = dataMarkup();
+    applyEnglishTitleFonts(modal);
     modalBackdrop.hidden = false;
     pageShell.setAttribute("aria-hidden", "true");
     pageShell.inert = true;
@@ -787,10 +839,16 @@
     if (!(event.target instanceof Element)) return;
     const modeButton = event.target.closest("button[data-score-mode]");
     if (modeButton) {
+      const role = modeButton.dataset.scoreRole;
       const mode = modeButton.dataset.scoreMode;
-      if (!engine.scoreModes.includes(mode)) return;
-      state.scoreMode = mode;
-      render({ type: "scoreMode", mode });
+      if (
+        !engine.bannerRoles.includes(role) ||
+        !engine.scoreModes.includes(mode)
+      ) {
+        return;
+      }
+      state.scoreMode[role] = mode;
+      renderScoreMode(role, { type: "scoreMode", role, mode });
       return;
     }
 

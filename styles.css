@@ -30,6 +30,8 @@
   --green-deep: #113724;
   --page-font: "Radiance", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
   --display-font: "Reaver", "Microsoft YaHei", serif;
+  --number-font: "Reaver", serif;
+  --kai-font: "Reaver", "KaiTi", "STKaiti", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
 }
 
 * {
@@ -124,16 +126,8 @@ a:focus-visible {
   text-shadow: 0 0 20px rgba(229, 195, 118, .26);
 }
 
-.brand span {
-  display: block;
-  margin-bottom: -3px;
-  font-family: "KaiTi", "STKaiti", serif;
-  font-size: 1.12rem;
-  letter-spacing: .18em;
-}
-
 .brand strong {
-  font-family: var(--display-font);
+  font-family: var(--kai-font);
   font-size: 2.1rem;
   font-weight: 700;
   letter-spacing: .035em;
@@ -157,7 +151,7 @@ a:focus-visible {
   margin: 3px 0 0;
   color: #bfb29b;
   font-family: var(--display-font);
-  font-size: .78rem;
+  font-size: 14px;
   font-weight: 400;
   letter-spacing: .16em;
   text-shadow: 0 2px 18px rgba(234, 204, 135, .12);
@@ -314,7 +308,6 @@ a:focus-visible {
   font-family: "KaiTi", "STKaiti", var(--display-font);
   font-size: 1.85rem;
   font-weight: 400;
-  letter-spacing: .12em;
 }
 
 .selected-roster {
@@ -332,7 +325,7 @@ a:focus-visible {
   display: block;
   margin-top: 1px;
   color: rgba(42, 33, 21, .6);
-  font-size: .63rem;
+  font-size: 12px;
 }
 
 .score-method {
@@ -349,8 +342,7 @@ a:focus-visible {
   padding: 0;
   text-align: center;
   font-family: var(--display-font);
-  font-size: .58rem;
-  letter-spacing: .12em;
+  font-size: 12px;
 }
 
 .score-method div {
@@ -368,7 +360,7 @@ a:focus-visible {
   cursor: pointer;
   border: 0;
   background: transparent;
-  font-size: .61rem;
+  font-size: 10px;
 }
 
 .score-method button:hover {
@@ -528,16 +520,15 @@ a:focus-visible {
 }
 
 .stat-select {
-  font-family: var(--display-font);
+  font-family: var(--page-font);
   font-size: .63rem;
-  letter-spacing: .035em;
 }
 
 .emblem-multiplier {
   min-width: 37px;
   color: #fff8e9;
   text-align: right;
-  font-family: var(--display-font);
+  font-family: "Reaver";
   font-size: 1.02rem;
   line-height: 1;
 }
@@ -595,7 +586,7 @@ a:focus-visible {
   min-height: 49px;
   padding: 7px 9px;
   display: grid;
-  grid-template-columns: 25px minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 7px;
   color: #2c2418;
@@ -616,16 +607,6 @@ a:focus-visible {
   box-shadow: inset 3px 0 #e2bf70;
 }
 
-.ranking-number {
-  color: rgba(53, 42, 27, .52);
-  font-family: var(--display-font);
-  font-size: .72rem;
-}
-
-.ranking-row.is-selected .ranking-number {
-  color: #c7aa70;
-}
-
 .ranking-identity {
   min-width: 0;
 }
@@ -639,14 +620,14 @@ a:focus-visible {
 }
 
 .ranking-identity strong {
-  font-size: .88rem;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .ranking-identity small {
   margin-top: 2px;
   color: rgba(58, 46, 30, .57);
-  font-size: .71rem;
+  font-size: 12px;
 }
 
 .ranking-row.is-selected .ranking-identity small {
@@ -656,7 +637,7 @@ a:focus-visible {
 .ranking-value {
   color: #60471f;
   text-align: right;
-  font-family: var(--display-font);
+  font-family: var(--number-font);
   font-size: .86rem;
 }
 
@@ -676,7 +657,7 @@ a:focus-visible {
   display: block;
   color: var(--gold-bright);
   text-align: center;
-  font-family: var(--display-font);
+  font-family: "Reaver";
   font-size: 1.36rem;
   letter-spacing: .04em;
   line-height: 1.2;
@@ -908,7 +889,7 @@ a:focus-visible {
   }
 
   .challenge-title h1 {
-    font-size: .7rem;
+    font-size: 15px;
   }
 
   .total-score {
@@ -925,7 +906,7 @@ a:focus-visible {
 
   .selected-roster {
     max-width: 175px;
-    font-size: .8rem;
+    font-size: 16px;
   }
 
   .emblem-pennant {
@@ -957,4 +938,14 @@ a:focus-visible {
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
   }
+}
+
+/* English typography: Radiance by default, Reaver only for all-caps titles. */
+html[lang="en"] {
+  --display-font: "Radiance", sans-serif;
+}
+
+html[lang="en"] .is-uppercase-title {
+  font-family: "Reaver", serif;
+  font-weight: 700;
 }
