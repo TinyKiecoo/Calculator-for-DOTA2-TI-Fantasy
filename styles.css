@@ -519,6 +519,10 @@ a:focus-visible {
   background: #181513;
 }
 
+html[lang="en"] .stat-select {
+  font-family: 'Reaver';
+}
+
 .stat-select {
   font-family: var(--page-font);
   font-size: .63rem;
