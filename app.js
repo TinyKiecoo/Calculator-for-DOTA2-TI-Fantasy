@@ -64,6 +64,7 @@
       scoringMethodBody: "最高得分逐张地图应用当前徽标倍率并取最高的一张；平均得分对全部有效地图的最终分数取算术平均。双人战旗始终要求两人来自同队，并在同一张地图上先取二人平均。",
       knownLimitations: "已知限制",
       limitationLotus: "莲花采集没有可靠公开字段，因此保存为 null，而不是 0。",
+      lotusDataMissingAlert: "“采集莲花”数据缺失，当前无法计算该项得分。",
       limitationProxy: "狂石与观察者为 OpenDota 回放事件代理值。",
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
@@ -143,6 +144,7 @@
       scoringMethodBody: "Highest Score applies the current emblem multipliers to every map and selects the best map. Average Score takes the arithmetic mean of all valid map scores. Two-player banners always require both players to be on the same team and average their scores within the same map first.",
       knownLimitations: "Known Limitations",
       limitationLotus: "Lotus collection has no reliable public field, so it is stored as null rather than 0.",
+      lotusDataMissingAlert: "Data for “Lotuses Grabbed” is unavailable, so this score cannot currently be calculated.",
       limitationProxy: "Madstone and Watcher values are proxies derived from OpenDota replay events.",
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
@@ -830,6 +832,11 @@
 
     state.config[role][index][field] =
       field === "quality" ? Number(select.value) : select.value;
+
+    if (field === "stat" && select.value === "lotuses_collected") {
+      window.alert(text("lotusDataMissingAlert"));
+    }
+
     render({ type: "select", role, index, field });
   });
 
