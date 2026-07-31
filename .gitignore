@@ -1,0 +1,14 @@
+/node_modules
+/dist
+/.vite
+/.vinext
+/.wrangler
+/fantasy-assets/preview.png
+
+.env*
+*.log
+*.tsbuildinfo
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db

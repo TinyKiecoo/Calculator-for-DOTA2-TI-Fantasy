@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090704">
+  <title>Dota 2 梦幻挑战 · EWC 2026</title>
+  <meta name="description" content="可离线使用的 Dota 2 EWC 2026 梦幻战旗积分模拟器。">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dota 2 梦幻挑战 · EWC 2026">
+  <meta property="og:description" content="选择徽标的数据、品质与特性，即时计算三面战旗的选手排名。">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="fantasy-app">
+    <div class="page-shell" id="page-shell">
+      <header class="topbar" id="challenge">
+        <a class="brand" href="#challenge" aria-label="返回梦幻挑战顶部">
+          <span>梦幻挑战</span>
+          <strong>FANTASY</strong>
+        </a>
+
+        <div class="challenge-title">
+          <img
+            class="event-script"
+            src="fantasy-assets/ti26_script_png.png"
+            alt="The International"
+          >
+          <h1>开源的 Dota 2 梦幻挑战计算器</h1>
+        </div>
+
+        <div class="topbar-actions">
+          <nav aria-label="页面操作">
+            <button type="button" data-open-modal="rules">玩法介绍</button>
+            <button type="button" id="reset-button">重置配置</button>
+            <button type="button" data-open-modal="data">数据说明</button>
+          </nav>
+          <div class="total-score" aria-live="polite">
+            <strong id="total-score">—</strong>
+            <small id="total-breakdown">核心 — · 中单 — · 辅助 —</small>
+          </div>
+        </div>
+      </header>
+
+      <main class="banner-grid" id="banner-grid" aria-label="三面梦幻战旗">
+        <p class="loading-message">正在载入本地赛事数据…</p>
+      </main>
+
+      <section class="load-error" id="load-error" hidden>
+        <strong>本地数据未能载入</strong>
+        <p>请确认 index.html、app.js、fantasy.js 与 data 文件夹保持原有相对位置。</p>
+      </section>
+
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <section
+      class="modal"
+      id="info-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      tabindex="-1"
+    >
+      <header class="modal-header">
+        <div>
+          <span id="modal-kicker">HOW TO PLAY</span>
+          <h2 id="modal-title">玩法介绍</h2>
+        </div>
+        <button type="button" id="modal-close" aria-label="关闭弹窗">关闭 ×</button>
+      </header>
+      <div class="modal-body" id="modal-body"></div>
+    </section>
+  </div>
+
+  <noscript>
+    <p class="noscript-message">此计算器需要浏览器启用 JavaScript。</p>
+  </noscript>
+
+  <script src="data/ewc_2026_data.js"></script>
+  <script src="fantasy.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
