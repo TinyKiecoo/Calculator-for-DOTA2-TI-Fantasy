@@ -163,7 +163,7 @@
 
   const internationalRoleColors = {
     core: ["red", "green", "red", "green", "red"],
-    mid: ["red", "blue", "green", "red", "blue"],
+    mid: ["red", "blue", "green", "red", "green"],
     support: ["blue", "green", "blue", "green", "blue"],
   };
 
@@ -625,8 +625,8 @@
       ...defaultBannerConfig.mid.map((emblem) => ({ ...emblem })),
       { color: "red", stat: "gpm", quality: 5, trait: "unique" },
       {
-        color: "blue",
-        stat: "lotuses_collected",
+        color: "green",
+        stat: "stun_seconds",
         quality: 2,
         trait: "friendly",
       },

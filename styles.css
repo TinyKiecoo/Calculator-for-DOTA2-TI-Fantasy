@@ -234,14 +234,12 @@ a:focus-visible {
   font-family: var(--display-font);
   font-size: 14px;
   font-weight: 400;
-  letter-spacing: .16em;
   text-shadow: 0 2px 18px rgba(234, 204, 135, .12);
 }
 
 .accuracy-note {
   color: #a99777;
   font-size: 12px;
-  letter-spacing: .06em;
   line-height: 1.4;
   white-space: nowrap;
 }
