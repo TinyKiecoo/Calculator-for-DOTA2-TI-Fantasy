@@ -67,6 +67,7 @@
       limitationLotus: "莲花采集没有可靠公开字段，因此保存为 null，而不是 0。",
       lotusDataMissingAlert: "“采集莲花”数据缺失，当前无法计算该项得分。",
       madstoneDataCaveatAlert: "已有中立物品时收集的狂石可能未被统计，计算数据低于真实数据",
+      watchersDataAlert: "目前无法区分“占领中立的观察者”与“取消敌方对观察者的占领”，因此该项计算数据明显高于真实数据",
       limitationProxy: "狂石与观察者为 OpenDota 回放事件代理值。",
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
@@ -149,6 +150,7 @@
       limitationLotus: "Lotus collection has no reliable public field, so it is stored as null rather than 0.",
       lotusDataMissingAlert: "Data for “Lotuses Grabbed” is unavailable, so this score cannot currently be calculated.",
       madstoneDataCaveatAlert: "Madstones collected when owning neutral items may not have been counted, so the calculated value is significantly lower than the actual value.",
+      watchersDataAlert: "It's impossible to distinguish between 'occupying a neutral watcher' and 'removing the enemy's control over an watcher', so the calculated value is larger than the actual value.",
       limitationProxy: "Madstone and Watcher values are proxies derived from OpenDota replay events.",
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
@@ -156,7 +158,7 @@
       roles: { core: "Core", mid: "Mid", support: "Support" },
       colors: { red: "Red", blue: "Blue", green: "Green" },
       qualityLabels: {
-        1: "Tier 1", 2: "Tier 2", 3: "Tier 3", 4: "Tier 4", 5: "Tier 5",
+        1: "TIER I", 2: "TIER II", 3: "TIER III", 4: "TIER IV", 5: "TIER V",
       },
       traitLabels: {
         fractal: "FRACTAL", benevolent: "BENEVOLENT", vampire: "VAMPIRIC", unique: "UNIQUE", friendly: "FRIENDLY",
@@ -841,6 +843,8 @@
       window.alert(text("lotusDataMissingAlert"));
     } else if (field === "stat" && select.value === "madstone_collected") {
       window.alert(text("madstoneDataCaveatAlert"));
+    } else if (field === "stat" && select.value === "watchers_taken") {
+      window.alert(text("watchersDataAlert"));
     }
 
     render({ type: "select", role, index, field });
