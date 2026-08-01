@@ -27,14 +27,16 @@ test("uses classic scripts and file-safe relative paths", () => {
   );
 
   for (const relativePath of [...htmlPaths, ...cssPaths]) {
+    if (relativePath.includes("://")) continue;
+    const localPath = relativePath.split(/[?#]/, 1)[0];
     assert.ok(
-      !path.isAbsolute(relativePath) &&
-        !relativePath.startsWith("/") &&
-        !relativePath.includes("://"),
+      !path.isAbsolute(localPath) &&
+        !localPath.startsWith("/") &&
+        !localPath.includes("://"),
       `path must stay local and relative: ${relativePath}`,
     );
     assert.ok(
-      fs.existsSync(path.join(root, relativePath)),
+      fs.existsSync(path.join(root, localPath)),
       `referenced local file is missing: ${relativePath}`,
     );
   }
@@ -42,16 +44,16 @@ test("uses classic scripts and file-safe relative paths", () => {
 
 test("loads the browser data snapshot without fetch or modules", () => {
   const source = fs.readFileSync(
-    path.join(root, "data", "ewc_2026_data.js"),
+    path.join(root, "data", "19785", "data.js"),
     "utf8",
   );
   const sandbox = { window: {} };
   vm.runInNewContext(source, sandbox);
 
-  const dataset = sandbox.window.FANTASY_EWC_2026;
+  const dataset = sandbox.window.FANTASY_DATA;
   const jsonDataset = JSON.parse(
     fs.readFileSync(
-      path.join(root, "data", "ewc_2026_summary.json"),
+      path.join(root, "data", "19785", "summary.json"),
       "utf8",
     ),
   );
@@ -64,12 +66,29 @@ test("loads the browser data snapshot without fetch or modules", () => {
       .reduce((sum, player) => sum + player.maps.length, 0),
     1570,
   );
+  const requiredStats = [
+    "kills", "deaths", "creep_score", "gpm", "madstones_collected",
+    "towers_destroyed", "observer_wards_placed", "camps_stacked",
+    "runes_picked_up", "watchers_captured", "smokes_used",
+    "lotuses_collected", "roshans_killed", "teamfight_participation",
+    "stun_seconds", "tormentors_killed", "first_blood", "couriers_killed",
+  ];
+  for (const map of dataset.teams.flatMap((team) =>
+    team.players.flatMap((player) => player.maps))) {
+    for (const stat of requiredStats) {
+      assert.notEqual(map.stats[stat], null, `${stat} must be available`);
+      assert.notEqual(map.stats[stat], undefined, `${stat} must be present`);
+    }
+  }
+  assert.match(dataset.meta.fieldProvenance.madstones_collected, /m_nAcquiredMadstone/);
+  assert.match(dataset.meta.fieldProvenance.watchers_captured, /m_iWatchersTaken/);
+  assert.match(dataset.meta.fieldProvenance.lotuses_collected, /m_iLotusesTaken/);
   assert.equal(JSON.stringify(dataset), JSON.stringify(jsonDataset));
 });
 
 test("renders all three banners with a minimal classic-script DOM", () => {
   const dataSource = fs.readFileSync(
-    path.join(root, "data", "ewc_2026_data.js"),
+    path.join(root, "data", "19785", "data.js"),
     "utf8",
   );
   const elements = new Map();
@@ -98,10 +117,15 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     console,
     Date,
     Intl,
-    window: { FantasyEngine: engine },
+    window: { FantasyEngine: engine, __TI_FANTASY_LANGUAGE__: "zh" },
     document: {
+      documentElement: { lang: "zh-CN" },
+      title: "",
       activeElement: null,
       getElementById: element,
+      querySelector() {
+        return null;
+      },
       querySelectorAll() {
         return [];
       },

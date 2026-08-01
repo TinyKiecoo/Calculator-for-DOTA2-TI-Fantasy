@@ -4,6 +4,7 @@
 /.vinext
 /.wrangler
 /fantasy-assets/preview.png
+/replays/
 
 .env*
 *.log

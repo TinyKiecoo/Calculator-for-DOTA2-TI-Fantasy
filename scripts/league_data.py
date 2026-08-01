@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
-"""Build a compact Dota 2 EWC 2026 fantasy-stat dataset from OpenDota.
+"""Build a Dota 2 league fantasy-stat dataset from OpenDota.
 
 The OpenDota SQL Explorer lets us fetch every parsed player row for a league in
-one request.  This avoids making 157 individual match requests and makes the
+one request.  This avoids making one request per match and makes the
 result reproducible without an API key.
 
-Usage:
-    python scripts/fetch_ewc_2026.py
-    python scripts/fetch_ewc_2026.py --output data/ewc_2026_fantasy.json
-    python scripts/fetch_ewc_2026.py \
-        --summary-output data/ewc_2026_summary.json
+This module contains the OpenDota-facing part of ``build_league.py``.  It can
+also be run directly for a base (pre-replay) dataset.
 """
 
 from __future__ import annotations
@@ -27,10 +24,10 @@ from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 
-LEAGUE_ID = 19785
-LEAGUE_NAME = "Esports World Cup 2026"
+DEFAULT_LEAGUE_ID = 19785
+DEFAULT_LEAGUE_NAME = "Esports World Cup 2026"
 EXPLORER_URL = "https://api.opendota.com/api/explorer"
-USER_AGENT = "DotaFantasyEWC2026/1.0 (local dataset builder)"
+USER_AGENT = "DotaFantasyLeagueBuilder/2.0 (local dataset builder)"
 
 STAT_KEYS = (
     "kills",
@@ -53,25 +50,7 @@ STAT_KEYS = (
     "couriers_killed",
 )
 
-# OpenDota's team registry has two stale/reused display names for this event.
-# These names are normalized to the EWC 2026 participant names on Liquipedia.
-TEAM_NAME_OVERRIDES = {
-    55: "Poor Rangers",
-    8255888: "BB Team",
-    9256405: "Level UP",
-    10019843: "IC x Insanity",
-    10136357: "Nigma Galaxy",
-}
-
-TEAM_TAG_OVERRIDES = {
-    55: "PR",
-    8255888: "BB",
-    9256405: "LevelUP",
-    10019843: "ICxI",
-    10136357: "NGX",
-}
-
-SQL = f"""
+SQL_TEMPLATE = """
 SELECT
     m.match_id,
     m.start_time,
@@ -132,16 +111,24 @@ LEFT JOIN teams AS t
         WHEN pm.player_slot < 128 THEN m.radiant_team_id
         ELSE m.dire_team_id
     END
-WHERE m.leagueid = {LEAGUE_ID}
+WHERE m.leagueid = {league_id}
 ORDER BY m.start_time, m.match_id, pm.player_slot
 """
 
 
+def build_sql(league_id: int) -> str:
+    return SQL_TEMPLATE.format(league_id=int(league_id))
+
+
 def parse_args() -> argparse.Namespace:
     data_directory = Path(__file__).resolve().parents[1] / "data"
-    default_output = data_directory / "ewc_2026_fantasy.json"
-    default_summary_output = data_directory / "ewc_2026_summary.json"
+    default_directory = data_directory / str(DEFAULT_LEAGUE_ID)
+    default_output = default_directory / "full.json"
+    default_summary_output = default_directory / "summary.json"
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--league-id", type=int, default=DEFAULT_LEAGUE_ID)
+    parser.add_argument("--league-name", default=DEFAULT_LEAGUE_NAME)
+    parser.add_argument("--liquipedia-url")
     parser.add_argument(
         "--output",
         type=Path,
@@ -160,8 +147,8 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def fetch_rows() -> list[dict[str, Any]]:
-    compact_sql = " ".join(SQL.split())
+def fetch_rows(league_id: int) -> list[dict[str, Any]]:
+    compact_sql = " ".join(build_sql(league_id).split())
     url = f"{EXPLORER_URL}?{urlencode({'sql': compact_sql})}"
     request = Request(
         url,
@@ -272,12 +259,13 @@ def stats_from_row(row: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]
 def infer_roles(
     player_accumulators: dict[tuple[int, int], dict[str, Any]]
 ) -> dict[tuple[int, int], dict[str, Any]]:
-    """Infer core/mid/support from this event's lanes and farm.
+    """Infer core/mid/support while allowing substitutes and roster changes.
 
-    Every EWC 2026 team's mid player has lane_role=2 in 100% of its games.
-    After selecting that player, the two lowest-CS remaining players are the
-    support pair and the other two are the core pair. Source fantasy_role is
-    retained as evidence, but it is incomplete/stale for several rosters.
+    A five-player roster uses the strongest event-local evidence: the highest
+    mid-lane rate is mid, then the two least-farmed players are supports.  For
+    larger rosters, OpenDota's fantasy role is preferred and lane/farm evidence
+    fills gaps.  Role evidence is kept in the output so unusual rosters can be
+    reviewed without blocking the data build.
     """
 
     by_team: dict[int, list[tuple[tuple[int, int], dict[str, Any]]]] = defaultdict(
@@ -288,11 +276,6 @@ def infer_roles(
 
     role_map: dict[tuple[int, int], dict[str, Any]] = {}
     for team_id, players in by_team.items():
-        if len(players) != 5:
-            raise RuntimeError(
-                f"Expected five players for team {team_id}, found {len(players)}"
-            )
-
         def mid_sort_key(item: tuple[tuple[int, int], dict[str, Any]]) -> tuple[float, float]:
             accumulator = item[1]
             games = accumulator["games"]
@@ -301,44 +284,62 @@ def infer_roles(
                 accumulator["totals"]["gpm"] / games,
             )
 
-        mid_key, mid_accumulator = max(players, key=mid_sort_key)
-        non_mid = [item for item in players if item[0] != mid_key]
-        non_mid.sort(
-            key=lambda item: (
-                item[1]["totals"]["creep_score"] / item[1]["games"],
-                item[1]["totals"]["gpm"] / item[1]["games"],
+        explicit_roles: dict[tuple[int, int], str] = {}
+        if len(players) == 5:
+            mid_key, mid_accumulator = max(players, key=mid_sort_key)
+            non_mid = [item for item in players if item[0] != mid_key]
+            non_mid.sort(
+                key=lambda item: (
+                    item[1]["totals"]["creep_score"] / item[1]["games"],
+                    item[1]["totals"]["gpm"] / item[1]["games"],
+                )
             )
-        )
-        support_keys = {item[0] for item in non_mid[:2]}
-        core_keys = {item[0] for item in non_mid[2:]}
+            support_keys = {item[0] for item in non_mid[:2]}
+            core_keys = {item[0] for item in non_mid[2:]}
+            highest_support_cs = max(
+                player_accumulators[key]["totals"]["creep_score"]
+                / player_accumulators[key]["games"]
+                for key in support_keys
+            )
+            lowest_core_cs = min(
+                player_accumulators[key]["totals"]["creep_score"]
+                / player_accumulators[key]["games"]
+                for key in core_keys
+            )
+            mid_lane_rate = mid_accumulator["mid_lane_games"] / mid_accumulator["games"]
+            confidence = (
+                "high"
+                if mid_lane_rate >= 0.8 and lowest_core_cs - highest_support_cs >= 50
+                else "medium"
+            )
+            explicit_roles[mid_key] = "mid"
+            explicit_roles.update({key: "support" for key in support_keys})
+            explicit_roles.update({key: "core" for key in core_keys})
+        else:
+            confidence = "medium"
+            for player_key, accumulator in players:
+                games = accumulator["games"]
+                mid_rate = accumulator["mid_lane_games"] / games
+                source_role = accumulator["source_fantasy_role"]
+                average_cs = accumulator["totals"]["creep_score"] / games
+                average_gpm = accumulator["totals"]["gpm"] / games
+                if source_role == 4 or mid_rate >= 0.55:
+                    role = "mid"
+                elif source_role == 2:
+                    role = "support"
+                elif source_role == 1:
+                    role = "core"
+                elif average_cs < 120 or average_gpm < 350:
+                    role = "support"
+                else:
+                    role = "core"
+                explicit_roles[player_key] = role
 
-        highest_support_cs = max(
-            player_accumulators[key]["totals"]["creep_score"]
-            / player_accumulators[key]["games"]
-            for key in support_keys
-        )
-        lowest_core_cs = min(
-            player_accumulators[key]["totals"]["creep_score"]
-            / player_accumulators[key]["games"]
-            for key in core_keys
-        )
-        support_core_gap = lowest_core_cs - highest_support_cs
-        mid_lane_rate = (
-            mid_accumulator["mid_lane_games"] / mid_accumulator["games"]
-        )
-        confidence = (
-            "high"
-            if mid_lane_rate >= 0.8 and support_core_gap >= 50
-            else "medium"
-        )
+            if "mid" not in explicit_roles.values():
+                explicit_roles[max(players, key=mid_sort_key)[0]] = "mid"
 
         for player_key, accumulator in players:
-            if player_key == mid_key:
-                role = "mid"
-            elif player_key in support_keys:
-                role = "support"
-            else:
-                role = "core"
+            role = explicit_roles[player_key]
 
             games = accumulator["games"]
             role_map[player_key] = {
@@ -360,9 +361,19 @@ def infer_roles(
     return role_map
 
 
-def build_dataset(rows: list[dict[str, Any]]) -> dict[str, Any]:
+def build_dataset(
+    rows: list[dict[str, Any]],
+    league_id: int,
+    league_name: str,
+    liquipedia_url: str | None = None,
+    team_name_overrides: dict[int, str] | None = None,
+    team_tag_overrides: dict[int, str] | None = None,
+) -> dict[str, Any]:
     if not rows:
-        raise RuntimeError(f"OpenDota returned no rows for league {LEAGUE_ID}")
+        raise RuntimeError(f"OpenDota returned no rows for league {league_id}")
+
+    team_name_overrides = team_name_overrides or {}
+    team_tag_overrides = team_tag_overrides or {}
 
     matches: dict[int, dict[str, Any]] = {}
     teams: dict[int, dict[str, Any]] = {}
@@ -398,9 +409,9 @@ def build_dataset(rows: list[dict[str, Any]]) -> dict[str, Any]:
             }
 
         raw_team_name = (row.get("team_name") or f"Team {team_id}").strip()
-        display_team_name = TEAM_NAME_OVERRIDES.get(team_id, raw_team_name)
+        display_team_name = team_name_overrides.get(team_id, raw_team_name)
         raw_team_tag = (row.get("team_tag") or "").strip()
-        display_team_tag = TEAM_TAG_OVERRIDES.get(team_id, raw_team_tag)
+        display_team_tag = team_tag_overrides.get(team_id, raw_team_tag)
         if team_id not in teams:
             teams[team_id] = {
                 "teamId": team_id,
@@ -446,6 +457,7 @@ def build_dataset(rows: list[dict[str, Any]]) -> dict[str, Any]:
         matches[match_id]["players"].append(
             {
                 "accountId": account_id,
+                "name": row["player_name"],
                 "teamId": team_id,
                 "playerSlot": as_int(row["player_slot"]),
                 "laneRole": as_int(row["lane_role"]),
@@ -536,48 +548,26 @@ def build_dataset(rows: list[dict[str, Any]]) -> dict[str, Any]:
     match_sizes = [len(match["players"]) for match in sorted_matches]
     start_times = [match["startTime"] for match in sorted_matches]
 
-    if len(sorted_matches) != 157:
-        raise RuntimeError(
-            f"Expected 157 EWC 2026 matches, found {len(sorted_matches)}"
-        )
-    if player_game_rows != 1570 or set(match_sizes) != {10}:
-        raise RuntimeError(
-            "Expected 1,570 player-game rows and ten players in every match; "
-            f"found {player_game_rows} rows and match sizes {sorted(set(match_sizes))}"
-        )
-    if len(sorted_teams) != 24 or unique_players != 120:
-        raise RuntimeError(
-            f"Expected 24 teams/120 players, found "
-            f"{len(sorted_teams)} teams/{unique_players} players"
-        )
-    if not all(team["rosterComplete"] for team in sorted_teams):
-        incomplete = [
-            f"{team['name']}={team['roleCounts']}"
-            for team in sorted_teams
-            if not team["rosterComplete"]
-        ]
-        raise RuntimeError(f"Role inference produced incomplete rosters: {incomplete}")
-
     generated_at = datetime.now(tz=timezone.utc).isoformat().replace("+00:00", "Z")
+    sources = {
+        "openDotaExplorer": EXPLORER_URL,
+        "openDotaLeagueMatches": (
+            f"https://api.opendota.com/api/leagues/{league_id}/matches"
+        ),
+    }
+    if liquipedia_url:
+        sources["liquipediaEvent"] = liquipedia_url
     return {
         "meta": {
-            "schemaVersion": 1,
-            "leagueId": LEAGUE_ID,
-            "leagueName": LEAGUE_NAME,
+            "schemaVersion": 2,
+            "leagueId": league_id,
+            "leagueName": league_name,
             "generatedAt": generated_at,
             "eventStartUtc": iso_utc(min(start_times)),
             "eventEndUtc": iso_utc(
                 max(match["startTime"] + match["duration"] for match in sorted_matches)
             ),
-            "sources": {
-                "openDotaExplorer": EXPLORER_URL,
-                "openDotaLeagueMatches": (
-                    f"https://api.opendota.com/api/leagues/{LEAGUE_ID}/matches"
-                ),
-                "liquipediaEvent": (
-                    "https://liquipedia.net/dota2/Esports_World_Cup/2026"
-                ),
-            },
+            "sources": sources,
             "coverage": {
                 "matches": len(sorted_matches),
                 "parsedMatches": parsed_matches,
@@ -588,9 +578,9 @@ def build_dataset(rows: list[dict[str, Any]]) -> dict[str, Any]:
             },
             "roleMethod": {
                 "description": (
-                    "Within each event roster, mid is the player with the highest "
-                    "lane_role=2 rate; the two lowest average-creep-score remaining "
-                    "players are supports; the other two are cores."
+                    "Five-player rosters use event-local lane and farm rankings. "
+                    "Rosters with substitutes prefer OpenDota fantasy_role and "
+                    "fall back to lane and farm evidence."
                 ),
                 "sourceFantasyRoleRetainedAsEvidence": True,
             },
@@ -650,16 +640,6 @@ def build_dataset(rows: list[dict[str, Any]]) -> dict[str, Any]:
                     "(match 8885614030, shiro, -0.58352 seconds); the generated "
                     "fantasy value is clamped to zero."
                 ),
-                (
-                    "Two stale OpenDota team registry names were normalized to the "
-                    "EWC participant names; openDotaRegistryName preserves the raw "
-                    "registry value."
-                ),
-                (
-                    "No STRATZ data was used: neither STARTZ nor STRATZ_TOKEN was "
-                    "available to the dataset-generation process, and OpenDota "
-                    "already had all 157 replays parsed."
-                ),
             ],
         },
         "teams": sorted_teams,
@@ -667,18 +647,20 @@ def build_dataset(rows: list[dict[str, Any]]) -> dict[str, Any]:
     }
 
 
-def build_summary(dataset: dict[str, Any]) -> dict[str, Any]:
+def build_summary(
+    dataset: dict[str, Any], source_data_file: str = "full.json"
+) -> dict[str, Any]:
     """Derive the small, stable app-facing projection from the full dataset."""
 
     summary_meta = {
         **dataset["meta"],
         "artifact": "summary",
-        "sourceDataFile": "ewc_2026_fantasy.json",
+        "sourceDataFile": source_data_file,
     }
-    player_maps: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    player_maps: dict[tuple[int, int], list[dict[str, Any]]] = defaultdict(list)
     for match in dataset["matches"]:
         for player_row in match["players"]:
-            player_maps[player_row["accountId"]].append(
+            player_maps[(player_row["teamId"], player_row["accountId"])].append(
                 {
                     "matchId": match["matchId"],
                     "stats": player_row["stats"],
@@ -699,7 +681,7 @@ def build_summary(dataset: dict[str, Any]) -> dict[str, Any]:
                         "role": player["role"],
                         "games": player["games"],
                         "averages": player["averages"],
-                        "maps": player_maps[player["accountId"]],
+                        "maps": player_maps[(team["teamId"], player["accountId"])],
                         "roleConfidence": player["roleConfidence"],
                     }
                     for player in team["players"]
@@ -713,9 +695,14 @@ def build_summary(dataset: dict[str, Any]) -> dict[str, Any]:
 def main() -> int:
     args = parse_args()
     try:
-        rows = fetch_rows()
-        dataset = build_dataset(rows)
-        summary = build_summary(dataset)
+        rows = fetch_rows(args.league_id)
+        dataset = build_dataset(
+            rows,
+            args.league_id,
+            args.league_name,
+            args.liquipedia_url,
+        )
+        summary = build_summary(dataset, args.output.name)
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_text(
             json.dumps(dataset, ensure_ascii=False, indent=2) + "\n",

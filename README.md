@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="fantasy-assets/ti26_logo_png.png"" width="96">
+  <img src="fantasy-assets/ti26_logo_png.png" width="96">
 </p>
 
 <h1 align="center">Calculator for DOTA 2 TI Fantasy</h1>
@@ -36,10 +36,39 @@ Clone or download the repository, then open `index.html` in a modern browser.
 | --- | --- |
 | `index.html` | Application and GitHub Pages entry point |
 | `fantasy-assets/` | Local images, fonts, and other interface assets |
-| `scripts/` | Scripts to generate match data |
-| `data/` | Generated data |
-| `tests/` | Code for verifacation and tests |
+| `scripts/build_league.py` | Configurable league data pipeline |
+| `scripts/league_data.py` | OpenDota base-stat and roster-role builder |
+| `scripts/replay_tools.py` | Valve replay downloader and Clarity field parser |
+| `data/<LEAGUE_ID>/` | Generated league metadata, match checkpoints, and browser snapshot |
+| `tests/` | Verification and calculation tests |
 | [`LICENSE`](LICENSE) | License for the original source code and documentation |
+
+## Build Data for a League
+
+Java/Javac 17 or newer and Python 3.10 or newer are required. First find the
+OpenDota league ID if it is not known:
+
+```powershell
+python scripts/build_league.py --find-league "Esports World Cup 2026"
+```
+
+Then edit `LEAGUE_ID`, `LEAGUE_NAME`, and `LIQUIPEDIA_URL` near the top of
+`scripts/build_league.py` and run:
+
+```powershell
+python scripts/build_league.py
+```
+
+The Liquipedia URL does not contain OpenDota's league ID, so the ID search is
+the reliable lookup method. The output is stored under `data/<LEAGUE_ID>/`.
+Every completed match has its own `matches/<MATCH_ID>.json` checkpoint. A
+rerun validates and prints those saved player stats without downloading or
+parsing the replay again. New compressed and decompressed replay files are
+created in a temporary directory and removed immediately after that match is
+written.
+
+To display another generated league, set the same `LEAGUE_ID` and
+`LEAGUE_NAME` in the data-loader block near the bottom of `index.html`.
 
 ## Disclaimer
 

@@ -36,15 +36,43 @@
       document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     })();
   </script>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20260801-stage">
 </head>
 <body>
+  <aside class="correction-banner" id="correction-banner" role="status" hidden>
+    <span data-i18n="correctionNotice">包括“莲花采集”、“采集莲花”和“狂石收集数量”在内的所有数据均已修正。</span>
+    <button
+      type="button"
+      id="correction-banner-close"
+      aria-label="关闭提示"
+      data-i18n-aria-label="closeCorrectionNotice"
+    >×</button>
+  </aside>
   <div class="fantasy-app">
     <div class="page-shell" id="page-shell">
       <header class="topbar" id="challenge">
-        <a class="brand">
+        <div class="brand">
           <strong data-i18n="brandName">梦幻挑战</strong>
-        </a>
+          <div
+            class="stage-switcher"
+            id="stage-switcher"
+            role="group"
+            aria-label="赛事阶段"
+            data-i18n-aria-label="stageSwitcher"
+          >
+            <button
+              type="button"
+              class="is-active"
+              data-stage="groupStage"
+              aria-pressed="true"
+            >Group Stage</button>
+            <button
+              type="button"
+              data-stage="international"
+              aria-pressed="false"
+            >The International</button>
+          </div>
+        </div>
 
         <div class="challenge-title">
           <img
@@ -111,9 +139,15 @@
     <p class="noscript-message">此计算器需要浏览器启用 JavaScript。 / This calculator requires JavaScript.</p>
   </noscript>
 
-  <script src="data/ewc_2026_data.js"></script>
-  <script src="fantasy.js"></script>
-  <script src="app.js"></script>
+  <script>
+    // 修改赛事时，只需同步修改这里和 scripts/build_league.py 顶部的配置。
+    const LEAGUE_ID = 19785;
+    const LEAGUE_NAME = "Esports World Cup 2026";
+    window.FANTASY_LEAGUE_CONFIG = { leagueId: LEAGUE_ID, leagueName: LEAGUE_NAME };
+    document.write('<script src="data/' + LEAGUE_ID + '/data.js"><\/script>');
+  </script>
+  <script src="fantasy.js?v=20260801-stage"></script>
+  <script src="app.js?v=20260801-stage"></script>
   <script>
     if (window.location.hostname === "www.ti-fantasy.site") {
       const busuanziScript = document.createElement("script");

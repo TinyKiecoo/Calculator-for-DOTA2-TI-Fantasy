@@ -11,6 +11,7 @@
   "use strict";
 
   const bannerRoles = ["core", "mid", "support"];
+  const stageKeys = ["groupStage", "international"];
   const scoreModes = ["highest", "average"];
   const emblemColors = ["red", "blue", "green"];
   const qualities = [1, 2, 3, 4, 5];
@@ -160,6 +161,17 @@
     support: ["blue", "green", "blue"],
   };
 
+  const internationalRoleColors = {
+    core: ["red", "green", "red", "green", "red"],
+    mid: ["red", "blue", "green", "red", "blue"],
+    support: ["blue", "green", "blue", "green", "blue"],
+  };
+
+  const stageRoleColors = {
+    groupStage: roleColors,
+    international: internationalRoleColors,
+  };
+
   const qualityBonus = {
     1: 0.1,
     2: 0.3,
@@ -185,7 +197,7 @@
   };
 
   const traitDescriptions = {
-    fractal: "三枚徽标品质各不相同时，自身 +60%",
+    fractal: "战旗上所有徽标品质各不相同时，自身 +60%",
     benevolent: "向相邻徽标提供 +20%",
     vampire: "自身 +50%，相邻徽标 −10%",
     unique: "全旗只有一枚“唯一”时，自身 +30%",
@@ -193,12 +205,12 @@
   };
 
   function calculateEmblemModifiers(emblems) {
-    if (emblems.length !== 3) {
-      throw new Error("每面战旗必须恰好有三枚徽标。");
+    if (![3, 5].includes(emblems.length)) {
+      throw new Error("每面战旗必须有三枚或五枚徽标。");
     }
 
     const allQualitiesDifferent =
-      new Set(emblems.map((item) => item.quality)).size === 3;
+      new Set(emblems.map((item) => item.quality)).size === emblems.length;
     const uniqueCount = emblems.filter(
       (item) => item.trait === "unique",
     ).length;
@@ -603,19 +615,62 @@
     ],
   };
 
-  function validateBannerConfig(config) {
+  const internationalBannerConfig = {
+    core: [
+      ...defaultBannerConfig.core.map((emblem) => ({ ...emblem })),
+      { color: "green", stat: "stun_seconds", quality: 2, trait: "unique" },
+      { color: "red", stat: "kills", quality: 1, trait: "friendly" },
+    ],
+    mid: [
+      ...defaultBannerConfig.mid.map((emblem) => ({ ...emblem })),
+      { color: "red", stat: "gpm", quality: 5, trait: "unique" },
+      {
+        color: "blue",
+        stat: "lotuses_collected",
+        quality: 2,
+        trait: "friendly",
+      },
+    ],
+    support: [
+      ...defaultBannerConfig.support.map((emblem) => ({ ...emblem })),
+      { color: "green", stat: "stun_seconds", quality: 5, trait: "unique" },
+      {
+        color: "blue",
+        stat: "lotuses_collected",
+        quality: 1,
+        trait: "fractal",
+      },
+    ],
+  };
+
+  const defaultBannerConfigs = {
+    groupStage: defaultBannerConfig,
+    international: internationalBannerConfig,
+  };
+
+  function validateBannerConfig(config, stage) {
+    const inferredStage = stage || (config?.core?.length === 5
+      ? "international"
+      : "groupStage");
+    if (!stageKeys.includes(inferredStage)) {
+      throw new Error("未知的赛事阶段。");
+    }
+    const expectedRoleColors = stageRoleColors[inferredStage];
+
     for (const role of bannerRoles) {
       const emblems = config[role];
-      if (emblems.length !== 3) {
-        throw new Error(`${role} 战旗必须恰好有三枚徽标。`);
+      if (!Array.isArray(emblems) || emblems.length !== expectedRoleColors[role].length) {
+        throw new Error(
+          `${role} 战旗必须恰好有 ${expectedRoleColors[role].length} 枚徽标。`,
+        );
       }
 
       emblems.forEach((emblem, index) => {
-        const expectedColor = roleColors[role][index];
+        const expectedColor = expectedRoleColors[role][index];
         if (emblem.color !== expectedColor) {
           throw new Error(`${role} 第 ${index + 1} 枚徽标颜色不正确。`);
         }
-        if (statDefinitions[emblem.stat].color !== emblem.color) {
+        if (!statDefinitions[emblem.stat] || statDefinitions[emblem.stat].color !== emblem.color) {
           throw new Error(`${emblem.stat} 不属于 ${emblem.color} 徽标。`);
         }
         if (!qualities.includes(emblem.quality)) {
@@ -636,16 +691,19 @@
     }).format(value);
   }
 
-  function cloneDefaultConfig() {
+  function cloneDefaultConfig(stage = "groupStage") {
+    const source = defaultBannerConfigs[stage];
+    if (!source) throw new Error("未知的赛事阶段。");
     return {
-      core: defaultBannerConfig.core.map((emblem) => ({ ...emblem })),
-      mid: defaultBannerConfig.mid.map((emblem) => ({ ...emblem })),
-      support: defaultBannerConfig.support.map((emblem) => ({ ...emblem })),
+      core: source.core.map((emblem) => ({ ...emblem })),
+      mid: source.mid.map((emblem) => ({ ...emblem })),
+      support: source.support.map((emblem) => ({ ...emblem })),
     };
   }
 
   return {
     bannerRoles,
+    stageKeys,
     scoreModes,
     emblemColors,
     qualities,
@@ -653,6 +711,8 @@
     statKeys,
     statDefinitions,
     roleColors,
+    internationalRoleColors,
+    stageRoleColors,
     qualityBonus,
     qualityLabels,
     traitLabels,
@@ -664,6 +724,8 @@
     scorePair,
     buildRankings,
     defaultBannerConfig,
+    internationalBannerConfig,
+    defaultBannerConfigs,
     validateBannerConfig,
     formatScore,
     cloneDefaultConfig,

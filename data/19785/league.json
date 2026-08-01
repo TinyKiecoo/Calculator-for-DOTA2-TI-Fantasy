@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "leagueId": 19785,
+  "leagueName": "Esports World Cup 2026",
+  "liquipediaUrl": "https://liquipedia.net/dota2/Esports_World_Cup/2026",
+  "generatedAt": "2026-08-01T10:35:52.698124Z",
+  "coverage": {
+    "matches": 157,
+    "parsedMatches": 157,
+    "playerGameRows": 1570,
+    "teams": 24,
+    "players": 120,
+    "allMatchesHaveTenPlayers": true
+  },
+  "files": {
+    "manifest": "manifest.json",
+    "matches": "matches/<MATCH_ID>.json",
+    "full": "full.json",
+    "summary": "summary.json",
+    "browser": "data.js"
+  }
+}

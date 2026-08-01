@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const dataset = window.FANTASY_EWC_2026;
+  const dataset = window.FANTASY_DATA;
   const engine = window.FantasyEngine;
   const bannerGrid = document.getElementById("banner-grid");
   const totalScore = document.getElementById("total-score");
@@ -13,9 +13,14 @@
   const modalTitle = document.getElementById("modal-title");
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modal-close");
+  const stageSwitcher = document.getElementById("stage-switcher");
+  const correctionBanner = document.getElementById("correction-banner");
+  const correctionBannerClose = document.getElementById("correction-banner-close");
 
   const languageToggle = document.getElementById("language-toggle");
   const LANGUAGE_STORAGE_KEY = "ti-fantasy-language";
+  const PAGE_STATE_STORAGE_KEY = "ti-fantasy-page-state-v1";
+  const CORRECTION_NOTICE_STORAGE_KEY = "ti-fantasy-corrected-data-notice-v1";
 
   const translations = {
     zh: {
@@ -31,6 +36,9 @@
       githubAria: "在新标签页打开 GitHub 仓库",
       switchLanguage: "切换为英文",
       dataNotes: "数据说明",
+      stageSwitcher: "赛事阶段",
+      correctionNotice: "包括“莲花采集”、“采集莲花”和“狂石收集数量”在内的所有数据均已修正。",
+      closeCorrectionNotice: "关闭提示",
       bannerGrid: "三面梦幻战旗",
       loading: "正在载入本地赛事数据…",
       loadErrorTitle: "本地数据未能载入",
@@ -55,7 +63,7 @@
       emblemPennant: "{role}徽标挂幅",
       bannerScore: "{role}战旗积分",
       dataKicker: "DATA NOTES",
-      dataLead: "本页面使用 Esports World Cup 2026 的数据来计算梦幻挑战的积分。",
+      dataLead: "本页面使用 {name} 的数据来计算梦幻挑战积分。",
       tournamentSnapshot: "赛事快照",
       leagueId: "联赛 ID",
       parsedMatches: "已解析比赛",
@@ -63,15 +71,10 @@
       generatedDate: "生成日期",
       scoringMethodTitle: "计算口径",
       scoringMethodBody: "最高得分逐张地图应用当前徽标倍率并取最高的一张；平均得分对全部有效地图的最终分数取算术平均。双人战旗始终要求两人来自同队，并在同一张地图上先取二人平均。",
-      knownLimitations: "已知限制",
-      limitationLotus: "莲花采集没有可靠公开字段，因此保存为 null，而不是 0。",
-      lotusDataMissingAlert: "“采集莲花”数据缺失，当前无法计算该项得分。",
-      madstoneDataCaveatAlert: "已有中立物品时收集的狂石可能未被统计，计算数据低于真实数据",
-      watchersDataAlert: "目前无法区分“占领中立的观察者”与“取消敌方对观察者的占领”，因此该项计算数据明显高于真实数据",
-      limitationProxy: "狂石与观察者为 OpenDota 回放事件代理值。",
+      knownLimitations: "数据说明",
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
-      dataSourcesBody: "OpenDota Explorer 与联赛比赛接口用于回放解析数据；Liquipedia 用于核对 EWC 2026 赛事范围。",
+      dataSourcesBody: "常规赛后数据来自 OpenDota；狂石、观察者与莲花直接读取 Valve 回放最终状态字段。Liquipedia 链接仅用于记录赛事来源。",
       roles: { core: "核心", mid: "中单", support: "辅助" },
       colors: { red: "红色", blue: "蓝色", green: "绿色" },
       qualityLabels: {
@@ -114,6 +117,9 @@
       githubAria: "Open the GitHub repository in a new tab",
       switchLanguage: "Switch to Chinese",
       dataNotes: "Data Notes",
+      stageSwitcher: "Tournament stage",
+      correctionNotice: "All data, including LOTUSES GRABBED, MADSTONE COLLECTED and WATCHERS TAKEN, has been corrected.",
+      closeCorrectionNotice: "Dismiss notice",
       bannerGrid: "Three fantasy banners",
       loading: "Loading local tournament data…",
       loadErrorTitle: "Local data could not be loaded",
@@ -138,7 +144,7 @@
       emblemPennant: "{role} emblem pennant",
       bannerScore: "{role} banner score",
       dataKicker: "DATA NOTES",
-      dataLead: "This page uses data from Esport World Cup 2026 to calculate Fantasy Score.",
+      dataLead: "This page uses {name} data to calculate Fantasy scores.",
       tournamentSnapshot: "Tournament Snapshot",
       leagueId: "League ID",
       parsedMatches: "Parsed matches",
@@ -146,15 +152,10 @@
       generatedDate: "Generated",
       scoringMethodTitle: "Scoring Method",
       scoringMethodBody: "Highest Score applies the current emblem multipliers to every map and selects the best map. Average Score takes the arithmetic mean of all valid map scores. Two-player banners always require both players to be on the same team and average their scores within the same map first.",
-      knownLimitations: "Known Limitations",
-      limitationLotus: "Lotus collection has no reliable public field, so it is stored as null rather than 0.",
-      lotusDataMissingAlert: "Data for “Lotuses Grabbed” is unavailable, so this score cannot currently be calculated.",
-      madstoneDataCaveatAlert: "Madstones collected when owning neutral items may not have been counted, so the calculated value is significantly lower than the actual value.",
-      watchersDataAlert: "It's impossible to distinguish between 'occupying a neutral watcher' and 'removing the enemy's control over an watcher', so the calculated value is larger than the actual value.",
-      limitationProxy: "Madstone and Watcher values are proxies derived from OpenDota replay events.",
+      knownLimitations: "Data Notes",
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
-      dataSourcesBody: "OpenDota Explorer and league match endpoints provide replay-parsed data; Liquipedia is used to verify the EWC 2026 tournament scope.",
+      dataSourcesBody: "Regular post-game stats come from OpenDota. Madstone, Watcher, and Lotus values are read directly from final-state fields in Valve replays. The Liquipedia link records the tournament source only.",
       roles: { core: "Core", mid: "Mid", support: "Support" },
       colors: { red: "Red", blue: "Blue", green: "Green" },
       qualityLabels: {
@@ -238,6 +239,19 @@
     }
   }
 
+  function initializeCorrectionNotice() {
+    let alreadySeen = false;
+    try {
+      alreadySeen = localStorage.getItem(CORRECTION_NOTICE_STORAGE_KEY) === "seen";
+      if (!alreadySeen) {
+        localStorage.setItem(CORRECTION_NOTICE_STORAGE_KEY, "seen");
+      }
+    } catch (error) {
+      // Keep the notice visible when storage is unavailable.
+    }
+    correctionBanner.hidden = alreadySeen;
+  }
+
   function applyEnglishTitleFonts(root = document) {
     const titleElements = root.querySelectorAll(
       ".brand strong, h1, h2, h3, .score-method legend, #modal-kicker",
@@ -292,6 +306,11 @@
   }
 
   applyStaticTranslations();
+  initializeCorrectionNotice();
+
+  correctionBannerClose.addEventListener("click", () => {
+    correctionBanner.hidden = true;
+  });
 
   languageToggle.addEventListener("click", () => {
     setLanguage(currentLanguage === "zh" ? "en" : "zh");
@@ -369,13 +388,111 @@
       '<path d="M3 17 13 7l3 5 3-5 10 10-9-3 5 9-7-4-2 11-2-11-7 4 5-9-9 3z"/>',
   };
 
-  const state = {
-    config: engine.cloneDefaultConfig(),
-    selectedKeys: {},
-    scoreMode: Object.fromEntries(
+  function defaultScoreModes() {
+    return Object.fromEntries(
       engine.bannerRoles.map((role) => [role, "highest"]),
-    ),
-  };
+    );
+  }
+
+  function createStagePage(stage) {
+    return {
+      config: engine.cloneDefaultConfig(stage),
+      selectedKeys: {},
+      scoreMode: defaultScoreModes(),
+    };
+  }
+
+  function normalizeStoredStagePage(rawPage, stage) {
+    const page = createStagePage(stage);
+    if (!rawPage || typeof rawPage !== "object") return page;
+
+    try {
+      const candidate = Object.fromEntries(
+        engine.bannerRoles.map((role) => [
+          role,
+          rawPage.config[role].map((emblem) => ({
+            color: emblem.color,
+            stat: emblem.stat,
+            quality: Number(emblem.quality),
+            trait: emblem.trait,
+          })),
+        ]),
+      );
+      engine.validateBannerConfig(candidate, stage);
+      page.config = candidate;
+    } catch (error) {
+      // Ignore malformed or obsolete saved emblem data.
+    }
+
+    for (const role of engine.bannerRoles) {
+      const savedMode = rawPage.scoreMode?.[role];
+      if (engine.scoreModes.includes(savedMode)) {
+        page.scoreMode[role] = savedMode;
+      }
+      const savedKey = rawPage.selectedKeys?.[role];
+      if (typeof savedKey === "string") {
+        page.selectedKeys[role] = savedKey;
+      }
+    }
+    return page;
+  }
+
+  function loadPageState() {
+    let saved = null;
+    try {
+      saved = JSON.parse(localStorage.getItem(PAGE_STATE_STORAGE_KEY) || "null");
+    } catch (error) {
+      // Use a clean state when localStorage is unavailable or invalid.
+    }
+
+    const stage = engine.stageKeys.includes(saved?.stage)
+      ? saved.stage
+      : "groupStage";
+    const pages = Object.fromEntries(
+      engine.stageKeys.map((stageKey) => [
+        stageKey,
+        normalizeStoredStagePage(saved?.pages?.[stageKey], stageKey),
+      ]),
+    );
+    return {
+      stage,
+      pages,
+      config: pages[stage].config,
+      selectedKeys: pages[stage].selectedKeys,
+      scoreMode: pages[stage].scoreMode,
+    };
+  }
+
+  const state = loadPageState();
+
+  function activateStage(stage) {
+    if (!engine.stageKeys.includes(stage)) return false;
+    const page = state.pages[stage];
+    state.stage = stage;
+    state.config = page.config;
+    state.selectedKeys = page.selectedKeys;
+    state.scoreMode = page.scoreMode;
+    return true;
+  }
+
+  function persistPageState() {
+    try {
+      localStorage.setItem(
+        PAGE_STATE_STORAGE_KEY,
+        JSON.stringify({ version: 1, stage: state.stage, pages: state.pages }),
+      );
+    } catch (error) {
+      // The calculator still works when storage is blocked or full.
+    }
+  }
+
+  function updateStageSwitcher() {
+    stageSwitcher.querySelectorAll("button[data-stage]").forEach((button) => {
+      const active = button.dataset.stage === state.stage;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", String(active));
+    });
+  }
 
   let modalTrigger = null;
   let players = normalizePlayers(dataset);
@@ -493,6 +610,7 @@
       }
     }
 
+    persistPageState();
     return { rankings, selected };
   }
 
@@ -627,7 +745,7 @@
 
     return `
       <section class="banner-column" data-banner-column-role="${role}">
-        <article class="war-banner war-banner--${role}" data-banner-role="${role}">
+        <article class="war-banner war-banner--${role}${state.config[role].length === 5 ? " war-banner--five" : ""}" data-banner-role="${role}">
           <div class="banner-rope is-top" aria-hidden="true"></div>
           <header class="banner-heading">
             <h2>${escapeHtml(currentLanguage === "en" ? roleName(role).toUpperCase() : roleName(role))}</h2>
@@ -768,7 +886,7 @@
     const coverage = meta.coverage || {};
     return `
       <p class="modal-lead">
-        ${escapeHtml(text("dataLead"))}
+        ${escapeHtml(text("dataLead", { name: meta.leagueName || "Dota 2" }))}
       </p>
       <div class="data-grid">
         <section class="data-card">
@@ -785,8 +903,6 @@
         <section class="data-card">
           <h3>${escapeHtml(text("knownLimitations"))}</h3>
           <ul>
-            <li>${escapeHtml(text("limitationLotus"))}</li>
-            <li>${escapeHtml(text("limitationProxy"))}</li>
             <li>${escapeHtml(text("limitationRoles"))}</li>
           </ul>
         </section>
@@ -830,7 +946,7 @@
       !engine.bannerRoles.includes(role) ||
       !Number.isInteger(index) ||
       index < 0 ||
-      index > 2 ||
+      index >= state.config[role].length ||
       !["stat", "quality", "trait"].includes(field)
     ) {
       return;
@@ -839,14 +955,7 @@
     state.config[role][index][field] =
       field === "quality" ? Number(select.value) : select.value;
 
-    if (field === "stat" && select.value === "lotuses_collected") {
-      window.alert(text("lotusDataMissingAlert"));
-    } else if (field === "stat" && select.value === "madstone_collected") {
-      window.alert(text("madstoneDataCaveatAlert"));
-    } else if (field === "stat" && select.value === "watchers_taken") {
-      window.alert(text("watchersDataAlert"));
-    }
-
+    persistPageState();
     render({ type: "select", role, index, field });
   });
 
@@ -863,6 +972,7 @@
         return;
       }
       state.scoreMode[role] = mode;
+      persistPageState();
       renderScoreMode(role, { type: "scoreMode", role, mode });
       return;
     }
@@ -873,7 +983,17 @@
     const key = button.dataset.rankingKey;
     if (!engine.bannerRoles.includes(role) || !key) return;
     state.selectedKeys[role] = key;
+    persistPageState();
     render({ type: "ranking", role, key });
+  });
+
+  stageSwitcher.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest("button[data-stage]");
+    if (!button || !activateStage(button.dataset.stage)) return;
+    updateStageSwitcher();
+    persistPageState();
+    render();
   });
 
 
@@ -918,6 +1038,7 @@
   });
 
   try {
+    updateStageSwitcher();
     render();
   } catch (error) {
     console.error(error);

@@ -5,9 +5,12 @@ const test = require("node:test");
 const {
   buildRankings,
   calculateEmblemModifiers,
+  cloneDefaultConfig,
+  internationalRoleColors,
   scorePair,
   scorePlayer,
   scoreRawStat,
+  validateBannerConfig,
 } = require("../fantasy.js");
 
 test("uses the current EWC 2026 base point rules", () => {
@@ -127,6 +130,34 @@ test("stacks two adjacent benevolent and vampire effects on the middle slot", ()
     Number(calculateEmblemModifiers(vampireEnds)[1].total.toFixed(8)),
     1.2,
   );
+});
+
+test("supports five-emblem International banners and all-emblem fractal", () => {
+  const config = cloneDefaultConfig("international");
+  validateBannerConfig(config, "international");
+  assert.deepEqual(
+    Object.fromEntries(
+      Object.entries(config).map(([role, emblems]) => [
+        role,
+        emblems.map((emblem) => emblem.color),
+      ]),
+    ),
+    internationalRoleColors,
+  );
+
+  const emblems = [
+    { color: "red", stat: "kills", quality: 1, trait: "fractal" },
+    { color: "green", stat: "stun_seconds", quality: 2, trait: "unique" },
+    { color: "red", stat: "gpm", quality: 3, trait: "unique" },
+    { color: "green", stat: "courier_kills", quality: 4, trait: "unique" },
+    { color: "red", stat: "deaths", quality: 5, trait: "unique" },
+  ];
+  assert.equal(
+    Number(calculateEmblemModifiers(emblems)[0].total.toFixed(8)),
+    1.7,
+  );
+  emblems[4].quality = 4;
+  assert.equal(calculateEmblemModifiers(emblems)[0].total, 1.1);
 });
 
 test("pairs only same-team players and averages their two scores", () => {
