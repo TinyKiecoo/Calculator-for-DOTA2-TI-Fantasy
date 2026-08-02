@@ -552,15 +552,16 @@ a:focus-visible {
 }
 
 .war-banner--five .emblem-card {
-  height: 75px;
-  min-height: 75px;
+  height: 77px;
+  min-height: 77px;
 }
 
 .emblem-stack {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 7px;
+  align-content: start;
+  row-gap: 8px;
 }
 
 .emblem-card {
@@ -1368,7 +1369,8 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .emblem-stack {
-    gap: 8px;
+    align-content: start;
+    row-gap: 8px;
   }
 
   .emblem-card {
