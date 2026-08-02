@@ -347,7 +347,6 @@ a:focus-visible {
   min-width: 280px;
   padding-top: 6px;
   text-align: right;
-  border-top: 1px solid rgba(211, 174, 97, .42);
 }
 
 .total-score small {
@@ -757,7 +756,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 
 .leaderboard {
   position: absolute;
-  left: 3.5%;
+  left: 2%;
   bottom: 18px;
   z-index: 3;
   width: 50%;
@@ -1042,7 +1041,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 
   .banner-heading,
   .leaderboard {
-    width: 52%;
+    width: 50%;
   }
 
   .banner-heading h2 {
