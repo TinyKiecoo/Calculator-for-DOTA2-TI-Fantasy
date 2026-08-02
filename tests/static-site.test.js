@@ -99,6 +99,15 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     "utf8",
   );
   const elements = new Map();
+  const storage = new Map([
+    ["ti-fantasy-page-state-v1", JSON.stringify({
+      version: 3,
+      stage: "groupStage",
+      pages: {},
+      titles: { prefix: "none", suffix: "none" },
+      multiplierMode: "manual",
+    })],
+  ]);
 
   function element(id) {
     if (!elements.has(id)) {
@@ -125,6 +134,14 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     Date,
     Intl,
     window: { FantasyEngine: engine, __TI_FANTASY_LANGUAGE__: "zh" },
+    localStorage: {
+      getItem(key) {
+        return storage.get(key) ?? null;
+      },
+      setItem(key, value) {
+        storage.set(key, String(value));
+      },
+    },
     document: {
       documentElement: { lang: "zh-CN" },
       title: "",
@@ -146,11 +163,25 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.equal((rendered.match(/class="war-banner /g) || []).length, 3);
   assert.equal((rendered.match(/class="emblem-card /g) || []).length, 9);
   assert.equal((rendered.match(/class="leaderboard"/g) || []).length, 3);
-  assert.equal((rendered.match(/class="banner-score-outside"/g) || []).length, 3);
   assert.equal((rendered.match(/data-score-mode="highest"/g) || []).length, 3);
+  assert.equal((rendered.match(/data-field="multiplier"/g) || []).length, 9);
+  assert.doesNotMatch(rendered, /class="emblem-detail"/);
+  assert.match(html, /id="multiplier-switcher"/);
+  assert.match(html, /data-multiplier-mode="manual"/);
   assert.match(element("prefix-title-select").innerHTML, /value="crimson"/);
   assert.match(element("suffix-title-select").innerHTML, /value="loser"/);
   assert.doesNotMatch(rendered, /leaderboard-header|有效地图/);
   assert.notEqual(element("total-score").textContent, "—");
   assert.equal(element("load-error").hidden, true);
+  const saved = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
+  assert.equal(saved.version, 3);
+  assert.equal(saved.multiplierMode, "manual");
+  assert.deepEqual(
+    Object.fromEntries(
+      Object.entries(saved.pages.groupStage.manualMultipliers).map(
+        ([role, values]) => [role, values.length],
+      ),
+    ),
+    { core: 3, mid: 3, support: 3 },
+  );
 });

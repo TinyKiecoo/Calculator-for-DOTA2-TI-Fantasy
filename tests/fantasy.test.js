@@ -11,6 +11,7 @@ const {
   scorePair,
   scorePlayer,
   scoreRawStat,
+  scoreStatistics,
   validateBannerConfig,
 } = require("../fantasy.js");
 
@@ -62,6 +63,26 @@ test("adds quality, self traits, and adjacent traits as percentage points", () =
       Number(item.total.toFixed(8)),
     ),
     [1.9, 1.2, 2.3],
+  );
+});
+
+test("manual emblem multipliers replace all quality and trait effects", () => {
+  const emblems = [
+    { color: "red", stat: "kills", quality: 5, trait: "vampire" },
+    { color: "green", stat: "stun_seconds", quality: 5, trait: "friendly" },
+    { color: "red", stat: "gpm", quality: 5, trait: "benevolent" },
+  ];
+  const result = scoreStatistics(
+    { kills: 2, stun_seconds: 5, gpm: 500 },
+    emblems,
+    1,
+    [1.25, 2, 0.5],
+  );
+
+  assert.equal(result.score, (214 * 1.25) + (50 * 2) + (1000 * 0.5));
+  assert.deepEqual(
+    result.components.map((component) => component.multiplier),
+    [1.25, 2, 0.5],
   );
 });
 

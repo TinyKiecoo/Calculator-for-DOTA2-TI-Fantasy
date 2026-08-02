@@ -75,6 +75,12 @@ best two maps in each series, then keeps the best series. **All-Map Average ×2*
 is an optional comparison method that averages every valid map in the full
 scoring period and doubles the result without selecting a best series.
 
+The multiplier switch below the stage selector can replace quality and trait
+effects with a manually entered percentage for every emblem. Manual mode hides
+the quality/trait rows and uses only those percentages. The selected mode and
+each stage's manual multiplier values are stored in `localStorage` together
+with the rest of the page configuration.
+
 Each match checkpoint also records every player's selected `heroId` and
 `heroName`, win/loss result, first-blood time, Tormentor-death evidence, and
 fountain-region death evidence. `isOwnFountain` distinguishes a death in the

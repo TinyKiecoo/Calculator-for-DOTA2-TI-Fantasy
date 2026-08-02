@@ -368,8 +368,36 @@
     }
   }
 
-  function scoreStatistics(statistics, emblems, coverage = 1) {
-    const modifiers = calculateEmblemModifiers(emblems);
+  function resolveModifiers(emblems, customMultipliers) {
+    if (!Array.isArray(customMultipliers)) {
+      return calculateEmblemModifiers(emblems);
+    }
+    if (customMultipliers.length !== emblems.length) {
+      throw new Error("手动徽标倍率数量必须与徽标数量一致。");
+    }
+    return customMultipliers.map((value) => {
+      const total = Number(value);
+      if (!Number.isFinite(total) || total < 0) {
+        throw new Error("手动徽标倍率必须是非负有限数值。");
+      }
+      return {
+        base: 1,
+        quality: 0,
+        selfTrait: 0,
+        neighbor: 0,
+        total,
+        triggered: ["手动倍率"],
+      };
+    });
+  }
+
+  function scoreStatistics(
+    statistics,
+    emblems,
+    coverage = 1,
+    customMultipliers = null,
+  ) {
+    const modifiers = resolveModifiers(emblems, customMultipliers);
     const missing = [];
     let score = 0;
 
@@ -440,8 +468,8 @@
     };
   }
 
-  function scoreMap(map, emblems, titles = {}) {
-    const result = scoreStatistics(map?.stats, emblems, 1);
+  function scoreMap(map, emblems, titles = {}, customMultipliers = null) {
+    const result = scoreStatistics(map?.stats, emblems, 1, customMultipliers);
     const titleBonus = calculateTitleBonus(map, titles);
     return {
       ...result,
@@ -537,24 +565,56 @@
     };
   }
 
-  function scorePlayer(player, emblems, mode = "average", titles = {}) {
+  function scorePlayer(
+    player,
+    emblems,
+    mode = "average",
+    titles = {},
+    customMultipliers = null,
+  ) {
     const maps = Array.isArray(player.maps) ? player.maps : [];
     if (!maps.length) {
-      return scoreStatistics(player.averages, emblems, player.games ?? 0);
+      return scoreStatistics(
+        player.averages,
+        emblems,
+        player.games ?? 0,
+        customMultipliers,
+      );
     }
 
     return aggregateMapResults(
-      maps.map((map) => scoreMap(map, emblems, titles)),
+      maps.map((map) =>
+        scoreMap(map, emblems, titles, customMultipliers),
+      ),
       mode,
     );
   }
 
-  function scorePair(first, second, emblems, mode = "average", titles = {}) {
+  function scorePair(
+    first,
+    second,
+    emblems,
+    mode = "average",
+    titles = {},
+    customMultipliers = null,
+  ) {
     const firstMaps = Array.isArray(first.maps) ? first.maps : [];
     const secondMaps = Array.isArray(second.maps) ? second.maps : [];
     if (!firstMaps.length || !secondMaps.length) {
-      const firstScore = scorePlayer(first, emblems, mode, titles);
-      const secondScore = scorePlayer(second, emblems, mode, titles);
+      const firstScore = scorePlayer(
+        first,
+        emblems,
+        mode,
+        titles,
+        customMultipliers,
+      );
+      const secondScore = scorePlayer(
+        second,
+        emblems,
+        mode,
+        titles,
+        customMultipliers,
+      );
       const complete =
         firstScore.score !== null && secondScore.score !== null;
       return {
@@ -580,8 +640,18 @@
     for (const secondMap of secondMaps) {
       const firstMap = firstByMatch.get(String(secondMap.matchId));
       if (!firstMap) continue;
-      const firstResult = scoreMap(firstMap, emblems, titles);
-      const secondResult = scoreMap(secondMap, emblems, titles);
+      const firstResult = scoreMap(
+        firstMap,
+        emblems,
+        titles,
+        customMultipliers,
+      );
+      const secondResult = scoreMap(
+        secondMap,
+        emblems,
+        titles,
+        customMultipliers,
+      );
 
       if (firstResult.score === null || secondResult.score === null) {
         missing.push(...firstResult.missing, ...secondResult.missing);
@@ -626,13 +696,20 @@
     emblems,
     mode = "average",
     titles = {},
+    customMultipliers = null,
   ) {
     const eligible = players.filter((player) => player.role === role);
 
     if (role === "mid") {
       return eligible
         .map((player) => {
-          const result = scorePlayer(player, emblems, mode, titles);
+          const result = scorePlayer(
+            player,
+            emblems,
+            mode,
+            titles,
+            customMultipliers,
+          );
           return {
             key: `mid:${player.id}`,
             teamId: player.teamId,
@@ -669,6 +746,7 @@
             emblems,
             mode,
             titles,
+            customMultipliers,
           );
           const orderedIds = [first.id, second.id].sort();
 

@@ -14,6 +14,7 @@
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modal-close");
   const stageSwitcher = document.getElementById("stage-switcher");
+  const multiplierSwitcher = document.getElementById("multiplier-switcher");
   const prefixTitleSelect = document.getElementById("prefix-title-select");
   const suffixTitleSelect = document.getElementById("suffix-title-select");
   const correctionBanner = document.getElementById("correction-banner");
@@ -23,6 +24,7 @@
   const LANGUAGE_STORAGE_KEY = "ti-fantasy-language";
   const PAGE_STATE_STORAGE_KEY = "ti-fantasy-page-state-v1";
   const CORRECTION_NOTICE_STORAGE_KEY = "ti-fantasy-corrected-data-notice-v1";
+  const MULTIPLIER_MODES = ["calculated", "manual"];
 
   const translations = {
     zh: {
@@ -39,6 +41,10 @@
       switchLanguage: "切换为英文",
       dataNotes: "数据说明",
       stageSwitcher: "赛事阶段",
+      multiplierSwitcher: "徽标倍率方式",
+      calculatedMultiplier: "品质与特性",
+      manualMultiplier: "手动倍率",
+      manualMultiplierInput: "{role}第 {index} 枚徽标的手动倍率",
       advisorTitles: "指导员称号",
       prefixTitle: "前缀",
       suffixTitle: "后缀",
@@ -75,7 +81,7 @@
       players: "选手",
       generatedDate: "生成日期",
       scoringMethodTitle: "计算口径",
-      scoringMethodBody: "每位选手逐场应用徽标与指导员称号加成；双人战旗在同一场比赛中先取二人平均。“最高两场”在每个系列赛内取最高两场之和，再选择全结算期最高的系列赛；“全部地图平均 ×2”对全结算期所有有效地图取平均并乘二，不再逐系列赛择优。",
+      scoringMethodBody: "每位选手逐场应用徽标与指导员称号加成；双人战旗在同一场比赛中先取二人平均。“最高两场”在每个系列赛内取最高两场之和，再选择全结算期最高的系列赛；“全部地图平均 ×2”对全结算期所有有效地图取平均并乘二，不再逐系列赛择优。手动倍率模式会完全替代徽标品质与特性的倍率。",
       knownLimitations: "数据说明",
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
@@ -145,6 +151,10 @@
       switchLanguage: "Switch to Chinese",
       dataNotes: "Data Notes",
       stageSwitcher: "Tournament stage",
+      multiplierSwitcher: "Emblem multiplier mode",
+      calculatedMultiplier: "Quality & Trait",
+      manualMultiplier: "Manual Multiplier",
+      manualMultiplierInput: "Manual multiplier for {role} emblem {index}",
       advisorTitles: "Advisor titles",
       prefixTitle: "Prefix",
       suffixTitle: "Suffix",
@@ -181,7 +191,7 @@
       players: "Players",
       generatedDate: "Generated",
       scoringMethodTitle: "Scoring Method",
-      scoringMethodBody: "Each player is scored map by map with emblem and advisor-title bonuses. Two-player banners first average both players within the same map. Best Two Maps sums the top two maps in each series and keeps the highest-scoring series; All-Map Average ×2 averages every valid map in the full scoring period and doubles it without selecting a best series.",
+      scoringMethodBody: "Each player is scored map by map with emblem and advisor-title bonuses. Two-player banners first average both players within the same map. Best Two Maps sums the top two maps in each series and keeps the highest-scoring series; All-Map Average ×2 averages every valid map in the full scoring period and doubles it without selecting a best series. Manual multiplier mode completely replaces quality and trait multipliers.",
       knownLimitations: "Data Notes",
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
@@ -447,9 +457,22 @@
     );
   }
 
+  function defaultManualMultipliers(config) {
+    return Object.fromEntries(
+      engine.bannerRoles.map((role) => [
+        role,
+        engine.calculateEmblemModifiers(config[role]).map(
+          (modifier) => Math.round(modifier.total * 100),
+        ),
+      ]),
+    );
+  }
+
   function createStagePage(stage) {
+    const config = engine.cloneDefaultConfig(stage);
     return {
-      config: engine.cloneDefaultConfig(stage),
+      config,
+      manualMultipliers: defaultManualMultipliers(config),
       selectedKeys: {},
       scoreMode: defaultScoreModes(),
     };
@@ -475,6 +498,20 @@
       page.config = candidate;
     } catch (error) {
       // Ignore malformed or obsolete saved emblem data.
+    }
+
+    page.manualMultipliers = defaultManualMultipliers(page.config);
+    for (const role of engine.bannerRoles) {
+      const savedMultipliers = rawPage.manualMultipliers?.[role];
+      if (
+        Array.isArray(savedMultipliers) &&
+        savedMultipliers.length === page.config[role].length &&
+        savedMultipliers.every(
+          (value) => Number.isFinite(Number(value)) && Number(value) >= 0,
+        )
+      ) {
+        page.manualMultipliers[role] = savedMultipliers.map(Number);
+      }
     }
 
     for (const role of engine.bannerRoles) {
@@ -511,8 +548,12 @@
       stage,
       pages,
       config: pages[stage].config,
+      manualMultipliers: pages[stage].manualMultipliers,
       selectedKeys: pages[stage].selectedKeys,
       scoreMode: pages[stage].scoreMode,
+      multiplierMode: MULTIPLIER_MODES.includes(saved?.multiplierMode)
+        ? saved.multiplierMode
+        : "calculated",
       titles: {
         prefix: engine.prefixTitles[saved?.titles?.prefix]
           ? saved.titles.prefix
@@ -531,6 +572,7 @@
     const page = state.pages[stage];
     state.stage = stage;
     state.config = page.config;
+    state.manualMultipliers = page.manualMultipliers;
     state.selectedKeys = page.selectedKeys;
     state.scoreMode = page.scoreMode;
     return true;
@@ -541,10 +583,11 @@
       localStorage.setItem(
         PAGE_STATE_STORAGE_KEY,
         JSON.stringify({
-          version: 2,
+          version: 3,
           stage: state.stage,
           pages: state.pages,
           titles: state.titles,
+          multiplierMode: state.multiplierMode,
         }),
       );
     } catch (error) {
@@ -558,6 +601,16 @@
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
     });
+  }
+
+  function updateMultiplierSwitcher() {
+    multiplierSwitcher
+      .querySelectorAll("button[data-multiplier-mode]")
+      .forEach((button) => {
+        const active = button.dataset.multiplierMode === state.multiplierMode;
+        button.classList.toggle("is-active", active);
+        button.setAttribute("aria-pressed", String(active));
+      });
   }
 
   function updateAdvisorTitleSelectors() {
@@ -671,6 +724,11 @@
       </svg>`;
   }
 
+  function activeMultipliers(role) {
+    if (state.multiplierMode !== "manual") return null;
+    return state.manualMultipliers[role].map((value) => Number(value) / 100);
+  }
+
   function getView() {
     const rankings = {};
     const selected = {};
@@ -682,6 +740,7 @@
         state.config[role],
         state.scoreMode[role],
         state.titles,
+        activeMultipliers(role),
       );
       selected[role] =
         rankings[role].find(
@@ -706,7 +765,7 @@
     }>${escapeHtml(label)}</option>`;
   }
 
-  function emblemMarkup(role, emblem, index, modifier) {
+  function emblemMarkup(role, emblem, index, modifier, manualValue) {
     const availableStats = engine.statKeys.filter(
       (stat) => engine.statDefinitions[stat].color === emblem.color,
     );
@@ -738,29 +797,31 @@
       )
       .join("");
     const traitEffect = modifier.selfTrait + modifier.neighbor;
-
-    return `
-      <article
-        class="emblem-card emblem-card--${emblem.color}"
-        aria-label="${escapeHtml(text("emblemAria", {
-          role: roleName(role),
-          index: index + 1,
-          color: colorName(emblem.color),
-        }))}"
-      >
-        <div class="emblem-head">
-          <span class="emblem-icon" aria-hidden="true">${statIconMarkup(emblem.stat)}</span>
-          <label>
-            <span class="sr-only">${escapeHtml(text("statistic"))}</span>
-            <select
-              class="stat-select"
-              data-role="${role}"
-              data-index="${index}"
-              data-field="stat"
-            >${statOptions}</select>
-          </label>
-          <strong class="emblem-multiplier">${Math.round(modifier.total * 100)}%</strong>
-        </div>
+    const manualMode = state.multiplierMode === "manual";
+    const multiplierMarkup = manualMode
+      ? `
+        <label class="manual-multiplier-control">
+          <span class="sr-only">${escapeHtml(text("manualMultiplierInput", {
+            role: roleName(role),
+            index: index + 1,
+          }))}</span>
+          <input
+            class="emblem-multiplier"
+            type="number"
+            min="0"
+            step="0.1"
+            inputmode="decimal"
+            value="${escapeHtml(manualValue)}"
+            data-role="${role}"
+            data-index="${index}"
+            data-field="multiplier"
+          >
+          <span aria-hidden="true">%</span>
+        </label>`
+      : `<strong class="emblem-multiplier">${Math.round(modifier.total * 100)}%</strong>`;
+    const detailMarkup = manualMode
+      ? ""
+      : `
         <div class="emblem-detail">
           <label>
             <span class="sr-only">${escapeHtml(text("quality"))}</span>
@@ -782,7 +843,31 @@
             >${traitOptions}</select>
           </label>
           <output title="${escapeHtml(text("totalTraitEffect"))}">${signedPercent(traitEffect)}</output>
+        </div>`;
+
+    return `
+      <article
+        class="emblem-card emblem-card--${emblem.color}${manualMode ? " emblem-card--manual" : ""}"
+        aria-label="${escapeHtml(text("emblemAria", {
+          role: roleName(role),
+          index: index + 1,
+          color: colorName(emblem.color),
+        }))}"
+      >
+        <div class="emblem-head">
+          <span class="emblem-icon" aria-hidden="true">${statIconMarkup(emblem.stat)}</span>
+          <label>
+            <span class="sr-only">${escapeHtml(text("statistic"))}</span>
+            <select
+              class="stat-select"
+              data-role="${role}"
+              data-index="${index}"
+              data-field="stat"
+            >${statOptions}</select>
+          </label>
+          ${multiplierMarkup}
         </div>
+        ${detailMarkup}
       </article>`;
   }
 
@@ -820,10 +905,27 @@
   }
 
   function bannerMarkup(role, rankings, selected) {
-    const modifiers = engine.calculateEmblemModifiers(state.config[role]);
+    const manualValues = state.manualMultipliers[role];
+    const multipliers = activeMultipliers(role);
+    const modifiers = multipliers
+      ? multipliers.map((total) => ({
+          base: 1,
+          quality: 0,
+          selfTrait: 0,
+          neighbor: 0,
+          total,
+          triggered: [],
+        }))
+      : engine.calculateEmblemModifiers(state.config[role]);
     const emblems = state.config[role]
       .map((emblem, index) =>
-        emblemMarkup(role, emblem, index, modifiers[index]),
+        emblemMarkup(
+          role,
+          emblem,
+          index,
+          modifiers[index],
+          manualValues[index],
+        ),
       )
       .join("");
     const selectedLabel = selected ? selected.label : text("waitingForData");
@@ -876,6 +978,8 @@
     const candidates =
       request.type === "select"
         ? bannerGrid.querySelectorAll("select[data-role]")
+        : request.type === "multiplier"
+          ? bannerGrid.querySelectorAll('input[data-field="multiplier"]')
         : request.type === "ranking"
           ? bannerGrid.querySelectorAll("button[data-ranking-role]")
           : bannerGrid.querySelectorAll("button[data-score-mode]");
@@ -886,6 +990,14 @@
         element.dataset.role === request.role &&
         element.dataset.index === String(request.index) &&
         element.dataset.field === request.field
+      ) {
+        element.focus();
+        return;
+      }
+      if (
+        request.type === "multiplier" &&
+        element.dataset.role === request.role &&
+        element.dataset.index === String(request.index)
       ) {
         element.focus();
         return;
@@ -1019,23 +1131,38 @@
   }
 
   bannerGrid.addEventListener("change", (event) => {
-    const select = event.target;
-    if (!(select instanceof HTMLSelectElement)) return;
-    const role = select.dataset.role;
-    const index = Number(select.dataset.index);
-    const field = select.dataset.field;
+    const control = event.target;
+    if (
+      !(control instanceof HTMLSelectElement) &&
+      !(control instanceof HTMLInputElement)
+    ) return;
+    const role = control.dataset.role;
+    const index = Number(control.dataset.index);
+    const field = control.dataset.field;
     if (
       !engine.bannerRoles.includes(role) ||
       !Number.isInteger(index) ||
       index < 0 ||
       index >= state.config[role].length ||
-      !["stat", "quality", "trait"].includes(field)
+      !["stat", "quality", "trait", "multiplier"].includes(field)
     ) {
       return;
     }
 
+    if (field === "multiplier") {
+      const value = Number(control.value);
+      if (control.value.trim() === "" || !Number.isFinite(value) || value < 0) {
+        control.value = String(state.manualMultipliers[role][index]);
+        return;
+      }
+      state.manualMultipliers[role][index] = value;
+      persistPageState();
+      render({ type: "multiplier", role, index });
+      return;
+    }
+
     state.config[role][index][field] =
-      field === "quality" ? Number(select.value) : select.value;
+      field === "quality" ? Number(control.value) : control.value;
 
     persistPageState();
     render({ type: "select", role, index, field });
@@ -1079,6 +1206,17 @@
   suffixTitleSelect.addEventListener("change", () => {
     if (!engine.suffixTitles[suffixTitleSelect.value]) return;
     state.titles.suffix = suffixTitleSelect.value;
+    persistPageState();
+    render();
+  });
+
+  multiplierSwitcher.addEventListener("click", (event) => {
+    if (!(event.target instanceof Element)) return;
+    const button = event.target.closest("button[data-multiplier-mode]");
+    const mode = button?.dataset.multiplierMode;
+    if (!button || !MULTIPLIER_MODES.includes(mode)) return;
+    state.multiplierMode = mode;
+    updateMultiplierSwitcher();
     persistPageState();
     render();
   });
@@ -1135,6 +1273,7 @@
 
   try {
     updateStageSwitcher();
+    updateMultiplierSwitcher();
     updateAdvisorTitleSelectors();
     render();
   } catch (error) {
