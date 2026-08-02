@@ -67,9 +67,17 @@ LEAGUE_TEAM_OVERRIDES: dict[int, dict[str, dict[int, str]]] = {
 }
 
 EXACT_REPLAY_FIELDS = {
-    "madstones_collected": "madstonesCollected",
+    "madstones_collected": "neutralTokensFound",
     "watchers_captured": "watchersCaptured",
     "lotuses_collected": "lotusesCollected",
+}
+
+CHECKPOINT_SCHEMA_VERSION = 5
+SERIES_MAX_GAMES = {
+    0: 1,
+    1: 3,
+    2: 5,
+    3: 2,
 }
 
 
@@ -210,6 +218,7 @@ def merge_exact_replay(
     base_match: dict[str, Any],
     replay_match: dict[str, Any],
     league_id: int,
+    series_context: dict[str, Any],
 ) -> dict[str, Any]:
     match = copy.deepcopy(base_match)
     by_account = {
@@ -245,8 +254,41 @@ def merge_exact_replay(
                 )
             player["stats"][stat_key] = int(value)
 
+        neutral_tokens = exact.get("neutralTokensFound")
+        if neutral_tokens is None:
+            raise RuntimeError(
+                f"Match {match['matchId']}: neutralTokensFound is missing for "
+                f"account {player['accountId']}"
+            )
+        player["heroId"] = exact.get("heroId")
+        player["heroName"] = exact.get("heroName")
+        player["replayCounters"] = {
+            "acquiredMadstones": int(exact["madstonesCollected"]),
+            "currentMadstones": (
+                int(exact["currentMadstones"])
+                if exact.get("currentMadstones") is not None
+                else None
+            ),
+            "neutralTokensFound": int(neutral_tokens),
+        }
+        is_radiant = int(player["playerSlot"]) < 128
+        player["won"] = bool(match["radiantWin"]) == is_radiant
+        player["lost"] = not player["won"]
+
+    title_data = copy.deepcopy(replay_match.get("titleData"))
+    if not isinstance(title_data, dict):
+        raise RuntimeError(
+            f"Match {match['matchId']}: replay lacks title-condition data"
+        )
+    title_data["seriesGameNumber"] = series_context["gameNumber"]
+    title_data["maxSeriesGames"] = series_context["maxGames"]
+    match["titleData"] = title_data
+    match["titleConditions"] = build_title_conditions(
+        match, title_data, series_context
+    )
+
     return {
-        "schemaVersion": 2,
+        "schemaVersion": CHECKPOINT_SCHEMA_VERSION,
         "leagueId": league_id,
         "matchId": int(match["matchId"]),
         "parsedAt": utc_now(),
@@ -256,14 +298,80 @@ def merge_exact_replay(
             "replayUrl": replay_match.get("replayUrl"),
             "parser": "Clarity 4.0.1",
             "exactFields": list(EXACT_REPLAY_FIELDS),
+            "includesHeroAndTitleData": True,
         },
         "match": match,
+    }
+
+
+def build_series_contexts(matches: list[dict[str, Any]]) -> dict[int, dict[str, Any]]:
+    """Return the map ordinal and maximum possible map count per match."""
+
+    by_series: dict[int, list[dict[str, Any]]] = defaultdict(list)
+    for match in matches:
+        series_id = match.get("seriesId")
+        if series_id is not None:
+            by_series[int(series_id)].append(match)
+
+    contexts: dict[int, dict[str, Any]] = {}
+    for series_matches in by_series.values():
+        series_matches.sort(key=lambda item: (item["startTime"], item["matchId"]))
+        for game_number, match in enumerate(series_matches, start=1):
+            series_type = match.get("seriesType")
+            contexts[int(match["matchId"])] = {
+                "gameNumber": game_number,
+                "maxGames": SERIES_MAX_GAMES.get(series_type),
+            }
+
+    for match in matches:
+        match_id = int(match["matchId"])
+        if match_id in contexts:
+            continue
+        series_type = match.get("seriesType")
+        contexts[match_id] = {
+            "gameNumber": 1,
+            "maxGames": SERIES_MAX_GAMES.get(series_type),
+        }
+    return contexts
+
+
+def build_title_conditions(
+    match: dict[str, Any],
+    title_data: dict[str, Any],
+    series_context: dict[str, Any],
+) -> dict[str, bool | None]:
+    """Derive the eight suffix conditions while retaining raw event evidence."""
+
+    first_blood_time = title_data.get("firstBloodTime")
+    max_games = series_context.get("maxGames")
+    game_number = series_context.get("gameNumber")
+    return {
+        "anyPlayerDiedToTormentor": bool(title_data.get("tormentorDeaths")),
+        "firstBloodBeforeHorn": (
+            float(first_blood_time) < 0 if first_blood_time is not None else None
+        ),
+        "firstBloodAfterTenMinutes": (
+            float(first_blood_time) > 600 if first_blood_time is not None else None
+        ),
+        # The loser condition is player-specific and is stored as player.lost.
+        "durationUnder25Minutes": int(match["duration"]) < 25 * 60,
+        "possibleFinalSeriesGame": (
+            int(game_number) == int(max_games) if max_games is not None else None
+        ),
+        "durationEndsInEight": int(match["duration"]) % 10 == 8,
+        "anyPlayerDiedInOwnFountain": bool(
+            title_data.get("ownFountainDeaths")
+        ),
     }
 
 
 def validate_checkpoint(
     checkpoint: dict[str, Any], league_id: int, match_id: int
 ) -> dict[str, Any]:
+    if int(checkpoint.get("schemaVersion", -1)) != CHECKPOINT_SCHEMA_VERSION:
+        raise RuntimeError(
+            f"Checkpoint {match_id} uses an older schema and must be reparsed"
+        )
     if int(checkpoint.get("leagueId", -1)) != league_id:
         raise RuntimeError(f"Checkpoint {match_id} belongs to another league")
     if int(checkpoint.get("matchId", -1)) != match_id:
@@ -272,6 +380,18 @@ def validate_checkpoint(
     if not isinstance(match, dict) or len(match.get("players", [])) != 10:
         raise RuntimeError(f"Checkpoint {match_id} does not contain ten players")
     for player in match["players"]:
+        if player.get("heroId") is None or not player.get("heroName"):
+            raise RuntimeError(f"Checkpoint {match_id} lacks player hero data")
+        if "lost" not in player:
+            raise RuntimeError(f"Checkpoint {match_id} lacks player result data")
+        replay_counters = player.get("replayCounters")
+        if not isinstance(replay_counters, dict) or any(
+            replay_counters.get(key) is None
+            for key in ("acquiredMadstones", "neutralTokensFound")
+        ):
+            raise RuntimeError(
+                f"Checkpoint {match_id} lacks replay Madstone counters"
+            )
         stats = player.get("stats", {})
         missing = [key for key in league_data.STAT_KEYS if key not in stats]
         if missing:
@@ -281,6 +401,10 @@ def validate_checkpoint(
             raise RuntimeError(
                 f"Checkpoint {match_id} has empty replay stats: {exact_missing}"
             )
+    if not isinstance(match.get("titleData"), dict):
+        raise RuntimeError(f"Checkpoint {match_id} lacks title event data")
+    if not isinstance(match.get("titleConditions"), dict):
+        raise RuntimeError(f"Checkpoint {match_id} lacks title conditions")
     return match
 
 
@@ -298,8 +422,25 @@ def echo_match(match: dict[str, Any], status: str) -> None:
         )
         print(
             f"  {name} | {team} | {player.get('role', '?')} | "
+            f"hero={player.get('heroName')} ({player.get('heroId')}) | "
             f"accountId={player['accountId']}\n    {stats}"
         )
+        counters = player.get("replayCounters", {})
+        print(
+            "    replayCounters: "
+            f"acquiredMadstones={counters.get('acquiredMadstones')}  "
+            f"currentMadstones={counters.get('currentMadstones')}  "
+            f"neutralTokensFound={counters.get('neutralTokensFound')}"
+        )
+    print(f"  称号条件: {json.dumps(match.get('titleConditions'), ensure_ascii=False)}")
+    title_data = match.get("titleData", {})
+    print(
+        "  称号事件: "
+        f"firstBloodTime={title_data.get('firstBloodTime')}  "
+        f"tormentorDeaths={len(title_data.get('tormentorDeaths', []))}  "
+        f"fountainDeaths={len(title_data.get('fountainDeaths', []))}  "
+        f"ownFountainDeaths={len(title_data.get('ownFountainDeaths', []))}"
+    )
 
 
 def parse_downloaded_match(
@@ -320,14 +461,14 @@ def parse_downloaded_match(
         )
         replay_tools.verify_bz2_header(compressed)
         replay_tools.decompress_replay(compressed, dem, quiet=False)
-        players = replay_tools.parse_replay(
+        parsed = replay_tools.parse_replay(
             dem,
             java_runtime[0],
             java_runtime[1],
             args.allow_missing_replay_fields,
             timeout=args.parse_timeout,
         )
-        return {**item, "players": players}
+        return {**item, **parsed}
 
 
 def recompute_player_totals(dataset: dict[str, Any]) -> None:
@@ -373,7 +514,7 @@ def finalize_dataset(
     ]
     recompute_player_totals(dataset)
     meta = dataset["meta"]
-    meta["schemaVersion"] = 2
+    meta["schemaVersion"] = CHECKPOINT_SCHEMA_VERSION
     meta["generatedAt"] = utc_now()
     meta.setdefault("sources", {})["valveReplays"] = (
         "http://replay{cluster}.valve.net/570/{match_id}_{replay_salt}.dem.bz2"
@@ -382,13 +523,31 @@ def finalize_dataset(
     provenance.update(
         {
             "madstones_collected": (
-                "Valve replay m_vecDataTeam[*].m_nAcquiredMadstone"
+                "Valve replay m_vecDataTeam[*].m_iNeutralTokensFound"
+            ),
+            "replayCounters.neutralTokensFound": (
+                "Valve replay m_vecDataTeam[*].m_iNeutralTokensFound; current "
+                "scored Madstone source"
+            ),
+            "replayCounters.acquiredMadstones": (
+                "Valve replay m_vecDataTeam[*].m_nAcquiredMadstone; retained "
+                "as an alternate counter"
             ),
             "watchers_captured": (
                 "Valve replay m_vecDataTeam[*].m_iWatchersTaken"
             ),
             "lotuses_collected": (
                 "Valve replay m_vecDataTeam[*].m_iLotusesTaken"
+            ),
+            "heroId/heroName": (
+                "Valve replay CDOTA_PlayerResource selected hero"
+            ),
+            "titleData.firstBloodTime": "Valve replay combat log and game start",
+            "titleData.tormentorDeaths": (
+                "Valve replay hero-death combat log; attacker npc_dota_miniboss"
+            ),
+            "titleData.fountainDeaths": (
+                "Valve replay hero-death positions relative to team fountains"
             ),
         }
     )
@@ -405,6 +564,7 @@ def finalize_dataset(
         "parser": "Clarity 4.0.1",
         "matchesMerged": len(checkpoints),
         "exactFields": list(EXACT_REPLAY_FIELDS),
+        "includesHeroAndTitleData": True,
     }
     return dataset
 
@@ -419,6 +579,7 @@ def build(args: argparse.Namespace) -> None:
     base_matches = {
         int(match["matchId"]): match for match in base_dataset["matches"]
     }
+    series_contexts = build_series_contexts(base_dataset["matches"])
     if args.import_replay_stats:
         manifest, imported = replay_manifest_from_import(args.import_replay_stats)
     else:
@@ -443,10 +604,16 @@ def build(args: argparse.Namespace) -> None:
         checkpoint_path = matches_dir / f"{match_id}.json"
         if checkpoint_path.exists():
             checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
-            match = validate_checkpoint(checkpoint, args.league_id, match_id)
-            echo_match(match, f"已记录，跳过下载 {index}/{len(manifest)}")
-            checkpoints.append(checkpoint)
-            continue
+            try:
+                match = validate_checkpoint(checkpoint, args.league_id, match_id)
+            except RuntimeError as exc:
+                if int(checkpoint.get("schemaVersion", -1)) >= CHECKPOINT_SCHEMA_VERSION:
+                    raise
+                print(f"比赛 {match_id} 的旧检查点将重新解析：{exc}")
+            else:
+                echo_match(match, f"已记录，跳过下载 {index}/{len(manifest)}")
+                checkpoints.append(checkpoint)
+                continue
 
         replay_match = imported.get(match_id)
         if replay_match is None:
@@ -456,7 +623,10 @@ def build(args: argparse.Namespace) -> None:
                 )
             replay_match = parse_downloaded_match(item, args, java_runtime)
         checkpoint = merge_exact_replay(
-            base_matches[match_id], replay_match, args.league_id
+            base_matches[match_id],
+            replay_match,
+            args.league_id,
+            series_contexts[match_id],
         )
         replay_tools.atomic_write_json(checkpoint_path, checkpoint, compact=True)
         match = validate_checkpoint(checkpoint, args.league_id, match_id)

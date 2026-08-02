@@ -67,6 +67,25 @@ parsing the replay again. New compressed and decompressed replay files are
 created in a temporary directory and removed immediately after that match is
 written.
 
+The browser supports advisor prefix and suffix titles. Prefix hero categories
+are maintained in `fantasy.js` from `heroids.txt`; suffix conditions are read
+from each replay checkpoint. The default **Best Two Maps** method scores every
+map, averages the two players on a two-player banner within each map, sums the
+best two maps in each series, then keeps the best series. **All-Map Average ×2**
+is an optional comparison method that averages every valid map in the full
+scoring period and doubles the result without selecting a best series.
+
+Each match checkpoint also records every player's selected `heroId` and
+`heroName`, win/loss result, first-blood time, Tormentor-death evidence, and
+fountain-region death evidence. `isOwnFountain` distinguishes a death in the
+player's own fountain from a death in the enemy fountain. Derived suffix/title
+conditions are stored in `match.titleConditions`; the original event rows stay
+in `match.titleData` for later verification. Per-map `replayCounters` preserves
+both `m_nAcquiredMadstone` and `m_iNeutralTokensFound`. Fantasy scoring uses
+`m_iNeutralTokensFound`; `m_nAcquiredMadstone` remains available for
+comparison. Checkpoints made with schema 4 or older are
+automatically treated as stale and reparsed on the next build.
+
 To display another generated league, set the same `LEAGUE_ID` and
 `LEAGUE_NAME` in the data-loader block near the bottom of `index.html`.
 

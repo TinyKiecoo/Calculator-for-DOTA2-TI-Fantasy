@@ -72,6 +72,7 @@ SELECT
     np.fantasy_role AS source_fantasy_role,
     pm.account_id,
     pm.player_slot,
+    pm.hero_id,
     pm.lane_role,
     pm.is_roaming,
     COALESCE(pm.kills, 0) AS kills,
@@ -460,6 +461,7 @@ def build_dataset(
                 "name": row["player_name"],
                 "teamId": team_id,
                 "playerSlot": as_int(row["player_slot"]),
+                "heroId": as_int(row.get("hero_id")),
                 "laneRole": as_int(row["lane_role"]),
                 "stats": stats,
                 "proxies": proxies,
@@ -659,10 +661,22 @@ def build_summary(
     }
     player_maps: dict[tuple[int, int], list[dict[str, Any]]] = defaultdict(list)
     for match in dataset["matches"]:
+        title_conditions = match.get("titleConditions")
         for player_row in match["players"]:
             player_maps[(player_row["teamId"], player_row["accountId"])].append(
                 {
                     "matchId": match["matchId"],
+                    "seriesId": match.get("seriesId"),
+                    "seriesType": match.get("seriesType"),
+                    "seriesGameNumber": (match.get("titleData") or {}).get(
+                        "seriesGameNumber"
+                    ),
+                    "heroId": player_row.get("heroId"),
+                    "heroName": player_row.get("heroName"),
+                    "won": player_row.get("won"),
+                    "lost": player_row.get("lost"),
+                    "titleConditions": title_conditions,
+                    "replayCounters": player_row.get("replayCounters"),
                     "stats": player_row["stats"],
                 }
             )

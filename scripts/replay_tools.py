@@ -4,7 +4,8 @@
 The three counters are read from the final replay state rather than inferred
 from item/ability use events:
 
-* ``m_nAcquiredMadstone`` -> ``madstones_collected``
+* ``m_iNeutralTokensFound`` -> scored ``madstones_collected``
+* ``m_nAcquiredMadstone`` -> retained alternate Madstone counter
 * ``m_iWatchersTaken``    -> ``watchers_captured``
 * ``m_iLotusesTaken``     -> ``lotuses_collected``
 
@@ -113,29 +114,51 @@ MAVEN_BASE_URLS = (
 )
 
 
-JAVA_SOURCE = r'''import skadistats.clarity.io.Util;
+JAVA_SOURCE = r'''import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+
+import skadistats.clarity.io.Util;
+import skadistats.clarity.model.CombatLogEntry;
 import skadistats.clarity.model.Entity;
 import skadistats.clarity.model.FieldPath;
 import skadistats.clarity.processor.entities.Entities;
 import skadistats.clarity.processor.entities.UsesEntities;
-import skadistats.clarity.processor.runner.ControllableRunner;
+import skadistats.clarity.processor.gameevents.OnCombatLogEntry;
+import skadistats.clarity.processor.runner.Context;
+import skadistats.clarity.processor.runner.SimpleRunner;
 import skadistats.clarity.source.MappedFileSource;
 
 @UsesEntities
 public final class ReplayFantasyStats {
-    private final ControllableRunner runner;
+    // Calibrated with replay 8917451314: all six stated Dire-fountain deaths
+    // are within 5.45 grid units, while the nearest preceding outside death is
+    // 11.41 units away. Eight cells equal 1024 Source 2 world units.
+    private static final double FOUNTAIN_RADIUS = 8.0;
+    private final List<DeathRecord> tormentorDeaths = new ArrayList<>();
+    private final List<DeathRecord> fountainDeaths = new ArrayList<>();
+    private Float firstBloodTimestamp;
+    private Float firstHeroDeathTimestamp;
 
-    private ReplayFantasyStats(String path) throws Exception {
-        try (MappedFileSource source = new MappedFileSource(path)) {
-            runner = new ControllableRunner(source).runWith(this);
-            try {
-                runner.seek(runner.getLastTick());
-            } finally {
-                runner.halt();
-                runner.join();
-            }
-        }
-    }
+    private record PlayerIdentity(
+        int teamNumber,
+        int teamPosition,
+        int playerSlot,
+        long steamId,
+        int heroId,
+        String heroName,
+        Entity hero
+    ) {}
+
+    private record DeathRecord(
+        float timestamp,
+        PlayerIdentity player,
+        String attacker,
+        Integer fountainTeamNumber,
+        Boolean ownFountain,
+        Double fountainDistance
+    ) {}
 
     @SuppressWarnings("unchecked")
     private static <T> T property(Entity entity, String name) {
@@ -147,6 +170,214 @@ public final class ReplayFantasyStats {
 
     private static String jsonNumber(Object value) {
         return value == null ? "null" : String.valueOf(value);
+    }
+
+    private static String jsonString(String value) {
+        if (value == null) return "null";
+        StringBuilder output = new StringBuilder("\"");
+        for (int index = 0; index < value.length(); index++) {
+            char character = value.charAt(index);
+            switch (character) {
+                case '\\' -> output.append("\\\\");
+                case '\"' -> output.append("\\\"");
+                case '\n' -> output.append("\\n");
+                case '\r' -> output.append("\\r");
+                case '\t' -> output.append("\\t");
+                default -> {
+                    if (character < 0x20) {
+                        output.append(String.format(Locale.ROOT, "\\u%04x", (int) character));
+                    } else {
+                        output.append(character);
+                    }
+                }
+            }
+        }
+        return output.append('\"').toString();
+    }
+
+    private static String fixed(Double value) {
+        return value == null ? "null" : String.format(Locale.ROOT, "%.4f", value);
+    }
+
+    private static Double coordinate(Entity entity, String axis) {
+        Number cell = property(entity, "CBodyComponent.m_cell" + axis);
+        Number vector = property(entity, "CBodyComponent.m_vec" + axis);
+        if (cell == null || vector == null) return null;
+        return cell.doubleValue() + vector.doubleValue() / 128.0;
+    }
+
+    private static String combatLogName(Entity hero) {
+        if (hero == null) return null;
+        String className = hero.getDtClass().getDtName();
+        String prefix = "CDOTA_Unit_Hero_";
+        if (!className.startsWith(prefix)) return null;
+        String ending = className.substring(prefix.length());
+        return "npc_dota_hero"
+            + ending.replaceAll("([A-Z])", "_$1").replaceAll("_+", "_")
+                .toLowerCase(Locale.ROOT);
+    }
+
+    private static Entity fountain(Entities entities, int teamNumber) {
+        Entity rules = entities.getByDtName("CDOTAGamerulesProxy");
+        Number handle = property(
+            rules,
+            "m_pGameRules.m_hTeamFountains." + Util.arrayIdxToString(teamNumber)
+        );
+        Entity result = handle == null ? null : entities.getByHandle(handle.intValue());
+        if (result != null) return result;
+
+        Iterator<Entity> candidates = entities.getAllByDtName("CDOTA_Unit_Fountain");
+        while (candidates.hasNext()) {
+            Entity candidate = candidates.next();
+            Number team = property(candidate, "m_iTeamNum");
+            if (team != null && team.intValue() == teamNumber) return candidate;
+        }
+        return null;
+    }
+
+    private static Double distance(Entity hero, Entity fountain) {
+        Double heroX = coordinate(hero, "X");
+        Double heroY = coordinate(hero, "Y");
+        Double fountainX = coordinate(fountain, "X");
+        Double fountainY = coordinate(fountain, "Y");
+        if (heroX == null || heroY == null || fountainX == null || fountainY == null) {
+            return null;
+        }
+        return Math.hypot(heroX - fountainX, heroY - fountainY);
+    }
+
+    private static PlayerIdentity playerForHero(
+        Entities entities,
+        int targetTeam,
+        String targetName
+    ) {
+        Entity resource = entities.getByDtName("CDOTA_PlayerResource");
+        if (resource == null) return null;
+        for (int index = 0; index < 64; index++) {
+            String arrayIndex = Util.arrayIdxToString(index);
+            Number team = property(resource, "m_vecPlayerData." + arrayIndex + ".m_iPlayerTeam");
+            Number handle = property(resource, "m_vecPlayerTeamData." + arrayIndex + ".m_hSelectedHero");
+            if (team == null || handle == null || team.intValue() != targetTeam) continue;
+            Entity hero = entities.getByHandle(handle.intValue());
+            String heroName = combatLogName(hero);
+            if (hero == null || heroName == null || !heroName.equals(targetName)) continue;
+
+            Number position = property(
+                resource,
+                "m_vecPlayerTeamData." + arrayIndex + ".m_iTeamSlot"
+            );
+            Number heroId = property(
+                resource,
+                "m_vecPlayerTeamData." + arrayIndex + ".m_nSelectedHeroID"
+            );
+            Number steamId = property(
+                resource,
+                "m_vecPlayerData." + arrayIndex + ".m_iPlayerSteamID"
+            );
+            int teamPosition = position == null ? -1 : position.intValue();
+            int playerSlot = targetTeam == 2 ? teamPosition : 128 + teamPosition;
+            return new PlayerIdentity(
+                targetTeam,
+                teamPosition,
+                playerSlot,
+                steamId == null ? 0L : steamId.longValue(),
+                heroId == null ? 0 : heroId.intValue(),
+                heroName,
+                hero
+            );
+        }
+        return null;
+    }
+
+    @OnCombatLogEntry
+    public void onCombatLogEntry(Context context, CombatLogEntry entry) {
+        if (entry == null || !entry.hasType()) return;
+        String type = entry.getType().name();
+        if (type.equals("DOTA_COMBATLOG_FIRST_BLOOD") && entry.hasTimestamp()) {
+            if (firstBloodTimestamp == null) firstBloodTimestamp = entry.getTimestamp();
+            return;
+        }
+        if (!type.equals("DOTA_COMBATLOG_DEATH")) return;
+        if (!entry.hasTargetHero() || !entry.isTargetHero() || entry.isTargetIllusion()) return;
+        if (!entry.hasTargetName() || !entry.hasTargetTeam() || !entry.hasTimestamp()) return;
+
+        if (firstHeroDeathTimestamp == null) firstHeroDeathTimestamp = entry.getTimestamp();
+        Entities entities = context.getProcessor(Entities.class);
+        PlayerIdentity player = playerForHero(
+            entities,
+            entry.getTargetTeam(),
+            entry.getTargetName()
+        );
+        if (player == null) return;
+
+        String attacker = entry.hasAttackerName() ? entry.getAttackerName() : "";
+        if (attacker.equals("npc_dota_miniboss")) {
+            tormentorDeaths.add(
+                new DeathRecord(entry.getTimestamp(), player, attacker, null, null, null)
+            );
+        }
+
+        Double radiantDistance = distance(player.hero(), fountain(entities, 2));
+        Double direDistance = distance(player.hero(), fountain(entities, 3));
+        Integer fountainTeam = null;
+        Double fountainDistance = null;
+        if (radiantDistance != null && radiantDistance <= FOUNTAIN_RADIUS) {
+            fountainTeam = 2;
+            fountainDistance = radiantDistance;
+        }
+        if (
+            direDistance != null
+            && direDistance <= FOUNTAIN_RADIUS
+            && (fountainDistance == null || direDistance < fountainDistance)
+        ) {
+            fountainTeam = 3;
+            fountainDistance = direDistance;
+        }
+        if (fountainTeam != null) {
+            fountainDeaths.add(
+                new DeathRecord(
+                    entry.getTimestamp(),
+                    player,
+                    attacker,
+                    fountainTeam,
+                    fountainTeam == player.teamNumber(),
+                    fountainDistance
+                )
+            );
+        }
+    }
+
+    private static PlayerIdentity playerAtPosition(
+        Entities entities,
+        int teamNumber,
+        int position
+    ) {
+        Entity resource = entities.getByDtName("CDOTA_PlayerResource");
+        if (resource == null) return null;
+        for (int index = 0; index < 64; index++) {
+            String arrayIndex = Util.arrayIdxToString(index);
+            Number team = property(resource, "m_vecPlayerData." + arrayIndex + ".m_iPlayerTeam");
+            Number slot = property(resource, "m_vecPlayerTeamData." + arrayIndex + ".m_iTeamSlot");
+            if (
+                team == null || slot == null
+                || team.intValue() != teamNumber || slot.intValue() != position
+            ) continue;
+            Number handle = property(resource, "m_vecPlayerTeamData." + arrayIndex + ".m_hSelectedHero");
+            Entity hero = handle == null ? null : entities.getByHandle(handle.intValue());
+            Number heroId = property(resource, "m_vecPlayerTeamData." + arrayIndex + ".m_nSelectedHeroID");
+            Number steamId = property(resource, "m_vecPlayerData." + arrayIndex + ".m_iPlayerSteamID");
+            int playerSlot = teamNumber == 2 ? position : 128 + position;
+            return new PlayerIdentity(
+                teamNumber,
+                position,
+                playerSlot,
+                steamId == null ? 0L : steamId.longValue(),
+                heroId == null ? 0 : heroId.intValue(),
+                combatLogName(hero),
+                hero
+            );
+        }
+        return null;
     }
 
     private int emitTeam(Entities entities, int teamNumber, String side) {
@@ -162,21 +393,30 @@ public final class ReplayFantasyStats {
             Object steamId = property(data, prefix + "m_iPlayerSteamID");
             Object madstones = property(data, prefix + "m_nAcquiredMadstone");
             Object currentMadstones = property(data, prefix + "m_nCurrentMadstone");
+            Object neutralTokens = property(data, prefix + "m_iNeutralTokensFound");
             Object watchers = property(data, prefix + "m_iWatchersTaken");
             Object lotuses = property(data, prefix + "m_iLotusesTaken");
             int playerSlot = teamNumber == 2 ? position : 128 + position;
+            PlayerIdentity identity = playerAtPosition(entities, teamNumber, position);
+            Object heroId = identity == null || identity.heroId() <= 0 ? null : identity.heroId();
+            String heroName = identity == null ? null : identity.heroName();
 
             System.out.printf(
-                "{\"teamNumber\":%d,\"position\":%d,\"playerSlot\":%d," +
-                "\"steamId\":%s,\"madstonesCollected\":%s," +
-                "\"currentMadstones\":%s,\"watchersCaptured\":%s," +
+                "{\"recordType\":\"player\",\"teamNumber\":%d," +
+                "\"position\":%d,\"playerSlot\":%d,\"steamId\":%s," +
+                "\"heroId\":%s,\"heroName\":%s,\"madstonesCollected\":%s," +
+                "\"currentMadstones\":%s,\"neutralTokensFound\":%s," +
+                "\"watchersCaptured\":%s," +
                 "\"lotusesCollected\":%s}%n",
                 teamNumber,
                 position,
                 playerSlot,
                 jsonNumber(steamId),
+                jsonNumber(heroId),
+                jsonString(heroName),
                 jsonNumber(madstones),
                 jsonNumber(currentMadstones),
+                jsonNumber(neutralTokens),
                 jsonNumber(watchers),
                 jsonNumber(lotuses)
             );
@@ -185,13 +425,75 @@ public final class ReplayFantasyStats {
         return emitted;
     }
 
-    private void emit() {
-        Entities entities = runner.getContext().getProcessor(Entities.class);
+    private static void emitDeathArray(
+        List<DeathRecord> events,
+        double gameStartTime
+    ) {
+        System.out.print("[");
+        for (int index = 0; index < events.size(); index++) {
+            if (index > 0) System.out.print(",");
+            DeathRecord event = events.get(index);
+            PlayerIdentity player = event.player();
+            System.out.printf(
+                Locale.ROOT,
+                "{\"time\":%.4f,\"teamNumber\":%d,\"teamPosition\":%d," +
+                "\"playerSlot\":%d,\"steamId\":%d,\"heroId\":%d," +
+                "\"heroName\":%s,\"attacker\":%s," +
+                "\"fountainTeamNumber\":%s,\"isOwnFountain\":%s," +
+                "\"fountainDistance\":%s}",
+                event.timestamp() - gameStartTime,
+                player.teamNumber(),
+                player.teamPosition(),
+                player.playerSlot(),
+                player.steamId(),
+                player.heroId(),
+                jsonString(player.heroName()),
+                jsonString(event.attacker()),
+                jsonNumber(event.fountainTeamNumber()),
+                jsonNumber(event.ownFountain()),
+                fixed(event.fountainDistance())
+            );
+        }
+        System.out.print("]");
+    }
+
+    private void emitMatch(Entities entities) {
+        Entity rules = entities.getByDtName("CDOTAGamerulesProxy");
+        Number gameStart = property(rules, "m_pGameRules.m_flGameStartTime");
+        Number seriesType = property(rules, "m_pGameRules.m_nSeriesType");
+        Number radiantSeriesWins = property(rules, "m_pGameRules.m_nRadiantSeriesWins");
+        Number direSeriesWins = property(rules, "m_pGameRules.m_nDireSeriesWins");
+        double gameStartTime = gameStart == null ? 0.0 : gameStart.doubleValue();
+        Float firstBlood = firstBloodTimestamp != null
+            ? firstBloodTimestamp
+            : firstHeroDeathTimestamp;
+
+        System.out.print("{\"recordType\":\"match\",");
+        System.out.print("\"gameStartTime\":" + fixed(gameStartTime) + ",");
+        System.out.print(
+            "\"firstBloodTime\":"
+            + (firstBlood == null ? "null" : fixed(firstBlood.doubleValue() - gameStartTime))
+            + ","
+        );
+        System.out.print("\"seriesType\":" + jsonNumber(seriesType) + ",");
+        System.out.print("\"radiantSeriesWins\":" + jsonNumber(radiantSeriesWins) + ",");
+        System.out.print("\"direSeriesWins\":" + jsonNumber(direSeriesWins) + ",");
+        System.out.print("\"fountainRadius\":" + fixed(FOUNTAIN_RADIUS) + ",");
+        System.out.print("\"tormentorDeaths\":");
+        emitDeathArray(tormentorDeaths, gameStartTime);
+        System.out.print(",\"fountainDeaths\":");
+        emitDeathArray(fountainDeaths, gameStartTime);
+        System.out.println("}");
+    }
+
+    private void emit(Context context) {
+        Entities entities = context.getProcessor(Entities.class);
         int count = emitTeam(entities, 2, "Radiant");
         count += emitTeam(entities, 3, "Dire");
         if (count != 10) {
             throw new IllegalStateException("Expected 10 players, emitted " + count);
         }
+        emitMatch(entities);
     }
 
     public static void main(String[] args) throws Exception {
@@ -199,8 +501,12 @@ public final class ReplayFantasyStats {
             System.err.println("Usage: ReplayFantasyStats <replay.dem>");
             System.exit(2);
         }
-        ReplayFantasyStats parser = new ReplayFantasyStats(args[0]);
-        parser.emit();
+        ReplayFantasyStats parser = new ReplayFantasyStats();
+        try (MappedFileSource source = new MappedFileSource(args[0])) {
+            SimpleRunner runner = new SimpleRunner(source);
+            runner.runWith(parser);
+            parser.emit(runner.getContext());
+        }
     }
 }
 '''
@@ -587,7 +893,6 @@ def ensure_java_helper(
             "17",
             "-target",
             "17",
-            "-proc:none",
             "-cp",
             classpath,
             "-d",
@@ -685,7 +990,10 @@ def decompress_replay(compressed: Path, dem: Path, quiet: bool) -> Path:
 def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]:
     required = (
         "steamId",
+        "heroId",
+        "heroName",
         "madstonesCollected",
+        "neutralTokensFound",
         "watchersCaptured",
         "lotusesCollected",
     )
@@ -719,10 +1027,85 @@ def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]
         "teamNumber": team_number,
         "teamPosition": int(raw["position"]),
         "playerSlot": int(raw["playerSlot"]),
+        "heroId": optional_nonnegative_int("heroId"),
+        "heroName": (
+            str(raw["heroName"]) if raw.get("heroName") is not None else None
+        ),
         "madstonesCollected": optional_nonnegative_int("madstonesCollected"),
         "currentMadstones": optional_nonnegative_int("currentMadstones"),
+        "neutralTokensFound": optional_nonnegative_int("neutralTokensFound"),
         "watchersCaptured": optional_nonnegative_int("watchersCaptured"),
         "lotusesCollected": optional_nonnegative_int("lotusesCollected"),
+    }
+
+
+def normalize_death_event(raw: dict[str, Any]) -> dict[str, Any]:
+    steam_id = int(raw["steamId"]) if raw.get("steamId") is not None else None
+    account_id: int | None = None
+    if steam_id:
+        account_id = steam_id - STEAM_ID64_BASE
+        if account_id < 0 or account_id > 0xFFFFFFFF:
+            raise RuntimeError(f"Invalid death-event Steam ID 64: {steam_id}")
+    return {
+        "time": normalized_number(float(raw["time"]), 4),
+        "accountId": account_id,
+        "steamId": str(steam_id) if steam_id else None,
+        "teamNumber": int(raw["teamNumber"]),
+        "teamPosition": int(raw["teamPosition"]),
+        "playerSlot": int(raw["playerSlot"]),
+        "heroId": int(raw["heroId"]),
+        "heroName": str(raw["heroName"]),
+        "attacker": str(raw.get("attacker") or ""),
+        "fountainTeamNumber": (
+            int(raw["fountainTeamNumber"])
+            if raw.get("fountainTeamNumber") is not None
+            else None
+        ),
+        "isOwnFountain": (
+            bool(raw["isOwnFountain"])
+            if raw.get("isOwnFountain") is not None
+            else None
+        ),
+        "fountainDistance": (
+            normalized_number(float(raw["fountainDistance"]), 4)
+            if raw.get("fountainDistance") is not None
+            else None
+        ),
+    }
+
+
+def normalize_match_record(raw: dict[str, Any]) -> dict[str, Any]:
+    fountain_deaths = [
+        normalize_death_event(event) for event in raw.get("fountainDeaths", [])
+    ]
+    return {
+        "gameStartTime": normalized_number(float(raw["gameStartTime"]), 4),
+        "firstBloodTime": (
+            normalized_number(float(raw["firstBloodTime"]), 4)
+            if raw.get("firstBloodTime") is not None
+            else None
+        ),
+        "seriesType": (
+            int(raw["seriesType"]) if raw.get("seriesType") is not None else None
+        ),
+        "radiantSeriesWins": (
+            int(raw["radiantSeriesWins"])
+            if raw.get("radiantSeriesWins") is not None
+            else None
+        ),
+        "direSeriesWins": (
+            int(raw["direSeriesWins"])
+            if raw.get("direSeriesWins") is not None
+            else None
+        ),
+        "fountainRadius": normalized_number(float(raw["fountainRadius"]), 4),
+        "tormentorDeaths": [
+            normalize_death_event(event) for event in raw.get("tormentorDeaths", [])
+        ],
+        "fountainDeaths": fountain_deaths,
+        "ownFountainDeaths": [
+            event for event in fountain_deaths if event["isOwnFountain"] is True
+        ],
     }
 
 
@@ -732,7 +1115,7 @@ def parse_replay(
     classpath: str,
     allow_missing: bool,
     timeout: int = 600,
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     verify_dem_header(dem)
     environment = os.environ.copy()
     environment.pop("JDK_JAVA_OPTIONS", None)
@@ -753,6 +1136,7 @@ def parse_replay(
         )
 
     players: list[dict[str, Any]] = []
+    match_record: dict[str, Any] | None = None
     for line in completed.stdout.splitlines():
         line = line.strip()
         if not line.startswith("{"):
@@ -761,21 +1145,31 @@ def parse_replay(
             raw = json.loads(line)
         except json.JSONDecodeError as exc:
             raise RuntimeError(f"Invalid helper JSON: {line}") from exc
-        players.append(normalize_player(raw, allow_missing))
+        record_type = raw.get("recordType")
+        if record_type == "match":
+            if match_record is not None:
+                raise RuntimeError("Replay helper emitted more than one match record")
+            match_record = normalize_match_record(raw)
+        elif record_type in (None, "player"):
+            players.append(normalize_player(raw, allow_missing))
+        else:
+            raise RuntimeError(f"Unknown replay record type: {record_type!r}")
 
     if len(players) != 10:
         raise RuntimeError(f"Expected 10 replay players, found {len(players)}")
     account_ids = [player["accountId"] for player in players]
     if None not in account_ids and len(set(account_ids)) != 10:
         raise RuntimeError("Replay contains duplicate player account IDs")
+    if match_record is None:
+        raise RuntimeError("Replay helper did not emit match title data")
     players.sort(key=lambda player: player["playerSlot"])
-    return players
+    return {"players": players, "titleData": match_record}
 
 
 def new_state() -> dict[str, Any]:
     return {
         "meta": {
-            "schemaVersion": 1,
+            "schemaVersion": 4,
             "leagueId": LEAGUE_ID,
             "leagueName": LEAGUE_NAME,
             "artifact": "replayFantasyStats",
@@ -783,13 +1177,25 @@ def new_state() -> dict[str, Any]:
             "parser": "Clarity 4.0.1",
             "fieldProvenance": {
                 "madstonesCollected": (
-                    "final replay state m_vecDataTeam[*].m_nAcquiredMadstone"
+                    "final replay state m_vecDataTeam[*].m_nAcquiredMadstone; "
+                    "retained for comparison"
+                ),
+                "neutralTokensFound": (
+                    "final replay state m_vecDataTeam[*].m_iNeutralTokensFound; "
+                    "scored Madstone source"
                 ),
                 "watchersCaptured": (
                     "final replay state m_vecDataTeam[*].m_iWatchersTaken"
                 ),
                 "lotusesCollected": (
                     "final replay state m_vecDataTeam[*].m_iLotusesTaken"
+                ),
+                "heroId/heroName": (
+                    "CDOTA_PlayerResource selected hero"
+                ),
+                "titleData": (
+                    "combat-log first blood/Tormentor deaths and replay-position "
+                    "fountain deaths"
                 ),
             },
         },
@@ -863,7 +1269,7 @@ def parse_one_local(args: argparse.Namespace) -> int:
         raise RuntimeError("--replay must point to a .dem or .dem.bz2 file")
 
     try:
-        players = parse_replay(
+        parsed = parse_replay(
             dem, java, classpath, args.allow_missing_fields
         )
     finally:
@@ -873,7 +1279,7 @@ def parse_one_local(args: argparse.Namespace) -> int:
     value = {
         "matchId": local_replay_match_id(source),
         "sourceFile": source.name,
-        "players": players,
+        **parsed,
     }
     print(json.dumps(value, ensure_ascii=False, indent=2))
     return 0
@@ -912,7 +1318,14 @@ def process_manifest(args: argparse.Namespace) -> dict[str, Any]:
     )
     old_state = load_state(args.output)
     match_map = {
-        int(match["matchId"]): match for match in old_state.get("matches", [])
+        int(match["matchId"]): match
+        for match in old_state.get("matches", [])
+        if isinstance(match.get("titleData"), dict)
+        and all(player.get("heroId") for player in match.get("players", []))
+        and all(
+            player.get("neutralTokensFound") is not None
+            for player in match.get("players", [])
+        )
     }
     error_map = {
         int(error["matchId"]): error for error in old_state.get("errors", [])
@@ -935,7 +1348,7 @@ def process_manifest(args: argparse.Namespace) -> dict[str, Any]:
             existed = expected_dem.exists()
             dem = decompress_replay(compressed, expected_dem, args.quiet)
             created_dem = not existed
-            players = parse_replay(
+            parsed = parse_replay(
                 dem, java, classpath, args.allow_missing_fields
             )
             match_map[match_id] = {
@@ -946,7 +1359,7 @@ def process_manifest(args: argparse.Namespace) -> dict[str, Any]:
                 "replaySalt": item["replaySalt"],
                 "replayUrl": item["replayUrl"],
                 "replayFile": item["filename"],
-                "players": players,
+                **parsed,
             }
             error_map.pop(match_id, None)
             if not args.quiet:
@@ -1024,10 +1437,21 @@ def merge_replay_stats(
             proxies = player.setdefault("proxies", {})
             proxies.setdefault("madstone_bundle_uses", stats.get("madstones_collected"))
             proxies.setdefault("watcher_ability_uses", stats.get("watchers_captured"))
-            stats["madstones_collected"] = exact["madstonesCollected"]
+            stats["madstones_collected"] = exact["neutralTokensFound"]
             stats["watchers_captured"] = exact["watchersCaptured"]
             stats["lotuses_collected"] = exact["lotusesCollected"]
+            player["replayCounters"] = {
+                "acquiredMadstones": exact.get("madstonesCollected"),
+                "currentMadstones": exact.get("currentMadstones"),
+                "neutralTokensFound": exact.get("neutralTokensFound"),
+            }
+            player["heroId"] = exact.get("heroId")
+            player["heroName"] = exact.get("heroName")
+            is_radiant = int(player["playerSlot"]) < 128
+            player["won"] = bool(match["radiantWin"]) == is_radiant
+            player["lost"] = not player["won"]
             rows_by_player[(int(player["teamId"]), account_id)].append(stats)
+        match["titleData"] = replay_match.get("titleData")
         merged_matches += 1
 
     stat_keys = (
@@ -1059,7 +1483,7 @@ def merge_replay_stats(
     )
     provenance = meta.setdefault("fieldProvenance", {})
     provenance["madstones_collected"] = (
-        "Valve replay m_vecDataTeam[*].m_nAcquiredMadstone"
+        "Valve replay m_vecDataTeam[*].m_iNeutralTokensFound"
     )
     provenance["watchers_captured"] = (
         "Valve replay m_vecDataTeam[*].m_iWatchersTaken"
@@ -1081,6 +1505,7 @@ def merge_replay_stats(
         "parser": "Clarity 4.0.1",
         "matchesMerged": merged_matches,
         "exactFields": list(stat_keys),
+        "includesHeroAndTitleData": True,
         "sourceArtifact": state.get("meta", {}).get(
             "artifact", "replayFantasyStats"
         ),
@@ -1096,7 +1521,16 @@ def build_summary(
     for match in dataset["matches"]:
         for player in match["players"]:
             player_maps[int(player["accountId"])].append(
-                {"matchId": match["matchId"], "stats": player["stats"]}
+                {
+                    "matchId": match["matchId"],
+                    "heroId": player.get("heroId"),
+                    "heroName": player.get("heroName"),
+                    "won": player.get("won"),
+                    "lost": player.get("lost"),
+                    "titleData": match.get("titleData"),
+                    "replayCounters": player.get("replayCounters"),
+                    "stats": player["stats"],
+                }
             )
     return {
         "meta": {

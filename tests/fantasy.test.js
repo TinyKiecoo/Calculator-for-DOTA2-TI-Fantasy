@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const {
   buildRankings,
+  calculateTitleBonus,
   calculateEmblemModifiers,
   cloneDefaultConfig,
   internationalRoleColors,
@@ -202,7 +203,7 @@ test("pairs only same-team players and averages their two scores", () => {
   assert.ok(!rankings[0].key.includes("b1"));
 });
 
-test("switches between one-map highest score and all-map average score", () => {
+test("takes the best two maps from the highest-scoring series", () => {
   const emblems = [
     { color: "red", stat: "kills", quality: 1, trait: "unique" },
     { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
@@ -211,7 +212,7 @@ test("switches between one-map highest score and all-map average score", () => {
   const player = {
     id: "p1",
     role: "mid",
-    games: 2,
+    games: 5,
     averages: {
       kills: 3,
       stun_seconds: 6,
@@ -220,37 +221,108 @@ test("switches between one-map highest score and all-map average score", () => {
     maps: [
       {
         matchId: 1,
+        seriesId: 10,
         stats: { kills: 2, stun_seconds: 4, gpm: 200 },
       },
       {
         matchId: 2,
+        seriesId: 10,
         stats: { kills: 4, stun_seconds: 8, gpm: 400 },
+      },
+      {
+        matchId: 3,
+        seriesId: 10,
+        stats: { kills: 3, stun_seconds: 6, gpm: 300 },
+      },
+      {
+        matchId: 4,
+        seriesId: 20,
+        stats: { kills: 5, stun_seconds: 10, gpm: 500 },
+      },
+      {
+        matchId: 5,
+        seriesId: 20,
+        stats: { kills: 1, stun_seconds: 2, gpm: 100 },
       },
     ],
   };
-  const firstMap = scorePlayer(
-    { ...player, maps: [player.maps[0]] },
-    emblems,
-    "average",
-  ).score;
-  const secondMap = scorePlayer(
-    { ...player, maps: [player.maps[1]] },
-    emblems,
-    "average",
-  ).score;
+  const mapScores = player.maps.map((map) =>
+    scorePlayer(
+      { ...player, maps: [{ ...map, seriesId: map.matchId }] },
+      emblems,
+      "highest",
+    ).score,
+  );
 
   assert.equal(
     scorePlayer(player, emblems, "highest").score,
-    Math.max(firstMap, secondMap),
+    Math.max(
+      mapScores[1] + mapScores[2],
+      mapScores[3] + mapScores[4],
+    ),
   );
-  assert.equal(
-    scorePlayer(player, emblems, "average").score,
-    (firstMap + secondMap) / 2,
+  assert.deepEqual(
+    scorePlayer(player, emblems, "highest").matchIds,
+    [2, 3],
   );
-  assert.equal(scorePlayer(player, emblems, "highest").matchId, 2);
 });
 
-test("takes a pair's highest score from the same map", () => {
+test("average mode doubles the average across every valid map", () => {
+  const emblems = [
+    { color: "red", stat: "kills", quality: 1, trait: "unique" },
+    { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
+    { color: "red", stat: "gpm", quality: 1, trait: "benevolent" },
+  ];
+  const player = {
+    id: "p1",
+    role: "mid",
+    maps: [
+      { matchId: 1, seriesId: 10, stats: { kills: 2, stun_seconds: 4, gpm: 200 } },
+      { matchId: 2, seriesId: 10, stats: { kills: 4, stun_seconds: 8, gpm: 400 } },
+      { matchId: 3, seriesId: 20, stats: { kills: 5, stun_seconds: 10, gpm: 500 } },
+    ],
+  };
+  const isolated = player.maps.map((map) =>
+    scorePlayer(
+      { ...player, maps: [{ ...map, seriesId: map.matchId }] },
+      emblems,
+      "highest",
+    ).score,
+  );
+
+  assert.equal(
+    scorePlayer(player, emblems, "average").score,
+    ((isolated[0] + isolated[1] + isolated[2]) / 3) * 2,
+  );
+  assert.deepEqual(
+    scorePlayer(player, emblems, "average").matchIds,
+    [1, 2, 3],
+  );
+});
+
+test("treats a missing series ID as a standalone match", () => {
+  const emblems = [
+    { color: "red", stat: "kills", quality: 1, trait: "unique" },
+    { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
+    { color: "red", stat: "gpm", quality: 1, trait: "benevolent" },
+  ];
+  const player = {
+    id: "p1",
+    role: "mid",
+    maps: [
+      { matchId: 1, stats: { kills: 1, stun_seconds: 1, gpm: 100 } },
+      { matchId: 2, stats: { kills: 2, stun_seconds: 2, gpm: 200 } },
+    ],
+  };
+  const expected = scorePlayer(
+    { ...player, maps: [player.maps[1]] },
+    emblems,
+    "highest",
+  ).score;
+  assert.equal(scorePlayer(player, emblems, "highest").score, expected);
+});
+
+test("averages a pair within each map before summing the series' best two", () => {
   const emblems = [
     { color: "red", stat: "kills", quality: 1, trait: "unique" },
     { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
@@ -262,8 +334,8 @@ test("takes a pair's highest score from the same map", () => {
     role: "core",
     games: 2,
     maps: [
-      { matchId: 101, stats: firstStats },
-      { matchId: 102, stats: secondStats },
+      { matchId: 101, seriesId: 99, stats: firstStats },
+      { matchId: 102, seriesId: 99, stats: secondStats },
     ],
     averages: {},
   });
@@ -283,12 +355,12 @@ test("takes a pair's highest score from the same map", () => {
       scorePlayer(
         { ...first, maps: [first.maps[0]] },
         emblems,
-        "average",
+        "highest",
       ).score +
       scorePlayer(
         { ...second, maps: [second.maps[0]] },
         emblems,
-        "average",
+        "highest",
       ).score
     ) / 2;
   const secondMapPair =
@@ -296,22 +368,44 @@ test("takes a pair's highest score from the same map", () => {
       scorePlayer(
         { ...first, maps: [first.maps[1]] },
         emblems,
-        "average",
+        "highest",
       ).score +
       scorePlayer(
         { ...second, maps: [second.maps[1]] },
         emblems,
-        "average",
+        "highest",
       ).score
     ) / 2;
 
-  assert.equal(pair.score, Math.max(firstMapPair, secondMapPair));
-  assert.equal(pair.matchId, firstMapPair > secondMapPair ? 101 : 102);
-  assert.notEqual(
-    pair.score,
-    (
-      scorePlayer(first, emblems, "highest").score +
-      scorePlayer(second, emblems, "highest").score
-    ) / 2,
-  );
+  assert.equal(pair.score, firstMapPair + secondMapPair);
+  assert.deepEqual(pair.matchIds, [
+    firstMapPair > secondMapPair ? 101 : 102,
+    firstMapPair > secondMapPair ? 102 : 101,
+  ]);
+});
+
+test("applies matching prefix and suffix bonuses to each map additively", () => {
+  const map = {
+    heroId: 2,
+    lost: true,
+    titleConditions: {
+      durationUnder25Minutes: true,
+      anyPlayerDiedToTormentor: false,
+    },
+  };
+
+  assert.deepEqual(calculateTitleBonus(map, {
+    prefix: "crimson",
+    suffix: "loser",
+  }), {
+    prefix: 0.06,
+    suffix: 0.06,
+    total: 0.12,
+    prefixActive: true,
+    suffixActive: true,
+  });
+  assert.equal(calculateTitleBonus(map, {
+    prefix: "azure",
+    suffix: "sufferer",
+  }).total, 0);
 });

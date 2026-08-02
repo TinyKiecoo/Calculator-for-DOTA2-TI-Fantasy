@@ -75,12 +75,19 @@ test("loads the browser data snapshot without fetch or modules", () => {
   ];
   for (const map of dataset.teams.flatMap((team) =>
     team.players.flatMap((player) => player.maps))) {
+    assert.notEqual(map.seriesId, undefined, "seriesId must be present");
+    assert.notEqual(map.seriesType, undefined, "seriesType must be present");
+    assert.notEqual(map.heroId, undefined, "heroId must be present");
+    assert.notEqual(map.titleConditions, undefined, "title conditions must be present");
     for (const stat of requiredStats) {
       assert.notEqual(map.stats[stat], null, `${stat} must be available`);
       assert.notEqual(map.stats[stat], undefined, `${stat} must be present`);
     }
   }
-  assert.match(dataset.meta.fieldProvenance.madstones_collected, /m_nAcquiredMadstone/);
+  assert.match(
+    dataset.meta.fieldProvenance.madstones_collected,
+    /m_(?:nAcquiredMadstone|iNeutralTokensFound)/,
+  );
   assert.match(dataset.meta.fieldProvenance.watchers_captured, /m_iWatchersTaken/);
   assert.match(dataset.meta.fieldProvenance.lotuses_collected, /m_iLotusesTaken/);
   assert.equal(JSON.stringify(dataset), JSON.stringify(jsonDataset));
@@ -141,6 +148,8 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.equal((rendered.match(/class="leaderboard"/g) || []).length, 3);
   assert.equal((rendered.match(/class="banner-score-outside"/g) || []).length, 3);
   assert.equal((rendered.match(/data-score-mode="highest"/g) || []).length, 3);
+  assert.match(element("prefix-title-select").innerHTML, /value="crimson"/);
+  assert.match(element("suffix-title-select").innerHTML, /value="loser"/);
   assert.doesNotMatch(rendered, /leaderboard-header|有效地图/);
   assert.notEqual(element("total-score").textContent, "—");
   assert.equal(element("load-error").hidden, true);

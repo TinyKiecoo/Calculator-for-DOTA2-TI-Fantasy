@@ -14,6 +14,8 @@
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modal-close");
   const stageSwitcher = document.getElementById("stage-switcher");
+  const prefixTitleSelect = document.getElementById("prefix-title-select");
+  const suffixTitleSelect = document.getElementById("suffix-title-select");
   const correctionBanner = document.getElementById("correction-banner");
   const correctionBannerClose = document.getElementById("correction-banner-close");
 
@@ -37,6 +39,9 @@
       switchLanguage: "切换为英文",
       dataNotes: "数据说明",
       stageSwitcher: "赛事阶段",
+      advisorTitles: "指导员称号",
+      prefixTitle: "前缀",
+      suffixTitle: "后缀",
       correctionNotice: "包括“采集莲花”、“占领观察者”和“狂石收集数量”在内的所有数据均已修正。",
       closeCorrectionNotice: "关闭提示",
       bannerGrid: "三面梦幻战旗",
@@ -58,8 +63,8 @@
       emblemAria: "{role}第 {index} 枚{color}徽标",
       liveRanking: "{role}实时排名",
       scoreMethod: "积分方式",
-      highestScore: "最高得分",
-      averageScore: "平均得分",
+      highestScore: "最高两场",
+      averageScore: "全部地图平均 ×2",
       emblemPennant: "{role}徽标挂幅",
       bannerScore: "{role}战旗积分",
       dataKicker: "DATA NOTES",
@@ -70,7 +75,7 @@
       players: "选手",
       generatedDate: "生成日期",
       scoringMethodTitle: "计算口径",
-      scoringMethodBody: "最高得分逐张地图应用当前徽标倍率并取最高的一张；平均得分对全部有效地图的最终分数取算术平均。双人战旗始终要求两人来自同队，并在同一张地图上先取二人平均。",
+      scoringMethodBody: "每位选手逐场应用徽标与指导员称号加成；双人战旗在同一场比赛中先取二人平均。“最高两场”在每个系列赛内取最高两场之和，再选择全结算期最高的系列赛；“全部地图平均 ×2”对全结算期所有有效地图取平均并乘二，不再逐系列赛择优。",
       knownLimitations: "数据说明",
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
@@ -82,6 +87,28 @@
       },
       traitLabels: {
         fractal: "分形", benevolent: "仁爱", vampire: "吸血鬼", unique: "唯一", friendly: "友好",
+      },
+      prefixTitles: {
+        none: "不选择前缀",
+        crimson: "猩红的：使用红色英雄时 +6%。",
+        azure: "蔚蓝的：使用蓝色英雄时 +11%。",
+        emerald: "碧绿的：使用绿色英雄时 +6%。",
+        purple: "紫气的：使用紫色英雄时 +10%。",
+        golden: "金光的：使用黄色或棕色英雄 +8%。",
+        elemental: "精通元素的：使用水系、火系或冰系英雄时 +8%。",
+        otherworldly: "异界的：使用亡灵、恶魔或圣灵英雄时 +7%。",
+        heroic: "盖世英雄：使用穿披风或戴面具的英雄时 +9%。",
+      },
+      suffixTitles: {
+        none: "不选择后缀",
+        sufferer: "受难之人：有任意选手死于痛苦魔方时 +23%。",
+        flayedTwinsAcolyte: "剥皮双子侍祭：任意选手在号角吹响前拿到第一滴血则 +9%。",
+        patient: "隐忍之人：第一滴血在 10 分钟后发生则 +23%。",
+        loser: "败者：选手失利的比赛中 +6%。",
+        bold: "果敢之人：短于 25 分钟的比赛中 +24%。",
+        pivotal: "关键之人：系列赛有可能打到的最后一场比赛中 +16%。",
+        lucky: "幸运之人：若比赛时间以 8 结尾则 +21%。",
+        cruel: "残酷之人：若有选手在己方泉水阵亡则 +13%。",
       },
       stats: {
         kills: { label: "击杀", formula: "每次 × 107" },
@@ -118,6 +145,9 @@
       switchLanguage: "Switch to Chinese",
       dataNotes: "Data Notes",
       stageSwitcher: "Tournament stage",
+      advisorTitles: "Advisor titles",
+      prefixTitle: "Prefix",
+      suffixTitle: "Suffix",
       correctionNotice: "All data, including LOTUSES GRABBED, MADSTONE COLLECTED and WATCHERS TAKEN, has been corrected.",
       closeCorrectionNotice: "Dismiss notice",
       bannerGrid: "Three fantasy banners",
@@ -139,8 +169,8 @@
       emblemAria: "{role}, emblem {index}, {color}",
       liveRanking: "Live {role} ranking",
       scoreMethod: "Scoring method",
-      highestScore: "Highest Score",
-      averageScore: "Average Score",
+      highestScore: "Best Two Maps",
+      averageScore: "All-Map Average ×2",
       emblemPennant: "{role} emblem pennant",
       bannerScore: "{role} banner score",
       dataKicker: "DATA NOTES",
@@ -151,7 +181,7 @@
       players: "Players",
       generatedDate: "Generated",
       scoringMethodTitle: "Scoring Method",
-      scoringMethodBody: "Highest Score applies the current emblem multipliers to every map and selects the best map. Average Score takes the arithmetic mean of all valid map scores. Two-player banners always require both players to be on the same team and average their scores within the same map first.",
+      scoringMethodBody: "Each player is scored map by map with emblem and advisor-title bonuses. Two-player banners first average both players within the same map. Best Two Maps sums the top two maps in each series and keeps the highest-scoring series; All-Map Average ×2 averages every valid map in the full scoring period and doubles it without selecting a best series.",
       knownLimitations: "Data Notes",
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
@@ -163,6 +193,28 @@
       },
       traitLabels: {
         fractal: "FRACTAL", benevolent: "BENEVOLENT", vampire: "VAMPIRIC", unique: "UNIQUE", friendly: "FRIENDLY",
+      },
+      prefixTitles: {
+        none: "No prefix",
+        crimson: "Crimson: +6% when playing a red hero.",
+        azure: "Cerulean: +11% when playing a blue hero.",
+        emerald: "Emerald: +6% when playing a green hero.",
+        purple: "Royal: +10% when playing a purple hero.",
+        golden: "Golden: +8% when playing a yellow or brown hero.",
+        elemental: "Elemental: +8% when playing an Aquatic, Fiery, or Icy Hero.",
+        otherworldly: "Otherworldly: +7% when playing an Undead, Demon, or Spirit Hero.",
+        heroic: "Heroic: +9% when playing a Caped or Masked Hero.",
+      },
+      suffixTitles: {
+        none: "No suffix",
+        sufferer: "the Tormented: +23% if any player dies to a Tormentor.",
+        flayedTwinsAcolyte: "the Flayed Twins Acolyte: +9% if any player gets first blood before the starting horn.",
+        patient: "the Patient: +23% if first blood does not happen until after 10 minutes.",
+        loser: "the Underdog: +6% in games where the player losses.",
+        bold: "the Decisive: +24% in games that last less than 25 minutes.",
+        pivotal: "the Clutch: +16% when playing the last possible match of a series.",
+        lucky: "the Lucky: +21% if the match time ends with an 8.",
+        cruel: "the Cruel: +13% if a player is killed while in their own fountain.",
       },
       stats: {
         kills: { label: "KILLS", formula: "Each × 107" },
@@ -294,6 +346,7 @@
     applyStaticTranslations();
 
     if (dataset && engine) {
+      updateAdvisorTitleSelectors();
       players = normalizePlayers(dataset);
       render();
       if (!modalBackdrop.hidden) {
@@ -460,6 +513,14 @@
       config: pages[stage].config,
       selectedKeys: pages[stage].selectedKeys,
       scoreMode: pages[stage].scoreMode,
+      titles: {
+        prefix: engine.prefixTitles[saved?.titles?.prefix]
+          ? saved.titles.prefix
+          : "none",
+        suffix: engine.suffixTitles[saved?.titles?.suffix]
+          ? saved.titles.suffix
+          : "none",
+      },
     };
   }
 
@@ -479,7 +540,12 @@
     try {
       localStorage.setItem(
         PAGE_STATE_STORAGE_KEY,
-        JSON.stringify({ version: 1, stage: state.stage, pages: state.pages }),
+        JSON.stringify({
+          version: 2,
+          stage: state.stage,
+          pages: state.pages,
+          titles: state.titles,
+        }),
       );
     } catch (error) {
       // The calculator still works when storage is blocked or full.
@@ -492,6 +558,17 @@
       button.classList.toggle("is-active", active);
       button.setAttribute("aria-pressed", String(active));
     });
+  }
+
+  function updateAdvisorTitleSelectors() {
+    prefixTitleSelect.innerHTML = engine.prefixTitleKeys
+      .map((key) => optionMarkup(key, copy().prefixTitles[key], state.titles.prefix))
+      .join("");
+    suffixTitleSelect.innerHTML = engine.suffixTitleKeys
+      .map((key) => optionMarkup(key, copy().suffixTitles[key], state.titles.suffix))
+      .join("");
+    prefixTitleSelect.value = state.titles.prefix;
+    suffixTitleSelect.value = state.titles.suffix;
   }
 
   let modalTrigger = null;
@@ -544,6 +621,14 @@
           maps: Array.isArray(player.maps)
             ? player.maps.map((map) => ({
                 matchId: map.matchId,
+                seriesId: map.seriesId ?? null,
+                seriesType: map.seriesType ?? null,
+                seriesGameNumber: map.seriesGameNumber ?? null,
+                heroId: map.heroId ?? null,
+                heroName: map.heroName ?? null,
+                won: map.won === true,
+                lost: map.lost === true,
+                titleConditions: map.titleConditions || {},
                 stats: normalizeAverages(map.stats),
               }))
             : [],
@@ -596,6 +681,7 @@
         players,
         state.config[role],
         state.scoreMode[role],
+        state.titles,
       );
       selected[role] =
         rankings[role].find(
@@ -782,10 +868,6 @@
 
           <div class="banner-rope is-bottom" aria-hidden="true"></div>
         </article>
-        <output
-          class="banner-score-outside"
-          aria-label="${escapeHtml(text("bannerScore", { role: roleName(role) }))}"
-        >${escapeHtml(formatScore(selected ? selected.score : null))}</output>
       </section>`;
   }
 
@@ -987,6 +1069,20 @@
     render({ type: "ranking", role, key });
   });
 
+  prefixTitleSelect.addEventListener("change", () => {
+    if (!engine.prefixTitles[prefixTitleSelect.value]) return;
+    state.titles.prefix = prefixTitleSelect.value;
+    persistPageState();
+    render();
+  });
+
+  suffixTitleSelect.addEventListener("change", () => {
+    if (!engine.suffixTitles[suffixTitleSelect.value]) return;
+    state.titles.suffix = suffixTitleSelect.value;
+    persistPageState();
+    render();
+  });
+
   stageSwitcher.addEventListener("click", (event) => {
     if (!(event.target instanceof Element)) return;
     const button = event.target.closest("button[data-stage]");
@@ -1039,6 +1135,7 @@
 
   try {
     updateStageSwitcher();
+    updateAdvisorTitleSelectors();
     render();
   } catch (error) {
     console.error(error);
