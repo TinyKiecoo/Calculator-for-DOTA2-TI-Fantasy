@@ -163,6 +163,11 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.equal((rendered.match(/class="war-banner /g) || []).length, 3);
   assert.equal((rendered.match(/class="emblem-card /g) || []).length, 9);
   assert.equal((rendered.match(/class="banner-score"/g) || []).length, 3);
+  assert.match(
+    css,
+    /\.emblem-pennant\s*\{[\s\S]*?height:\s*auto;/,
+    "the pennant height must follow its content stack",
+  );
   assert.equal((rendered.match(/class="leaderboard"/g) || []).length, 3);
   assert.equal((rendered.match(/data-score-mode="highest"/g) || []).length, 3);
   assert.equal((rendered.match(/data-field="multiplier"/g) || []).length, 9);

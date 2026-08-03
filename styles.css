@@ -541,7 +541,7 @@ a:focus-visible {
   right: 3.3%;
   z-index: 3;
   width: 43.5%;
-  height: 302px;
+  height: auto;
   padding: 10px 9px 45px;
   background: rgba(238, 232, 199, .92);
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 90%, 0 100%);
@@ -561,7 +561,7 @@ a:focus-visible {
 }
 
 .war-banner--five .emblem-pennant {
-  height: 472px;
+  height: auto;
 }
 
 .war-banner--five .emblem-card {
@@ -766,6 +766,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   text-align: right;
   font-size: .59rem;
   letter-spacing: .04em;
+  font-family: 'Reaver';
 }
 
 .leaderboard {
@@ -837,7 +838,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 }
 
 .ranking-identity strong {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
 }
 

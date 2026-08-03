@@ -85,7 +85,7 @@
       knownLimitations: "数据说明",
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
-      dataSourcesBody: "常规赛后数据来自 OpenDota；狂石、观察者与莲花直接读取 Valve 回放最终状态字段。Liquipedia 链接仅用于记录赛事来源。",
+      dataSourcesBody: "常规赛后数据来自 OpenDota；狂石、观察者与莲花直接读取 Valve 回放最终状态字段。",
       roles: { core: "核心", mid: "中单", support: "辅助" },
       colors: { red: "红色", blue: "蓝色", green: "绿色" },
       qualityLabels: {
@@ -195,7 +195,7 @@
       knownLimitations: "Data Notes",
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
-      dataSourcesBody: "Regular post-game stats come from OpenDota. Madstone, Watcher, and Lotus values are read directly from final-state fields in Valve replays. The Liquipedia link records the tournament source only.",
+      dataSourcesBody: "Regular post-game stats come from OpenDota. Madstone, Watcher, and Lotus values are read directly from final-state fields in Valve replays.",
       roles: { core: "Core", mid: "Mid", support: "Support" },
       colors: { red: "Red", blue: "Blue", green: "Green" },
       qualityLabels: {
