@@ -40,12 +40,20 @@
 </head>
 <body>
   <aside class="correction-banner" id="correction-banner" role="status" hidden>
-    <span data-i18n="correctionNotice">包括“莲花采集”、“采集莲花”和“狂石收集数量”在内的所有数据均已修正。</span>
     <button
       type="button"
+      class="correction-banner-open"
+      id="scoring-change-notice-open"
+      aria-label="查看 2025 与 2026 积分规则变化"
+      data-i18n-aria-label="openScoringChangeNotice"
+      data-i18n="scoringChangeNotice"
+    >温馨提示：请注意今年积分规则的改变。</button>
+    <button
+      type="button"
+      class="correction-banner-close"
       id="correction-banner-close"
-      aria-label="关闭提示"
-      data-i18n-aria-label="closeCorrectionNotice"
+      aria-label="关闭积分规则变化提示"
+      data-i18n-aria-label="closeScoringChangeNotice"
     >×</button>
   </aside>
   <div class="fantasy-app">

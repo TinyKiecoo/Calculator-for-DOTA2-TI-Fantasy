@@ -92,7 +92,25 @@ a:focus-visible {
   text-align: center;
 }
 
-.correction-banner button {
+.correction-banner-open {
+  max-width: calc(100% - 16px);
+  padding: 2px 8px;
+  color: inherit;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  letter-spacing: inherit;
+  text-align: center;
+}
+
+.correction-banner-open:hover {
+  color: #fff;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.correction-banner-close {
   position: absolute;
   top: 0;
   right: 8px;
@@ -106,7 +124,7 @@ a:focus-visible {
   font-size: 1rem;
 }
 
-.correction-banner button:hover {
+.correction-banner-close:hover {
   color: #fff;
   background: rgba(255, 255, 255, .08);
 }
@@ -1012,6 +1030,61 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 
 .stat-table td {
   color: #8f867a;
+}
+
+.score-change-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.score-change-table {
+  min-width: 760px;
+  margin-top: 0;
+}
+
+.score-change-table th,
+.score-change-table td {
+  padding: 9px 8px;
+  vertical-align: top;
+  line-height: 1.45;
+}
+
+.score-change-table thead th:first-child {
+  width: 20%;
+}
+
+.score-change-table thead th:nth-child(2),
+.score-change-table thead th:nth-child(3) {
+  width: 31%;
+}
+
+.score-change-table tbody th {
+  color: #d8c9ad;
+  font-family: var(--display-font);
+  font-size: .68rem;
+  font-weight: 400;
+}
+
+.score-change-percent {
+  color: #a69c8c;
+  font-family: var(--number-font);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.score-change-row.is-increase .score-change-percent,
+.score-change-row.is-increase td:nth-child(3) {
+  color: #79c990;
+}
+
+.score-change-row.is-decrease .score-change-percent,
+.score-change-row.is-decrease td:nth-child(3) {
+  color: #df7c74;
+}
+
+.score-change-row.is-neutral .score-change-percent {
+  color: #aaa18f;
 }
 
 .sr-only {

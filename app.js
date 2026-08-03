@@ -19,12 +19,33 @@
   const suffixTitleSelect = document.getElementById("suffix-title-select");
   const correctionBanner = document.getElementById("correction-banner");
   const correctionBannerClose = document.getElementById("correction-banner-close");
+  const scoringChangeNoticeOpen = document.getElementById("scoring-change-notice-open");
 
   const languageToggle = document.getElementById("language-toggle");
   const LANGUAGE_STORAGE_KEY = "ti-fantasy-language";
   const PAGE_STATE_STORAGE_KEY = "ti-fantasy-page-state-v1";
-  const CORRECTION_NOTICE_STORAGE_KEY = "ti-fantasy-corrected-data-notice-v1";
+  const SCORING_CHANGE_NOTICE_STORAGE_KEY = "ti-fantasy-scoring-change-notice-v1";
   const MULTIPLIER_MODES = ["calculated", "manual"];
+  const SCORING_CHANGES = [
+    { key: "kills", previous: 121, current: 107 },
+    { key: "deaths", previous: 1800, current: 1950 },
+    { key: "creep_score", previous: 3, current: 3 },
+    { key: "gpm", previous: 2, current: 2 },
+    { key: "madstone_collected", previous: 19, current: 13 },
+    { key: "tower_kills", previous: 340, current: 352 },
+    { key: "observer_wards_placed", previous: 113, current: 117 },
+    { key: "camps_stacked", previous: 170, current: 234 },
+    { key: "runes_grabbed", previous: 121, current: 141 },
+    { key: "watchers_taken", previous: 121, current: 147 },
+    { key: "lotuses_collected", previous: 213, current: 176 },
+    { key: "roshan_kills", previous: 850, current: 1172 },
+    { key: "teamfight_participation", previous: 1895, current: 2124 },
+    { key: "stun_seconds", previous: 128, current: 10 },
+    { key: "tormentor_kills", previous: 850, current: 879 },
+    { key: "courier_kills", previous: 850, current: 703 },
+    { key: "first_blood", previous: 1700, current: 1934 },
+    { key: "smokes_used", previous: 283, current: 293 },
+  ];
 
   const translations = {
     zh: {
@@ -48,8 +69,36 @@
       advisorTitles: "指导员称号",
       prefixTitle: "前缀",
       suffixTitle: "后缀",
-      correctionNotice: "包括“采集莲花”、“占领观察者”和“狂石收集数量”在内的所有数据均已修正。",
-      closeCorrectionNotice: "关闭提示",
+      scoringChangeNotice: "温馨提示：请注意今年积分规则的改变。",
+      openScoringChangeNotice: "查看 2025 与 2026 积分规则变化",
+      closeScoringChangeNotice: "关闭积分规则变化提示",
+      scoringChangesKicker: "SCORING CHANGES",
+      scoringChangesTitle: "2025 与 2026 积分规则对比",
+      scoringChangesLead: "以下项目按基础积分系数的相对涨跌幅从高到低排列。死亡的初始分和每次死亡扣分均同比增加 8.33%。",
+      scoringCategory: "项目",
+      scoringPreviousYear: "2025",
+      scoringCurrentYear: "2026",
+      scoringRelativeChange: "相对变化",
+      scoringChanges: {
+        kills: { label: "击杀", previous: "每个击杀 +121", current: "每个击杀 +107" },
+        deaths: { label: "死亡", previous: "初始积分为 1800，每次阵亡 −180", current: "初始积分为 1950，每次阵亡 −195" },
+        creep_score: { label: "正反补", previous: "每个正补/反补 +3", current: "每个正补/反补 +3" },
+        gpm: { label: "GPM", previous: "得分为选手 GPM 乘以 2", current: "得分为选手 GPM 乘以 2" },
+        madstone_collected: { label: "狂石收集数量", previous: "每收集一块狂石 +19", current: "每收集一块狂石 +13" },
+        tower_kills: { label: "摧毁防御塔", previous: "摧毁一座防御塔 +340", current: "摧毁一座防御塔 +352" },
+        observer_wards_placed: { label: "放置守卫", previous: "放置一个侦察守卫 +113", current: "放置一个侦察守卫 +117" },
+        camps_stacked: { label: "堆叠野怪", previous: "堆叠一次野怪 +170", current: "堆叠一次野怪 +234" },
+        runes_grabbed: { label: "拾取神符", previous: "装入/激活一个神符 +121", current: "装入/激活一个神符 +141" },
+        watchers_taken: { label: "占领观察者", previous: "占领一个观察者 +121", current: "占领一个观察者 +147" },
+        lotuses_collected: { label: "采集莲花", previous: "采集一朵莲花 +213", current: "采集一朵莲花 +176" },
+        roshan_kills: { label: "击杀肉山", previous: "击杀肉山 +850", current: "击杀肉山 +1172" },
+        teamfight_participation: { label: "参与团战", previous: "参与团战最多可得 1895", current: "参与团战最多可得 2124" },
+        stun_seconds: { label: "眩晕时间", previous: "造成一秒眩晕 +128", current: "造成一秒眩晕 +10" },
+        tormentor_kills: { label: "消灭痛苦魔方", previous: "消灭痛苦魔方 +850", current: "消灭痛苦魔方 +879" },
+        courier_kills: { label: "杀害信使", previous: "杀害一次信使 +850", current: "杀害一次信使 +703" },
+        first_blood: { label: "第一滴血", previous: "选手获得第一滴血时获得 1700 分", current: "选手获得第一滴血时获得 1934 分" },
+        smokes_used: { label: "开雾次数", previous: "每次使用诡计之雾 +283", current: "每次使用诡计之雾 +293" },
+      },
       bannerGrid: "三面梦幻战旗",
       loading: "正在载入本地赛事数据…",
       loadErrorTitle: "本地数据未能载入",
@@ -158,8 +207,36 @@
       advisorTitles: "Advisor titles",
       prefixTitle: "Prefix",
       suffixTitle: "Suffix",
-      correctionNotice: "All data, including LOTUSES GRABBED, MADSTONE COLLECTED and WATCHERS TAKEN, has been corrected.",
-      closeCorrectionNotice: "Dismiss notice",
+      scoringChangeNotice: "Kind reminder: Please note this year's changes to the scoring rules.",
+      openScoringChangeNotice: "View the 2025 and 2026 scoring-rule changes",
+      closeScoringChangeNotice: "Dismiss scoring-rule change notice",
+      scoringChangesKicker: "SCORING CHANGES",
+      scoringChangesTitle: "2025 vs. 2026 Scoring Rules",
+      scoringChangesLead: "Categories are sorted from the largest relative increase in their base scoring coefficient to the largest decrease. Death starting points and the per-death penalty both increased by 8.33%.",
+      scoringCategory: "Category",
+      scoringPreviousYear: "2025",
+      scoringCurrentYear: "2026",
+      scoringRelativeChange: "Relative change",
+      scoringChanges: {
+        kills: { label: "KILLS", previous: "+121 per kill", current: "+107 per kill" },
+        deaths: { label: "DEATHS", previous: "1800 starting points, −180 per death", current: "1950 starting points, −195 per death" },
+        creep_score: { label: "CREEP SCORE", previous: "+3 per last hit or deny", current: "+3 per last hit or deny" },
+        gpm: { label: "GPM", previous: "Scores player's GPM Multiplied by 2", current: "Scores player's GPM Multiplied by 2" },
+        madstone_collected: { label: "MADSTONE COLLECTED", previous: "+19 per Madstone collected", current: "+13 per Madstone collected" },
+        tower_kills: { label: "TOWER KILLS", previous: "+340 per Tower last hit", current: "+352 per Tower last hit" },
+        observer_wards_placed: { label: "WARDS PLACED", previous: "+113 per observer ward placed", current: "+117 per observer ward placed" },
+        camps_stacked: { label: "CAMPS STACKED", previous: "+170 per camp stacked", current: "+234 per camp stacked" },
+        runes_grabbed: { label: "RUNES GRABBED", previous: "+121 per rune bottled or taken", current: "+141 per rune bottled or taken" },
+        watchers_taken: { label: "WATCHERS TAKEN", previous: "+121 per captured Watcher", current: "+147 per captured Watcher" },
+        lotuses_collected: { label: "LOTUSES GRABBED", previous: "+213 per Lotus taken", current: "+176 per Lotus taken" },
+        roshan_kills: { label: "ROSHAN KILLS", previous: "+850 per Roshan kill", current: "+1172 per Roshan kill" },
+        teamfight_participation: { label: "TEAMFIGHT PARTICIPATION", previous: "Up to 1895 points based on participation", current: "Up to 2124 points based on participation" },
+        stun_seconds: { label: "STUNS", previous: "+128 per second of stun", current: "+10 per second of stun" },
+        tormentor_kills: { label: "TORMENTOR KILLS", previous: "+850 per Tormentor kill", current: "+879 per Tormentor kill" },
+        courier_kills: { label: "COURIER KILLS", previous: "+850 per Courier kill", current: "+703 per Courier kill" },
+        first_blood: { label: "FIRST BLOOD", previous: "+1700 if the player gets First Blood", current: "+1934 if the player gets First Blood" },
+        smokes_used: { label: "SMOKES USED", previous: "+283 per Smoke of Deceit used", current: "+293 per Smoke of Deceit used" },
+      },
       bannerGrid: "Three fantasy banners",
       loading: "Loading local tournament data…",
       loadErrorTitle: "Local data could not be loaded",
@@ -301,17 +378,15 @@
     }
   }
 
-  function initializeCorrectionNotice() {
-    let alreadySeen = false;
+  function initializeScoringChangeNotice() {
+    let dismissed = false;
     try {
-      alreadySeen = localStorage.getItem(CORRECTION_NOTICE_STORAGE_KEY) === "seen";
-      if (!alreadySeen) {
-        localStorage.setItem(CORRECTION_NOTICE_STORAGE_KEY, "seen");
-      }
+      dismissed =
+        localStorage.getItem(SCORING_CHANGE_NOTICE_STORAGE_KEY) === "dismissed";
     } catch (error) {
       // Keep the notice visible when storage is unavailable.
     }
-    correctionBanner.hidden = alreadySeen;
+    correctionBanner.hidden = dismissed;
   }
 
   function applyEnglishTitleFonts(root = document) {
@@ -360,18 +435,20 @@
       players = normalizePlayers(dataset);
       render();
       if (!modalBackdrop.hidden) {
-        modalKicker.textContent = text("dataKicker");
-        modalTitle.textContent = text("dataNotes");
-        modalBody.innerHTML = dataMarkup();
-        applyEnglishTitleFonts(modal);
+        updateModalContent(activeModalType || "data");
       }
     }
   }
 
   applyStaticTranslations();
-  initializeCorrectionNotice();
+  initializeScoringChangeNotice();
 
   correctionBannerClose.addEventListener("click", () => {
+    try {
+      localStorage.setItem(SCORING_CHANGE_NOTICE_STORAGE_KEY, "dismissed");
+    } catch (error) {
+      // The current page can still hide the notice when storage is blocked.
+    }
     correctionBanner.hidden = true;
   });
 
@@ -625,6 +702,7 @@
   }
 
   let modalTrigger = null;
+  let activeModalType = null;
   let players = normalizePlayers(dataset);
   const meta = dataset.meta || {};
 
@@ -1103,12 +1181,70 @@
       </div>`;
   }
 
-  function openModal(trigger) {
-    modalTrigger = trigger || document.activeElement;
-    modalKicker.textContent = text("dataKicker");
-    modalTitle.textContent = text("dataNotes");
-    modalBody.innerHTML = dataMarkup();
+  function scoringChangesMarkup() {
+    const percentFormatter = new Intl.NumberFormat(copy().locale, {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+    const rows = SCORING_CHANGES
+      .map((item) => ({
+        ...item,
+        change: ((item.current - item.previous) / item.previous) * 100,
+      }))
+      .sort((left, right) => right.change - left.change)
+      .map((item) => {
+        const details = copy().scoringChanges[item.key];
+        const direction =
+          item.change > 0
+            ? "is-increase"
+            : item.change < 0
+              ? "is-decrease"
+              : "is-neutral";
+        const sign = item.change > 0 ? "+" : "";
+        return `
+          <tr class="score-change-row ${direction}" data-score-change="${item.change}">
+            <th scope="row">${escapeHtml(details.label)}</th>
+            <td>${escapeHtml(details.previous)}</td>
+            <td>${escapeHtml(details.current)}</td>
+            <td class="score-change-percent">${sign}${escapeHtml(percentFormatter.format(item.change))}%</td>
+          </tr>`;
+      })
+      .join("");
+
+    return `
+      <p class="modal-lead">${escapeHtml(text("scoringChangesLead"))}</p>
+      <div class="score-change-table-wrap">
+        <table class="stat-table score-change-table">
+          <thead>
+            <tr>
+              <th scope="col">${escapeHtml(text("scoringCategory"))}</th>
+              <th scope="col">${escapeHtml(text("scoringPreviousYear"))}</th>
+              <th scope="col">${escapeHtml(text("scoringCurrentYear"))}</th>
+              <th scope="col">${escapeHtml(text("scoringRelativeChange"))}</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>`;
+  }
+
+  function updateModalContent(type) {
+    activeModalType = type === "scoringChanges" ? "scoringChanges" : "data";
+    if (activeModalType === "scoringChanges") {
+      modalKicker.textContent = text("scoringChangesKicker");
+      modalTitle.textContent = text("scoringChangesTitle");
+      modalBody.innerHTML = scoringChangesMarkup();
+    } else {
+      modalKicker.textContent = text("dataKicker");
+      modalTitle.textContent = text("dataNotes");
+      modalBody.innerHTML = dataMarkup();
+    }
     applyEnglishTitleFonts(modal);
+  }
+
+  function openModal(trigger, type = "data") {
+    modalTrigger = trigger || document.activeElement;
+    updateModalContent(type);
     modalBackdrop.hidden = false;
     pageShell.setAttribute("aria-hidden", "true");
     pageShell.inert = true;
@@ -1124,6 +1260,7 @@
       modalTrigger.focus();
     }
     modalTrigger = null;
+    activeModalType = null;
   }
 
   function manualMultiplierTarget(control) {
@@ -1268,8 +1405,12 @@
 
   document.querySelectorAll("[data-open-modal]").forEach((button) => {
     button.addEventListener("click", () => {
-      openModal(button);
+      openModal(button, button.dataset.openModal);
     });
+  });
+
+  scoringChangeNoticeOpen.addEventListener("click", () => {
+    openModal(scoringChangeNoticeOpen, "scoringChanges");
   });
 
   modalClose.addEventListener("click", closeModal);

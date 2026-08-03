@@ -235,4 +235,30 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   const updated = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
   assert.equal(updated.pages.groupStage.manualMultipliers.core[0], 123.45);
   assert.equal(multiplier.focusCount, 0, "committing must not restore input focus");
+
+  assert.equal(
+    storage.has("ti-fantasy-scoring-change-notice-v1"),
+    false,
+    "merely showing the notice must not dismiss it",
+  );
+  listeners.get("scoring-change-notice-open:click")();
+  assert.equal(element("modal-backdrop").hidden, false);
+  assert.equal(element("modal-title").textContent, "2025 与 2026 积分规则对比");
+  const comparison = element("modal-body").innerHTML;
+  const comparisonRows = Array.from(
+    comparison.matchAll(/<tr class="score-change-row [^"]+"[\s\S]*?<\/tr>/g),
+    (match) => match[0],
+  );
+  assert.equal(comparisonRows.length, 18);
+  assert.match(comparisonRows[0], /is-increase[\s\S]*击杀肉山/);
+  assert.match(comparisonRows.at(-1), /is-decrease[\s\S]*眩晕时间/);
+  assert.match(comparison, /\+37\.88%/);
+  assert.match(comparison, /−92\.19%|-92\.19%/);
+
+  listeners.get("correction-banner-close:click")();
+  assert.equal(element("correction-banner").hidden, true);
+  assert.equal(
+    storage.get("ti-fantasy-scoring-change-notice-v1"),
+    "dismissed",
+  );
 });
