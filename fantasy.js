@@ -753,7 +753,7 @@
           pairs.push({
             key: `${role}:${teamId}:${orderedIds.join("+")}`,
             teamId,
-            label: `${first.name} · ${second.name}`,
+            label: `${first.name} & ${second.name}`,
             subtitle: first.teamName,
             score: pairScore.score,
             coverage: pairScore.coverage,

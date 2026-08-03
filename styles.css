@@ -466,6 +466,7 @@ a:focus-visible {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: 'Reaver';
 }
 
 .selected-roster small {
@@ -768,6 +769,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   box-shadow:
     0 8px 20px rgba(72, 48, 15, .18),
     inset 0 0 22px rgba(255, 255, 255, .14);
+  font-family: 'Reaver';
 }
 
 .ranking-list {
@@ -840,8 +842,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 .ranking-value {
   color: #60471f;
   text-align: right;
-  font-family: var(--number-font);
-  font-size: .86rem;
+  font-size: 12px;
 }
 
 .ranking-row.is-selected .ranking-value {
