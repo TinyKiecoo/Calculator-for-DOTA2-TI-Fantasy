@@ -712,8 +712,8 @@
   function formatScore(value) {
     if (value === null || !Number.isFinite(value)) return text("insufficientData");
     return new Intl.NumberFormat(copy().locale, {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 1,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(value);
   }
 
@@ -930,6 +930,8 @@
       .join("");
     const selectedLabel = selected ? selected.label : text("waitingForData");
     const selectedSubtitle = selected ? selected.subtitle : "—";
+    const selectedScore =
+      selected && selected.score !== null ? formatScore(selected.score) : "—";
 
     return `
       <section class="banner-column" data-banner-column-role="${role}">
@@ -960,6 +962,10 @@
                 >${escapeHtml(text("averageScore"))}</button>
               </div>
             </fieldset>
+            <div
+              class="banner-score"
+              aria-label="${escapeHtml(text("bannerScore", { role: roleName(role) }))}"
+            >${escapeHtml(selectedScore)}</div>
           </header>
 
           <section class="emblem-pennant" aria-label="${escapeHtml(text("emblemPennant", { role: roleName(role) }))}">

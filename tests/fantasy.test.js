@@ -7,6 +7,7 @@ const {
   calculateTitleBonus,
   calculateEmblemModifiers,
   cloneDefaultConfig,
+  formatScore,
   internationalRoleColors,
   scorePair,
   scorePlayer,
@@ -44,6 +45,11 @@ test("uses the current EWC 2026 base point rules", () => {
   for (const [stat, raw, expected] of linearCases) {
     assert.equal(scoreRawStat(stat, raw), expected);
   }
+});
+
+test("formats every displayed score with exactly two decimals", () => {
+  assert.equal(formatScore(1234.5), "1,234.50");
+  assert.equal(formatScore(0), "0.00");
 });
 
 test("adds quality, self traits, and adjacent traits as percentage points", () => {

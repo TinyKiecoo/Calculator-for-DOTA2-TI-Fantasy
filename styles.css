@@ -523,6 +523,18 @@ a:focus-visible {
   box-shadow: inset 0 0 10px rgba(238, 198, 104, .15);
 }
 
+.banner-score {
+  min-height: 31px;
+  margin: 10px auto 0;
+  display: block;
+  color: rgba(124, 84, 38, 1);
+  text-align: center;
+  font-family: "Reaver";
+  font-size: 1.36rem;
+  letter-spacing: .04em;
+  line-height: 1.2;
+}
+
 .emblem-pennant {
   position: absolute;
   top: 32px;

@@ -894,8 +894,8 @@
   function formatScore(value) {
     if (value === null || !Number.isFinite(value)) return "数据不足";
     return new Intl.NumberFormat("zh-CN", {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 1,
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     }).format(value);
   }
 
