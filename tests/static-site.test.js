@@ -99,6 +99,7 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     "utf8",
   );
   const elements = new Map();
+  const listeners = new Map();
   const storage = new Map([
     ["ti-fantasy-page-state-v1", JSON.stringify({
       version: 3,
@@ -109,6 +110,21 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     })],
   ]);
 
+  class FakeElement {}
+  class FakeInput extends FakeElement {
+    constructor(dataset, value) {
+      super();
+      this.dataset = { ...dataset };
+      this.value = value;
+      this.focusCount = 0;
+    }
+
+    focus() {
+      this.focusCount += 1;
+    }
+  }
+  class FakeSelect extends FakeElement {}
+
   function element(id) {
     if (!elements.has(id)) {
       elements.set(id, {
@@ -117,7 +133,9 @@ test("renders all three banners with a minimal classic-script DOM", () => {
         inert: false,
         innerHTML: "",
         textContent: "",
-        addEventListener() {},
+        addEventListener(type, handler) {
+          listeners.set(`${id}:${type}`, handler);
+        },
         setAttribute() {},
         removeAttribute() {},
         focus() {},
@@ -132,6 +150,9 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   const sandbox = {
     console,
     Date,
+    Element: FakeElement,
+    HTMLInputElement: FakeInput,
+    HTMLSelectElement: FakeSelect,
     Intl,
     window: { FantasyEngine: engine, __TI_FANTASY_LANGUAGE__: "zh" },
     localStorage: {
@@ -190,4 +211,28 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     ),
     { core: 3, mid: 3, support: 3 },
   );
+
+  const focusIn = listeners.get("banner-grid:focusin");
+  const focusOut = listeners.get("banner-grid:focusout");
+  const original = saved.pages.groupStage.manualMultipliers.core[0];
+  const multiplier = new FakeInput(
+    { role: "core", index: "0", field: "multiplier" },
+    String(original),
+  );
+
+  focusIn({ target: multiplier });
+  assert.equal(multiplier.value, "", "focusing must clear the current value");
+  focusOut({ target: multiplier });
+  assert.equal(
+    multiplier.value,
+    String(original),
+    "an empty edit must restore the previous value",
+  );
+
+  focusIn({ target: multiplier });
+  multiplier.value = "123.45";
+  focusOut({ target: multiplier });
+  const updated = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
+  assert.equal(updated.pages.groupStage.manualMultipliers.core[0], 123.45);
+  assert.equal(multiplier.focusCount, 0, "committing must not restore input focus");
 });

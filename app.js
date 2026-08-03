@@ -984,8 +984,6 @@
     const candidates =
       request.type === "select"
         ? bannerGrid.querySelectorAll("select[data-role]")
-        : request.type === "multiplier"
-          ? bannerGrid.querySelectorAll('input[data-field="multiplier"]')
         : request.type === "ranking"
           ? bannerGrid.querySelectorAll("button[data-ranking-role]")
           : bannerGrid.querySelectorAll("button[data-score-mode]");
@@ -996,14 +994,6 @@
         element.dataset.role === request.role &&
         element.dataset.index === String(request.index) &&
         element.dataset.field === request.field
-      ) {
-        element.focus();
-        return;
-      }
-      if (
-        request.type === "multiplier" &&
-        element.dataset.role === request.role &&
-        element.dataset.index === String(request.index)
       ) {
         element.focus();
         return;
@@ -1136,6 +1126,53 @@
     modalTrigger = null;
   }
 
+  function manualMultiplierTarget(control) {
+    if (
+      !(control instanceof HTMLInputElement) ||
+      control.dataset.field !== "multiplier"
+    ) {
+      return null;
+    }
+    const role = control.dataset.role;
+    const index = Number(control.dataset.index);
+    if (
+      !engine.bannerRoles.includes(role) ||
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index >= state.manualMultipliers[role].length
+    ) {
+      return null;
+    }
+    return { control, role, index };
+  }
+
+  bannerGrid.addEventListener("focusin", (event) => {
+    const target = manualMultiplierTarget(event.target);
+    if (!target) return;
+    target.control.dataset.previousValue = String(
+      state.manualMultipliers[target.role][target.index],
+    );
+    target.control.value = "";
+  });
+
+  bannerGrid.addEventListener("focusout", (event) => {
+    const target = manualMultiplierTarget(event.target);
+    if (!target) return;
+    const fallback =
+      target.control.dataset.previousValue ??
+      String(state.manualMultipliers[target.role][target.index]);
+    delete target.control.dataset.previousValue;
+    const rawValue = target.control.value.trim();
+    const value = Number(rawValue);
+    if (rawValue === "" || !Number.isFinite(value) || value < 0) {
+      target.control.value = fallback;
+      return;
+    }
+    state.manualMultipliers[target.role][target.index] = value;
+    persistPageState();
+    render();
+  });
+
   bannerGrid.addEventListener("change", (event) => {
     const control = event.target;
     if (
@@ -1156,14 +1193,6 @@
     }
 
     if (field === "multiplier") {
-      const value = Number(control.value);
-      if (control.value.trim() === "" || !Number.isFinite(value) || value < 0) {
-        control.value = String(state.manualMultipliers[role][index]);
-        return;
-      }
-      state.manualMultipliers[role][index] = value;
-      persistPageState();
-      render({ type: "multiplier", role, index });
       return;
     }
 
