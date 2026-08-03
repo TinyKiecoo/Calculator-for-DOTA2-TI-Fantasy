@@ -16,6 +16,12 @@ test("uses classic scripts and file-safe relative paths", () => {
   assert.doesNotMatch(html, /type=["']module["']/i);
   assert.doesNotMatch(html, /%BASE_URL%|\/src\/|src=["']\//i);
   assert.doesNotMatch(app, /\b(?:import|export)\b|fetch\s*\(/);
+  assert.match(html, /window\.__TI_FANTASY_RETURNING_VISITOR__/);
+  assert.ok(
+    html.indexOf("returningVisitor = previousVisitKeys.some") <
+      html.indexOf("localStorage.setItem(storageKey, language)"),
+    "returning-visitor state must be captured before a first visit writes storage",
+  );
 
   const htmlPaths = Array.from(
     html.matchAll(/(?:src|href)=["']([^"'#]+)["']/gi),
@@ -100,6 +106,7 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   );
   const elements = new Map();
   const listeners = new Map();
+  const alerts = [];
   const storage = new Map([
     ["ti-fantasy-page-state-v1", JSON.stringify({
       version: 3,
@@ -154,7 +161,13 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     HTMLInputElement: FakeInput,
     HTMLSelectElement: FakeSelect,
     Intl,
-    window: { FantasyEngine: engine, __TI_FANTASY_LANGUAGE__: "zh" },
+    window: {
+      FantasyEngine: engine,
+      __TI_FANTASY_LANGUAGE__: "zh",
+      alert(message) {
+        alerts.push(String(message));
+      },
+    },
     localStorage: {
       getItem(key) {
         return storage.get(key) ?? null;
@@ -200,6 +213,14 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.doesNotMatch(rendered, /leaderboard-header|有效地图/);
   assert.notEqual(element("total-score").textContent, "—");
   assert.equal(element("load-error").hidden, true);
+  assert.deepEqual(alerts, [
+    '原有的"消灭痛苦魔方"数值整体偏低，目前已修正。请您知悉。',
+  ]);
+  assert.equal(element("modal-backdrop").hidden, true);
+  assert.equal(
+    storage.get("ti-fantasy-tormentor-correction-notice-v1"),
+    "shown",
+  );
   const saved = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
   assert.equal(saved.version, 3);
   assert.equal(saved.multiplierMode, "manual");

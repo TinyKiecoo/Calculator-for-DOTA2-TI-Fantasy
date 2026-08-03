@@ -25,6 +25,9 @@
   const LANGUAGE_STORAGE_KEY = "ti-fantasy-language";
   const PAGE_STATE_STORAGE_KEY = "ti-fantasy-page-state-v1";
   const SCORING_CHANGE_NOTICE_STORAGE_KEY = "ti-fantasy-scoring-change-notice-v1";
+  const VISITED_STORAGE_KEY = "ti-fantasy-visited-v1";
+  const TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY =
+    "ti-fantasy-tormentor-correction-notice-v1";
   const MULTIPLIER_MODES = ["calculated", "manual"];
   const SCORING_CHANGES = [
     { key: "kills", previous: 121, current: 107 },
@@ -75,6 +78,7 @@
       scoringChangesKicker: "SCORING CHANGES",
       scoringChangesTitle: "2025 与 2026 积分规则对比",
       scoringChangesLead: "以下项目按基础积分系数的相对涨跌幅从高到低排列。",
+      tormentorCorrectionBody: '原有的"消灭痛苦魔方"数值整体偏低，目前已修正。请您知悉。',
       scoringCategory: "项目",
       scoringPreviousYear: "2025",
       scoringCurrentYear: "2026",
@@ -213,6 +217,7 @@
       scoringChangesKicker: "SCORING CHANGES",
       scoringChangesTitle: "2025 vs. 2026 Scoring Rules",
       scoringChangesLead: "Categories are sorted from the largest relative increase in their base scoring coefficient to the largest decrease.",
+      tormentorCorrectionBody: "The previous “Tormentor Kills” values were generally too low and have now been corrected. Please take note.",
       scoringCategory: "Category",
       scoringPreviousYear: "2025",
       scoringCurrentYear: "2026",
@@ -389,6 +394,36 @@
     correctionBanner.hidden = dismissed;
   }
 
+  function wasReturningVisitorBeforeThisLoad() {
+    if (typeof window.__TI_FANTASY_RETURNING_VISITOR__ === "boolean") {
+      return window.__TI_FANTASY_RETURNING_VISITOR__;
+    }
+    try {
+      return localStorage.getItem(PAGE_STATE_STORAGE_KEY) !== null;
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function shouldShowTormentorCorrectionNotice() {
+    if (!wasReturningVisitorBeforeThisLoad()) return false;
+    try {
+      return (
+        localStorage.getItem(TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY) !== "shown"
+      );
+    } catch (error) {
+      return false;
+    }
+  }
+
+  function rememberCurrentVisit() {
+    try {
+      localStorage.setItem(VISITED_STORAGE_KEY, "visited");
+    } catch (error) {
+      // Future returning-visitor notices remain disabled when storage is blocked.
+    }
+  }
+
   function applyEnglishTitleFonts(root = document) {
     const titleElements = root.querySelectorAll(
       ".brand strong, h1, h2, h3, .score-method legend, #modal-kicker",
@@ -442,6 +477,8 @@
 
   applyStaticTranslations();
   initializeScoringChangeNotice();
+  const shouldShowTormentorCorrection = shouldShowTormentorCorrectionNotice();
+  rememberCurrentVisit();
 
   correctionBannerClose.addEventListener("click", () => {
     try {
@@ -1263,6 +1300,16 @@
     activeModalType = null;
   }
 
+  function showTormentorCorrectionNotice() {
+    if (!shouldShowTormentorCorrection) return;
+    try {
+      localStorage.setItem(TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY, "shown");
+    } catch (error) {
+      // The current visit can still display the correction notice.
+    }
+    window.alert(text("tormentorCorrectionBody"));
+  }
+
   function manualMultiplierTarget(control) {
     if (
       !(control instanceof HTMLInputElement) ||
@@ -1452,6 +1499,7 @@
     updateMultiplierSwitcher();
     updateAdvisorTitleSelectors();
     render();
+    showTormentorCorrectionNotice();
   } catch (error) {
     console.error(error);
     bannerGrid.hidden = true;

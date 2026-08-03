@@ -13,9 +13,19 @@
     (function () {
       "use strict";
       const storageKey = "ti-fantasy-language";
+      const previousVisitKeys = [
+        storageKey,
+        "ti-fantasy-page-state-v1",
+        "ti-fantasy-scoring-change-notice-v1",
+        "ti-fantasy-visited-v1",
+      ];
       let language = null;
+      let returningVisitor = false;
 
       try {
+        returningVisitor = previousVisitKeys.some(
+          (key) => localStorage.getItem(key) !== null,
+        );
         const saved = localStorage.getItem(storageKey);
         if (saved === "zh" || saved === "en") language = saved;
       } catch (error) {
@@ -33,6 +43,7 @@
       }
 
       window.__TI_FANTASY_LANGUAGE__ = language;
+      window.__TI_FANTASY_RETURNING_VISITOR__ = returningVisitor;
       document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     })();
   </script>
@@ -191,7 +202,7 @@
     document.write('<script src="data/' + LEAGUE_ID + '/data.js"><\/script>');
   </script>
   <script src="fantasy.js?v=20260801-stage"></script>
-  <script src="app.js?v=20260801-stage"></script>
+  <script src="app.js?v=20260804-tormentor-alert"></script>
   <script>
     if (window.location.hostname === "www.ti-fantasy.site") {
       const busuanziScript = document.createElement("script");
