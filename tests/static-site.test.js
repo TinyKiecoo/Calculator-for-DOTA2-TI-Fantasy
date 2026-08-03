@@ -253,7 +253,7 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.match(comparisonRows[0], /is-increase[\s\S]*击杀肉山/);
   assert.match(comparisonRows.at(-1), /is-decrease[\s\S]*眩晕时间/);
   assert.match(comparison, /\+37\.88%/);
-  assert.match(comparison, /−92\.19%|-92\.19%/);
+  assert.match(comparison, /−33\.33%|-33\.33%/);
 
   listeners.get("correction-banner-close:click")();
   assert.equal(element("correction-banner").hidden, true);

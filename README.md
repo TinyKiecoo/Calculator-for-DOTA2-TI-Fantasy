@@ -37,8 +37,8 @@ Clone or download the repository, then open `index.html` in a modern browser.
 | `index.html` | Application and GitHub Pages entry point |
 | `fantasy-assets/` | Local images, fonts, and other interface assets |
 | `scripts/build_league.py` | Configurable league data pipeline |
-| `scripts/league_data.py` | OpenDota base-stat and roster-role builder |
-| `scripts/replay_tools.py` | Valve replay downloader and Clarity field parser |
+| `scripts/league_data.py` | Replay-checkpoint dataset and roster-role assembler |
+| `scripts/replay_tools.py` | Valve replay downloader and complete Clarity field parser |
 | `data/<LEAGUE_ID>/` | Generated league metadata, match checkpoints, and browser snapshot |
 | `tests/` | Verification and calculation tests |
 | [`LICENSE`](LICENSE) | License for the original source code and documentation |
@@ -60,12 +60,35 @@ python scripts/build_league.py
 ```
 
 The Liquipedia URL does not contain OpenDota's league ID, so the ID search is
-the reliable lookup method. The output is stored under `data/<LEAGUE_ID>/`.
+the reliable lookup method. OpenDota is used only to discover the league's
+Valve replay links. Player statistics, identities, teams, internal match ID,
+timestamps, match result and duration all come from the downloaded replay.
+The output is stored under `data/<LEAGUE_ID>/`.
 Every completed match has its own `matches/<MATCH_ID>.json` checkpoint. A
 rerun validates and prints those saved player stats without downloading or
-parsing the replay again. New compressed and decompressed replay files are
-created in a temporary directory and removed immediately after that match is
-written.
+parsing the replay again. Compressed and decompressed replay files are kept in
+`replays/<LEAGUE_ID>/`. An existing `.dem` is parsed directly; otherwise an
+existing `.dem.bz2` is decompressed, and only a missing replay is downloaded.
+Neither file is deleted automatically.
+
+For the one-time schema-6 GPM correction, the existing schema-5 post-match
+values can be copied without reparsing replays. The migration validates every
+match/player identity first and then rebuilds all browser artifacts locally:
+
+```powershell
+python scripts/migrate_gpm_from_legacy.py --dry-run
+python scripts/migrate_gpm_from_legacy.py
+```
+
+Most Fantasy counters are stored together in each replay under
+`CDOTA_DataRadiant/Dire.m_vecDataTeam[*]`. Kills, deaths, teamfight
+participation and first blood are in the corresponding
+`CDOTA_PlayerResource.m_vecPlayerTeamData[*]` rows. GPM uses the authoritative
+post-match `CMsgDOTAMatch.Player.gold_per_min` value embedded in the replay;
+deriving it from total earned gold and duration can overcount some players. In
+particular, Tormentor kills use the official per-player `m_iTormentorKills`
+participation counter, not OpenDota's last-hit-only
+`killed.npc_dota_miniboss` value.
 
 The browser supports advisor prefix and suffix titles. Prefix hero categories
 are maintained in `fantasy.js` from `heroids.txt`; suffix conditions are read
@@ -89,7 +112,11 @@ conditions are stored in `match.titleConditions`; the original event rows stay
 in `match.titleData` for later verification. Per-map `replayCounters` preserves
 both `m_nAcquiredMadstone` and `m_iNeutralTokensFound`. Fantasy scoring uses
 `m_iNeutralTokensFound`; `m_nAcquiredMadstone` remains available for
-comparison. Checkpoints made with schema 4 or older are
+comparison. Roles are inferred from event-wide creep-score ordering: the two
+lowest farmers are supports and the middle of the remaining three is mid.
+Unusual rosters can be corrected by account ID in `LEAGUE_ROLE_OVERRIDES` near the top
+of `scripts/build_league.py`, without adding a remote role-data source.
+Checkpoints made with schema 5 or older are
 automatically treated as stale and reparsed on the next build.
 
 To display another generated league, set the same `LEAGUE_ID` and

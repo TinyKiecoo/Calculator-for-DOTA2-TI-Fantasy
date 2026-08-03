@@ -5,6 +5,8 @@
 /.wrangler
 /fantasy-assets/preview.png
 /replays/
+*.dem
+*.dem.bz2
 
 .env*
 *.log

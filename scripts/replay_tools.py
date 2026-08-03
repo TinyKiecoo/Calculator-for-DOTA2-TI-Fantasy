@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 """Low-level Dota 2 replay download and Fantasy-field parsing tools.
 
-The three counters are read from the final replay state rather than inferred
-from item/ability use events:
-
-* ``m_iNeutralTokensFound`` -> scored ``madstones_collected``
-* ``m_nAcquiredMadstone`` -> retained alternate Madstone counter
-* ``m_iWatchersTaken``    -> ``watchers_captured``
-* ``m_iLotusesTaken``     -> ``lotuses_collected``
+All Fantasy statistics are read from the replay. Most come from its final
+player-data arrays; GPM comes from the authoritative post-match message. The
+helper also emits player/team identities, match result and duration, hero
+selection, and combat-log evidence required by advisor-title conditions.
 
 The script is intentionally self-contained and has no Python package
 dependencies.  It downloads Clarity 4.0.1 and its small Java dependency set
@@ -20,9 +17,9 @@ low-level command below remains useful for debugging one local replay::
     python scripts/replay_tools.py \
         --replay ../8885275216_882748103/8885275216_882748103.dem
 
-``build_league.py`` imports the functions in this module, keeps downloads in a
-temporary directory, and deletes both compressed and decompressed files after
-each successful parse.
+``build_league.py`` imports the functions in this module and keeps both the
+compressed and decompressed replays in a persistent cache until the maintainer
+deletes them manually.
 """
 
 from __future__ import annotations
@@ -38,7 +35,6 @@ import shutil
 import subprocess
 import sys
 import time
-from collections import defaultdict
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -59,6 +55,29 @@ OPEN_DOTA_API = "https://api.opendota.com/api"
 USER_AGENT = "DotaFantasyReplayBuilder/2.0"
 STEAM_ID64_BASE = 76561197960265728
 CHUNK_SIZE = 1024 * 1024
+
+FANTASY_STAT_KEYS = (
+    "kills",
+    "deaths",
+    "creep_score",
+    "gpm",
+    "madstones_collected",
+    "towers_destroyed",
+    "observer_wards_placed",
+    "camps_stacked",
+    "runes_picked_up",
+    "watchers_captured",
+    "smokes_used",
+    "lotuses_collected",
+    "roshans_killed",
+    "teamfight_participation",
+    "stun_seconds",
+    "tormentors_killed",
+    "first_blood",
+    "couriers_killed",
+)
+
+FLOAT_STAT_KEYS = {"teamfight_participation", "stun_seconds"}
 
 
 def utc_now() -> str:
@@ -114,10 +133,16 @@ MAVEN_BASE_URLS = (
 )
 
 
-JAVA_SOURCE = r'''import java.util.ArrayList;
+JAVA_SOURCE = r'''import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import skadistats.clarity.io.Util;
 import skadistats.clarity.model.CombatLogEntry;
@@ -126,9 +151,13 @@ import skadistats.clarity.model.FieldPath;
 import skadistats.clarity.processor.entities.Entities;
 import skadistats.clarity.processor.entities.UsesEntities;
 import skadistats.clarity.processor.gameevents.OnCombatLogEntry;
+import skadistats.clarity.processor.reader.OnMessage;
 import skadistats.clarity.processor.runner.Context;
 import skadistats.clarity.processor.runner.SimpleRunner;
 import skadistats.clarity.source.MappedFileSource;
+import skadistats.clarity.wire.dota.s2.proto.DOTAS2GcMessagesCommon.CMsgDOTAMatch;
+import skadistats.clarity.wire.shared.demo.proto.Demo.CDemoFileInfo;
+import skadistats.clarity.wire.shared.demo.proto.Demo.CGameInfo.CDotaGameInfo;
 
 @UsesEntities
 public final class ReplayFantasyStats {
@@ -136,16 +165,23 @@ public final class ReplayFantasyStats {
     // are within 5.45 grid units, while the nearest preceding outside death is
     // 11.41 units away. Eight cells equal 1024 Source 2 world units.
     private static final double FOUNTAIN_RADIUS = 8.0;
+    private static final long STEAM_ID64_BASE = 76561197960265728L;
     private final List<DeathRecord> tormentorDeaths = new ArrayList<>();
     private final List<DeathRecord> fountainDeaths = new ArrayList<>();
+    private final Map<Long, Integer> postMatchGpmByAccountId = new HashMap<>();
     private Float firstBloodTimestamp;
     private Float firstHeroDeathTimestamp;
+    private Long replayMatchId;
+    private Integer replayLeagueId;
+    private Integer replayEndTime;
 
     private record PlayerIdentity(
+        int resourceIndex,
         int teamNumber,
         int teamPosition,
         int playerSlot,
         long steamId,
+        String playerName,
         int heroId,
         String heroName,
         Entity hero
@@ -159,6 +195,26 @@ public final class ReplayFantasyStats {
         Boolean ownFountain,
         Double fountainDistance
     ) {}
+
+    @OnMessage(CDemoFileInfo.class)
+    public void onDemoFileInfo(CDemoFileInfo fileInfo) {
+        if (!fileInfo.hasGameInfo() || !fileInfo.getGameInfo().hasDota()) return;
+        CDotaGameInfo dota = fileInfo.getGameInfo().getDota();
+        replayMatchId = dota.hasMatchId() ? dota.getMatchId() : null;
+        replayLeagueId = dota.hasLeagueid() ? dota.getLeagueid() : null;
+        replayEndTime = dota.hasEndTime() ? dota.getEndTime() : null;
+    }
+
+    @OnMessage(CMsgDOTAMatch.class)
+    public void onDotaMatch(CMsgDOTAMatch match) {
+        for (CMsgDOTAMatch.Player player : match.getPlayersList()) {
+            if (!player.hasAccountId() || !player.hasGoldPerMin()) continue;
+            postMatchGpmByAccountId.put(
+                Integer.toUnsignedLong(player.getAccountId()),
+                player.getGoldPerMin()
+            );
+        }
+    }
 
     @SuppressWarnings("unchecked")
     private static <T> T property(Entity entity, String name) {
@@ -276,11 +332,17 @@ public final class ReplayFantasyStats {
             );
             int teamPosition = position == null ? -1 : position.intValue();
             int playerSlot = targetTeam == 2 ? teamPosition : 128 + teamPosition;
+            String playerName = property(
+                resource,
+                "m_vecPlayerData." + arrayIndex + ".m_iszPlayerName"
+            );
             return new PlayerIdentity(
+                index,
                 targetTeam,
                 teamPosition,
                 playerSlot,
                 steamId == null ? 0L : steamId.longValue(),
+                playerName,
                 heroId == null ? 0 : heroId.intValue(),
                 heroName,
                 hero
@@ -366,12 +428,15 @@ public final class ReplayFantasyStats {
             Entity hero = handle == null ? null : entities.getByHandle(handle.intValue());
             Number heroId = property(resource, "m_vecPlayerTeamData." + arrayIndex + ".m_nSelectedHeroID");
             Number steamId = property(resource, "m_vecPlayerData." + arrayIndex + ".m_iPlayerSteamID");
+            String playerName = property(resource, "m_vecPlayerData." + arrayIndex + ".m_iszPlayerName");
             int playerSlot = teamNumber == 2 ? position : 128 + position;
             return new PlayerIdentity(
+                index,
                 teamNumber,
                 position,
                 playerSlot,
                 steamId == null ? 0L : steamId.longValue(),
+                playerName,
                 heroId == null ? 0 : heroId.intValue(),
                 combatLogName(hero),
                 hero
@@ -380,10 +445,46 @@ public final class ReplayFantasyStats {
         return null;
     }
 
-    private int emitTeam(Entities entities, int teamNumber, String side) {
+    private static Entity teamEntity(Entities entities, int teamNumber) {
+        Iterator<Entity> candidates = entities.getAllByDtName("CDOTATeam");
+        while (candidates.hasNext()) {
+            Entity candidate = candidates.next();
+            Number number = property(candidate, "m_iTeamNum");
+            if (number != null && number.intValue() == teamNumber) return candidate;
+        }
+        return null;
+    }
+
+    private static void emitTeamMetadata(Entities entities, int teamNumber) {
+        Entity team = teamEntity(entities, teamNumber);
+        if (team == null) {
+            throw new IllegalStateException("Missing CDOTATeam " + teamNumber);
+        }
+        Object teamId = property(team, "m_unTournamentTeamID");
+        String name = property(team, "m_szTeamname");
+        String tag = property(team, "m_szTag");
+        System.out.printf(
+            "{\"recordType\":\"team\",\"teamNumber\":%d," +
+            "\"teamId\":%s,\"name\":%s,\"tag\":%s}%n",
+            teamNumber,
+            jsonNumber(teamId),
+            jsonString(name),
+            jsonString(tag)
+        );
+    }
+
+    private int emitPlayers(
+        Entities entities,
+        int teamNumber,
+        String side
+    ) {
         Entity data = entities.getByDtName("CDOTA_Data" + side);
+        Entity resource = entities.getByDtName("CDOTA_PlayerResource");
         if (data == null) {
             throw new IllegalStateException("Missing CDOTA_Data" + side);
+        }
+        if (resource == null) {
+            throw new IllegalStateException("Missing CDOTA_PlayerResource");
         }
 
         int emitted = 0;
@@ -391,34 +492,109 @@ public final class ReplayFantasyStats {
             String index = Util.arrayIdxToString(position);
             String prefix = "m_vecDataTeam." + index + ".";
             Object steamId = property(data, prefix + "m_iPlayerSteamID");
+            Number totalEarnedGold = property(data, prefix + "m_iTotalEarnedGold");
+            Object lastHits = property(data, prefix + "m_iLastHitCount");
+            Object denies = property(data, prefix + "m_iDenyCount");
+            Object stuns = property(data, prefix + "m_fStuns");
+            Object towerKills = property(data, prefix + "m_iTowerKills");
+            Object roshanKills = property(data, prefix + "m_iRoshanKills");
+            Object observerWards = property(data, prefix + "m_iObserverWardsPlaced");
+            Object campsStacked = property(data, prefix + "m_iCampsStacked");
+            Object runePickups = property(data, prefix + "m_iRunePickups");
+            Object smokesUsed = property(data, prefix + "m_iSmokesUsed");
             Object madstones = property(data, prefix + "m_nAcquiredMadstone");
             Object currentMadstones = property(data, prefix + "m_nCurrentMadstone");
             Object neutralTokens = property(data, prefix + "m_iNeutralTokensFound");
             Object watchers = property(data, prefix + "m_iWatchersTaken");
             Object lotuses = property(data, prefix + "m_iLotusesTaken");
+            Object tormentorKills = property(data, prefix + "m_iTormentorKills");
+            Object courierKills = property(data, prefix + "m_iCourierKills");
             int playerSlot = teamNumber == 2 ? position : 128 + position;
             PlayerIdentity identity = playerAtPosition(entities, teamNumber, position);
             Object heroId = identity == null || identity.heroId() <= 0 ? null : identity.heroId();
             String heroName = identity == null ? null : identity.heroName();
+            String playerName = identity == null ? null : identity.playerName();
+            String resourceIndex = identity == null
+                ? null
+                : Util.arrayIdxToString(identity.resourceIndex());
+            String teamPrefix = resourceIndex == null
+                ? null
+                : "m_vecPlayerTeamData." + resourceIndex + ".";
+            Object kills = teamPrefix == null ? null : property(resource, teamPrefix + "m_iKills");
+            Object deaths = teamPrefix == null ? null : property(resource, teamPrefix + "m_iDeaths");
+            Object assists = teamPrefix == null ? null : property(resource, teamPrefix + "m_iAssists");
+            Object teamfight = teamPrefix == null
+                ? null
+                : property(resource, teamPrefix + "m_flTeamFightParticipation");
+            Object firstBlood = teamPrefix == null
+                ? null
+                : property(resource, teamPrefix + "m_iFirstBloodClaimed");
+            Object creepScore = lastHits instanceof Number && denies instanceof Number
+                ? ((Number) lastHits).longValue() + ((Number) denies).longValue()
+                : null;
+            long steamId64 = steamId instanceof Number
+                ? ((Number) steamId).longValue()
+                : identity == null ? 0L : identity.steamId();
+            long accountId = steamId64 - STEAM_ID64_BASE;
+            Object gpm = accountId >= 0L && accountId <= 0xFFFFFFFFL
+                ? postMatchGpmByAccountId.get(accountId)
+                : null;
 
             System.out.printf(
                 "{\"recordType\":\"player\",\"teamNumber\":%d," +
                 "\"position\":%d,\"playerSlot\":%d,\"steamId\":%s," +
-                "\"heroId\":%s,\"heroName\":%s,\"madstonesCollected\":%s," +
+                "\"playerName\":%s,\"heroId\":%s,\"heroName\":%s," +
+                "\"madstonesCollected\":%s," +
                 "\"currentMadstones\":%s,\"neutralTokensFound\":%s," +
                 "\"watchersCaptured\":%s," +
-                "\"lotusesCollected\":%s}%n",
+                "\"lotusesCollected\":%s," +
+                "\"rawStats\":{\"totalEarnedGold\":%s,\"postMatchGpm\":%s," +
+                "\"lastHits\":%s," +
+                "\"denies\":%s,\"assists\":%s}," +
+                "\"stats\":{\"kills\":%s,\"deaths\":%s," +
+                "\"creep_score\":%s,\"gpm\":%s," +
+                "\"madstones_collected\":%s,\"towers_destroyed\":%s," +
+                "\"observer_wards_placed\":%s,\"camps_stacked\":%s," +
+                "\"runes_picked_up\":%s,\"watchers_captured\":%s," +
+                "\"smokes_used\":%s,\"lotuses_collected\":%s," +
+                "\"roshans_killed\":%s,\"teamfight_participation\":%s," +
+                "\"stun_seconds\":%s,\"tormentors_killed\":%s," +
+                "\"first_blood\":%s,\"couriers_killed\":%s}}%n",
                 teamNumber,
                 position,
                 playerSlot,
                 jsonNumber(steamId),
+                jsonString(playerName),
                 jsonNumber(heroId),
                 jsonString(heroName),
                 jsonNumber(madstones),
                 jsonNumber(currentMadstones),
                 jsonNumber(neutralTokens),
                 jsonNumber(watchers),
-                jsonNumber(lotuses)
+                jsonNumber(lotuses),
+                jsonNumber(totalEarnedGold),
+                jsonNumber(gpm),
+                jsonNumber(lastHits),
+                jsonNumber(denies),
+                jsonNumber(assists),
+                jsonNumber(kills),
+                jsonNumber(deaths),
+                jsonNumber(creepScore),
+                jsonNumber(gpm),
+                jsonNumber(neutralTokens),
+                jsonNumber(towerKills),
+                jsonNumber(observerWards),
+                jsonNumber(campsStacked),
+                jsonNumber(runePickups),
+                jsonNumber(watchers),
+                jsonNumber(smokesUsed),
+                jsonNumber(lotuses),
+                jsonNumber(roshanKills),
+                jsonNumber(teamfight),
+                jsonNumber(stuns),
+                jsonNumber(tormentorKills),
+                jsonNumber(firstBlood),
+                jsonNumber(courierKills)
             );
             emitted++;
         }
@@ -460,16 +636,31 @@ public final class ReplayFantasyStats {
     private void emitMatch(Entities entities) {
         Entity rules = entities.getByDtName("CDOTAGamerulesProxy");
         Number gameStart = property(rules, "m_pGameRules.m_flGameStartTime");
+        Number gameEnd = property(rules, "m_pGameRules.m_flGameEndTime");
+        Number gameWinner = property(rules, "m_pGameRules.m_nGameWinner");
+        Number entityLeagueId = property(rules, "m_pGameRules.m_lobbyLeagueID");
+        Number leagueId = replayLeagueId == null ? entityLeagueId : replayLeagueId;
         Number seriesType = property(rules, "m_pGameRules.m_nSeriesType");
         Number radiantSeriesWins = property(rules, "m_pGameRules.m_nRadiantSeriesWins");
         Number direSeriesWins = property(rules, "m_pGameRules.m_nDireSeriesWins");
+        String lobbyGameName = property(rules, "m_pGameRules.m_lobbyGameName");
         double gameStartTime = gameStart == null ? 0.0 : gameStart.doubleValue();
+        Double duration = gameStart == null || gameEnd == null
+            ? null
+            : Math.max(0.0, gameEnd.doubleValue() - gameStart.doubleValue());
         Float firstBlood = firstBloodTimestamp != null
             ? firstBloodTimestamp
             : firstHeroDeathTimestamp;
 
         System.out.print("{\"recordType\":\"match\",");
+        System.out.print("\"matchId\":" + jsonNumber(replayMatchId) + ",");
+        System.out.print("\"endTime\":" + jsonNumber(replayEndTime) + ",");
         System.out.print("\"gameStartTime\":" + fixed(gameStartTime) + ",");
+        System.out.print("\"gameEndTime\":" + fixed(gameEnd == null ? null : gameEnd.doubleValue()) + ",");
+        System.out.print("\"duration\":" + fixed(duration) + ",");
+        System.out.print("\"leagueId\":" + jsonNumber(leagueId) + ",");
+        System.out.print("\"gameWinner\":" + jsonNumber(gameWinner) + ",");
+        System.out.print("\"lobbyGameName\":" + jsonString(lobbyGameName) + ",");
         System.out.print(
             "\"firstBloodTime\":"
             + (firstBlood == null ? "null" : fixed(firstBlood.doubleValue() - gameStartTime))
@@ -488,8 +679,13 @@ public final class ReplayFantasyStats {
 
     private void emit(Context context) {
         Entities entities = context.getProcessor(Entities.class);
-        int count = emitTeam(entities, 2, "Radiant");
-        count += emitTeam(entities, 3, "Dire");
+        Entity rules = entities.getByDtName("CDOTAGamerulesProxy");
+        Number gameStart = property(rules, "m_pGameRules.m_flGameStartTime");
+        Number gameEnd = property(rules, "m_pGameRules.m_flGameEndTime");
+        emitTeamMetadata(entities, 2);
+        emitTeamMetadata(entities, 3);
+        int count = emitPlayers(entities, 2, "Radiant");
+        count += emitPlayers(entities, 3, "Dire");
         if (count != 10) {
             throw new IllegalStateException("Expected 10 players, emitted " + count);
         }
@@ -497,6 +693,18 @@ public final class ReplayFantasyStats {
     }
 
     public static void main(String[] args) throws Exception {
+        // Redirected Windows stdout may use a legacy code page and replace
+        // Unicode player names before Python can decode them.
+        System.setOut(new PrintStream(
+            new FileOutputStream(FileDescriptor.out),
+            true,
+            StandardCharsets.UTF_8
+        ));
+        System.setErr(new PrintStream(
+            new FileOutputStream(FileDescriptor.err),
+            true,
+            StandardCharsets.UTF_8
+        ));
         if (args.length != 1) {
             System.err.println("Usage: ReplayFantasyStats <replay.dem>");
             System.exit(2);
@@ -513,10 +721,10 @@ public final class ReplayFantasyStats {
 
 
 MANIFEST_SQL_TEMPLATE = """
-SELECT match_id, start_time, duration, cluster, replay_salt
+SELECT match_id, cluster, replay_salt
 FROM matches
 WHERE leagueid = {league_id}
-ORDER BY start_time, match_id
+ORDER BY match_id
 """
 
 
@@ -569,7 +777,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--keep-dem",
         action="store_true",
-        help="Retain decompressed .dem files after successful parsing",
+        help="Deprecated compatibility option; .dem files are now always retained",
     )
     parser.add_argument(
         "--force",
@@ -584,7 +792,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--allow-missing-fields",
         action="store_true",
-        help="Write null if a replay lacks one of the three Fantasy fields",
+        help="Write null if a replay lacks a required Fantasy field",
     )
     parser.add_argument(
         "--timeout",
@@ -598,31 +806,6 @@ def parse_args() -> argparse.Namespace:
         default=4,
         help="Download attempts per URL (default: 4)",
     )
-    parser.add_argument(
-        "--merge-dataset",
-        type=Path,
-        help="Existing full dataset JSON to merge after parsing",
-    )
-    parser.add_argument(
-        "--merge-output",
-        type=Path,
-        help="Merged full-dataset output; required with --merge-dataset",
-    )
-    parser.add_argument(
-        "--summary-output",
-        type=Path,
-        help="Optional compact summary generated from the merged dataset",
-    )
-    parser.add_argument(
-        "--browser-data-output",
-        type=Path,
-        help="Optional classic JS wrapper generated from the merged dataset",
-    )
-    parser.add_argument(
-        "--allow-partial-merge",
-        action="store_true",
-        help="Allow merging fewer replay results than the dataset contains",
-    )
     parser.add_argument("--quiet", action="store_true")
     args = parser.parse_args()
 
@@ -630,12 +813,6 @@ def parse_args() -> argparse.Namespace:
         parser.error("--download-only and --parse-only cannot be combined")
     if args.replay and (args.download_only or args.parse_only):
         parser.error("--replay cannot be combined with download/parse-only modes")
-    if args.merge_dataset and not args.merge_output:
-        parser.error("--merge-output is required with --merge-dataset")
-    if args.merge_output and not args.merge_dataset:
-        parser.error("--merge-output requires --merge-dataset")
-    if (args.summary_output or args.browser_data_output) and not args.merge_dataset:
-        parser.error("summary/browser outputs require --merge-dataset")
     if args.limit is not None and args.limit < 1:
         parser.error("--limit must be positive")
     if args.retries < 1:
@@ -739,8 +916,6 @@ def fetch_manifest(
         manifest.append(
             {
                 "matchId": match_id,
-                "startTime": int(row["start_time"]),
-                "duration": int(row["duration"]),
                 "cluster": cluster,
                 "replaySalt": replay_salt,
                 "filename": filename,
@@ -990,6 +1165,7 @@ def decompress_replay(compressed: Path, dem: Path, quiet: bool) -> Path:
 def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]:
     required = (
         "steamId",
+        "playerName",
         "heroId",
         "heroName",
         "madstonesCollected",
@@ -998,6 +1174,13 @@ def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]
         "lotusesCollected",
     )
     missing = [key for key in required if raw.get(key) is None]
+    raw_stats = raw.get("stats")
+    if not isinstance(raw_stats, dict):
+        missing.append("stats")
+        raw_stats = {}
+    missing.extend(
+        f"stats.{key}" for key in FANTASY_STAT_KEYS if raw_stats.get(key) is None
+    )
     if missing and not allow_missing:
         raise RuntimeError(f"Replay player is missing fields: {', '.join(missing)}")
 
@@ -1017,6 +1200,27 @@ def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]
             raise RuntimeError(f"Negative {name}: {number}")
         return number
 
+    stats: dict[str, int | float | None] = {}
+    for key in FANTASY_STAT_KEYS:
+        value = raw_stats.get(key)
+        if value is None:
+            stats[key] = None
+            continue
+        if key in FLOAT_STAT_KEYS:
+            number = float(value)
+            if not math.isfinite(number):
+                raise RuntimeError(f"Non-finite stats.{key}: {number}")
+            if key == "teamfight_participation":
+                number = min(1.0, max(0.0, number))
+            else:
+                number = max(0.0, number)
+            stats[key] = normalized_number(number, 6)
+        else:
+            number = int(value)
+            if number < 0:
+                raise RuntimeError(f"Negative stats.{key}: {number}")
+            stats[key] = number
+
     team_number = int(raw["teamNumber"])
     if team_number not in (2, 3):
         raise RuntimeError(f"Unexpected team number: {team_number}")
@@ -1027,6 +1231,7 @@ def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]
         "teamNumber": team_number,
         "teamPosition": int(raw["position"]),
         "playerSlot": int(raw["playerSlot"]),
+        "name": str(raw["playerName"]) if raw.get("playerName") else None,
         "heroId": optional_nonnegative_int("heroId"),
         "heroName": (
             str(raw["heroName"]) if raw.get("heroName") is not None else None
@@ -1036,6 +1241,29 @@ def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]
         "neutralTokensFound": optional_nonnegative_int("neutralTokensFound"),
         "watchersCaptured": optional_nonnegative_int("watchersCaptured"),
         "lotusesCollected": optional_nonnegative_int("lotusesCollected"),
+        "rawStats": {
+            key: (
+                normalized_number(float(value), 6)
+                if isinstance(value, (int, float))
+                else value
+            )
+            for key, value in (raw.get("rawStats") or {}).items()
+        },
+        "stats": stats,
+    }
+
+
+def normalize_team(raw: dict[str, Any]) -> dict[str, Any]:
+    team_number = int(raw["teamNumber"])
+    if team_number not in (2, 3):
+        raise RuntimeError(f"Unexpected replay team number: {team_number}")
+    team_id = int(raw.get("teamId") or 0)
+    return {
+        "teamNumber": team_number,
+        "side": "radiant" if team_number == 2 else "dire",
+        "teamId": team_id,
+        "name": str(raw.get("name") or f"Team {team_id}"),
+        "tag": str(raw.get("tag") or ""),
     }
 
 
@@ -1078,8 +1306,44 @@ def normalize_match_record(raw: dict[str, Any]) -> dict[str, Any]:
     fountain_deaths = [
         normalize_death_event(event) for event in raw.get("fountainDeaths", [])
     ]
+    duration = (
+        max(0, int(math.floor(float(raw["duration"]))))
+        if raw.get("duration") is not None
+        else None
+    )
+    game_winner = (
+        int(raw["gameWinner"]) if raw.get("gameWinner") is not None else None
+    )
+    match_id = int(raw["matchId"]) if raw.get("matchId") is not None else None
+    end_time = int(raw["endTime"]) if raw.get("endTime") is not None else None
+    start_time = (
+        end_time - duration
+        if end_time is not None and duration is not None
+        else None
+    )
+    if game_winner not in (None, 2, 3):
+        raise RuntimeError(f"Unexpected game winner team: {game_winner}")
     return {
+        "matchId": match_id,
+        "startTime": start_time,
+        "endTime": end_time,
         "gameStartTime": normalized_number(float(raw["gameStartTime"]), 4),
+        "gameEndTime": (
+            normalized_number(float(raw["gameEndTime"]), 4)
+            if raw.get("gameEndTime") is not None
+            else None
+        ),
+        "duration": duration,
+        "leagueId": (
+            int(raw["leagueId"]) if raw.get("leagueId") is not None else None
+        ),
+        "gameWinner": game_winner,
+        "radiantWin": game_winner == 2 if game_winner is not None else None,
+        "lobbyGameName": (
+            str(raw["lobbyGameName"])
+            if raw.get("lobbyGameName") is not None
+            else None
+        ),
         "firstBloodTime": (
             normalized_number(float(raw["firstBloodTime"]), 4)
             if raw.get("firstBloodTime") is not None
@@ -1136,6 +1400,7 @@ def parse_replay(
         )
 
     players: list[dict[str, Any]] = []
+    teams: list[dict[str, Any]] = []
     match_record: dict[str, Any] | None = None
     for line in completed.stdout.splitlines():
         line = line.strip()
@@ -1150,6 +1415,8 @@ def parse_replay(
             if match_record is not None:
                 raise RuntimeError("Replay helper emitted more than one match record")
             match_record = normalize_match_record(raw)
+        elif record_type == "team":
+            teams.append(normalize_team(raw))
         elif record_type in (None, "player"):
             players.append(normalize_player(raw, allow_missing))
         else:
@@ -1162,37 +1429,33 @@ def parse_replay(
         raise RuntimeError("Replay contains duplicate player account IDs")
     if match_record is None:
         raise RuntimeError("Replay helper did not emit match title data")
+    if len(teams) != 2 or {team["teamNumber"] for team in teams} != {2, 3}:
+        raise RuntimeError(f"Expected Radiant and Dire replay teams, found {teams}")
     players.sort(key=lambda player: player["playerSlot"])
-    return {"players": players, "titleData": match_record}
+    teams.sort(key=lambda team: team["teamNumber"])
+    return {
+        "players": players,
+        "teams": teams,
+        "matchData": match_record,
+        "titleData": match_record,
+    }
 
 
 def new_state() -> dict[str, Any]:
     return {
         "meta": {
-            "schemaVersion": 4,
+            "schemaVersion": 7,
             "leagueId": LEAGUE_ID,
             "leagueName": LEAGUE_NAME,
             "artifact": "replayFantasyStats",
             "generatedAt": utc_now(),
             "parser": "Clarity 4.0.1",
             "fieldProvenance": {
-                "madstonesCollected": (
-                    "final replay state m_vecDataTeam[*].m_nAcquiredMadstone; "
-                    "retained for comparison"
-                ),
-                "neutralTokensFound": (
-                    "final replay state m_vecDataTeam[*].m_iNeutralTokensFound; "
-                    "scored Madstone source"
-                ),
-                "watchersCaptured": (
-                    "final replay state m_vecDataTeam[*].m_iWatchersTaken"
-                ),
-                "lotusesCollected": (
-                    "final replay state m_vecDataTeam[*].m_iLotusesTaken"
-                ),
-                "heroId/heroName": (
-                    "CDOTA_PlayerResource selected hero"
-                ),
+                "stats": "Valve replay final player-data arrays",
+                "gpm": "CMsgDOTAMatch.Player gold_per_min",
+                "tormentors_killed": "CDOTA_Data* m_iTormentorKills",
+                "heroId/heroName": "CDOTA_PlayerResource selected hero",
+                "player/team identities": "CDOTA_PlayerResource and CDOTATeam",
                 "titleData": (
                     "combat-log first blood/Tormentor deaths and replay-position "
                     "fountain deaths"
@@ -1216,6 +1479,8 @@ def load_state(path: Path) -> dict[str, Any]:
     state = json.loads(path.read_text(encoding="utf-8"))
     if state.get("meta", {}).get("leagueId") != LEAGUE_ID:
         raise RuntimeError(f"Checkpoint {path} is for a different league")
+    if int(state.get("meta", {}).get("schemaVersion", -1)) != 7:
+        return new_state()
     if not isinstance(state.get("matches"), list):
         raise RuntimeError(f"Checkpoint {path} has no matches array")
     state.setdefault("errors", [])
@@ -1256,28 +1521,32 @@ def parse_one_local(args: argparse.Namespace) -> int:
         args.tool_cache, args.timeout, args.retries, args.quiet
     )
 
-    created_dem = False
     if source.name.endswith(".dem.bz2"):
         verify_bz2_header(source)
         dem = args.replay_root / "dem" / source.name.removesuffix(".bz2")
-        existed = dem.exists()
         dem = decompress_replay(source, dem, args.quiet)
-        created_dem = not existed
     elif source.suffix == ".dem":
         dem = source
     else:
         raise RuntimeError("--replay must point to a .dem or .dem.bz2 file")
 
-    try:
-        parsed = parse_replay(
-            dem, java, classpath, args.allow_missing_fields
-        )
-    finally:
-        if created_dem and not args.keep_dem and dem.exists():
-            dem.unlink()
+    parsed = parse_replay(
+        dem, java, classpath, args.allow_missing_fields
+    )
 
+    filename_match_id = local_replay_match_id(source)
+    replay_match_id = parsed["matchData"].get("matchId")
+    if (
+        filename_match_id is not None
+        and replay_match_id is not None
+        and filename_match_id != replay_match_id
+    ):
+        raise RuntimeError(
+            f"Replay match ID {replay_match_id} does not match filename "
+            f"{filename_match_id}"
+        )
     value = {
-        "matchId": local_replay_match_id(source),
+        "matchId": replay_match_id,
         "sourceFile": source.name,
         **parsed,
     }
@@ -1321,9 +1590,12 @@ def process_manifest(args: argparse.Namespace) -> dict[str, Any]:
         int(match["matchId"]): match
         for match in old_state.get("matches", [])
         if isinstance(match.get("titleData"), dict)
+        and isinstance(match.get("matchData"), dict)
+        and len(match.get("teams", [])) == 2
         and all(player.get("heroId") for player in match.get("players", []))
         and all(
-            player.get("neutralTokensFound") is not None
+            isinstance(player.get("stats"), dict)
+            and all(player["stats"].get(key) is not None for key in FANTASY_STAT_KEYS)
             for player in match.get("players", [])
         )
     }
@@ -1340,21 +1612,23 @@ def process_manifest(args: argparse.Namespace) -> dict[str, Any]:
         if not args.quiet:
             print(f"[{index}/{len(selected)}] match {match_id}")
 
-        dem: Path | None = None
-        created_dem = False
         try:
             compressed = download_replay(item, args)
             _, expected_dem = replay_paths(args.replay_root, item)
-            existed = expected_dem.exists()
             dem = decompress_replay(compressed, expected_dem, args.quiet)
-            created_dem = not existed
             parsed = parse_replay(
                 dem, java, classpath, args.allow_missing_fields
             )
+            replay_match_id = parsed["matchData"].get("matchId")
+            if replay_match_id != match_id:
+                raise RuntimeError(
+                    f"Downloaded match {match_id}, but replay contains "
+                    f"match ID {replay_match_id}"
+                )
             match_map[match_id] = {
                 "matchId": match_id,
-                "startTime": item["startTime"],
-                "duration": item["duration"],
+                "startTime": parsed["matchData"]["startTime"],
+                "duration": parsed["matchData"]["duration"],
                 "cluster": item["cluster"],
                 "replaySalt": item["replaySalt"],
                 "replayUrl": item["replayUrl"],
@@ -1374,14 +1648,6 @@ def process_manifest(args: argparse.Namespace) -> dict[str, Any]:
             if args.fail_fast:
                 save_state(args.output, match_map, error_map)
                 raise
-        finally:
-            if (
-                created_dem
-                and not args.keep_dem
-                and dem is not None
-                and dem.exists()
-            ):
-                dem.unlink()
         save_state(args.output, match_map, error_map)
 
     return save_state(args.output, match_map, error_map)
@@ -1392,202 +1658,11 @@ def normalized_number(value: float, digits: int = 6) -> int | float:
     return int(rounded) if math.isclose(rounded, int(rounded)) else rounded
 
 
-def merge_replay_stats(
-    dataset_path: Path,
-    output_path: Path,
-    state: dict[str, Any],
-    allow_partial: bool,
-) -> dict[str, Any]:
-    dataset = json.loads(dataset_path.read_text(encoding="utf-8"))
-    replay_matches = {
-        int(match["matchId"]): match for match in state.get("matches", [])
-    }
-    dataset_match_ids = {int(match["matchId"]) for match in dataset["matches"]}
-    missing_matches = dataset_match_ids - set(replay_matches)
-    if missing_matches and not allow_partial:
-        raise RuntimeError(
-            f"Cannot merge: {len(missing_matches)} dataset matches lack replay stats"
-        )
-
-    rows_by_player: dict[tuple[int, int], list[dict[str, Any]]] = defaultdict(list)
-    merged_matches = 0
-    for match in dataset["matches"]:
-        match_id = int(match["matchId"])
-        replay_match = replay_matches.get(match_id)
-        if replay_match is None:
-            for player in match["players"]:
-                rows_by_player[(int(player["teamId"]), int(player["accountId"]))].append(
-                    player["stats"]
-                )
-            continue
-
-        by_account = {
-            int(player["accountId"]): player
-            for player in replay_match["players"]
-            if player.get("accountId") is not None
-        }
-        for player in match["players"]:
-            account_id = int(player["accountId"])
-            exact = by_account.get(account_id)
-            if exact is None:
-                raise RuntimeError(
-                    f"Match {match_id}: account {account_id} absent from replay"
-                )
-            stats = player["stats"]
-            proxies = player.setdefault("proxies", {})
-            proxies.setdefault("madstone_bundle_uses", stats.get("madstones_collected"))
-            proxies.setdefault("watcher_ability_uses", stats.get("watchers_captured"))
-            stats["madstones_collected"] = exact["neutralTokensFound"]
-            stats["watchers_captured"] = exact["watchersCaptured"]
-            stats["lotuses_collected"] = exact["lotusesCollected"]
-            player["replayCounters"] = {
-                "acquiredMadstones": exact.get("madstonesCollected"),
-                "currentMadstones": exact.get("currentMadstones"),
-                "neutralTokensFound": exact.get("neutralTokensFound"),
-            }
-            player["heroId"] = exact.get("heroId")
-            player["heroName"] = exact.get("heroName")
-            is_radiant = int(player["playerSlot"]) < 128
-            player["won"] = bool(match["radiantWin"]) == is_radiant
-            player["lost"] = not player["won"]
-            rows_by_player[(int(player["teamId"]), account_id)].append(stats)
-        match["titleData"] = replay_match.get("titleData")
-        merged_matches += 1
-
-    stat_keys = (
-        "madstones_collected",
-        "watchers_captured",
-        "lotuses_collected",
-    )
-    for team in dataset["teams"]:
-        team_id = int(team["teamId"])
-        for player in team["players"]:
-            key = (team_id, int(player["accountId"]))
-            rows = rows_by_player.get(key, [])
-            if not rows:
-                raise RuntimeError(f"No match rows for team/player {key}")
-            for stat_key in stat_keys:
-                values = [row.get(stat_key) for row in rows]
-                if any(value is None for value in values):
-                    total: int | None = None
-                    average: int | float | None = None
-                else:
-                    total = sum(int(value) for value in values)
-                    average = normalized_number(total / len(values))
-                player["totals"][stat_key] = total
-                player["averages"][stat_key] = average
-
-    meta = dataset["meta"]
-    meta.setdefault("sources", {})["valveReplays"] = (
-        "http://replay{cluster}.valve.net/570/{match_id}_{replay_salt}.dem.bz2"
-    )
-    provenance = meta.setdefault("fieldProvenance", {})
-    provenance["madstones_collected"] = (
-        "Valve replay m_vecDataTeam[*].m_iNeutralTokensFound"
-    )
-    provenance["watchers_captured"] = (
-        "Valve replay m_vecDataTeam[*].m_iWatchersTaken"
-    )
-    provenance["lotuses_collected"] = (
-        "Valve replay m_vecDataTeam[*].m_iLotusesTaken"
-    )
-    caveats = meta.get("caveats", [])
-    meta["caveats"] = [
-        caveat
-        for caveat in caveats
-        if not (
-            "lotuses_collected is null" in caveat
-            or "madstones_collected uses OpenDota" in caveat
-        )
-    ]
-    meta["replayFantasyStats"] = {
-        "generatedAt": utc_now(),
-        "parser": "Clarity 4.0.1",
-        "matchesMerged": merged_matches,
-        "exactFields": list(stat_keys),
-        "includesHeroAndTitleData": True,
-        "sourceArtifact": state.get("meta", {}).get(
-            "artifact", "replayFantasyStats"
-        ),
-    }
-    atomic_write_json(output_path, dataset)
-    return dataset
-
-
-def build_summary(
-    dataset: dict[str, Any], source_data_file: str
-) -> dict[str, Any]:
-    player_maps: dict[int, list[dict[str, Any]]] = defaultdict(list)
-    for match in dataset["matches"]:
-        for player in match["players"]:
-            player_maps[int(player["accountId"])].append(
-                {
-                    "matchId": match["matchId"],
-                    "heroId": player.get("heroId"),
-                    "heroName": player.get("heroName"),
-                    "won": player.get("won"),
-                    "lost": player.get("lost"),
-                    "titleData": match.get("titleData"),
-                    "replayCounters": player.get("replayCounters"),
-                    "stats": player["stats"],
-                }
-            )
-    return {
-        "meta": {
-            **dataset["meta"],
-            "artifact": "summary",
-            "sourceDataFile": source_data_file,
-        },
-        "teams": [
-            {
-                "teamId": team["teamId"],
-                "name": team["name"],
-                "tag": team["tag"],
-                "players": [
-                    {
-                        "accountId": player["accountId"],
-                        "name": player["name"],
-                        "role": player["role"],
-                        "games": player["games"],
-                        "averages": player["averages"],
-                        "maps": player_maps[int(player["accountId"])],
-                        "roleConfidence": player["roleConfidence"],
-                    }
-                    for player in team["players"]
-                ],
-            }
-            for team in dataset["teams"]
-        ],
-    }
-
-
-def write_merged_outputs(
-    args: argparse.Namespace, state: dict[str, Any]
-) -> None:
-    if not args.merge_dataset:
-        return
-    merged = merge_replay_stats(
-        args.merge_dataset,
-        args.merge_output,
-        state,
-        args.allow_partial_merge,
-    )
-    print(f"Wrote merged dataset: {args.merge_output}")
-    if args.summary_output or args.browser_data_output:
-        summary = build_summary(merged, args.merge_output.name)
-        if args.summary_output:
-            atomic_write_json(args.summary_output, summary, compact=True)
-            print(f"Wrote replay summary: {args.summary_output}")
-        if args.browser_data_output:
-            payload = json.dumps(summary, ensure_ascii=False, separators=(",", ":"))
-            atomic_write_text(
-                args.browser_data_output,
-                "window.FANTASY_DATA=" + payload + ";\n",
-            )
-            print(f"Wrote browser data: {args.browser_data_output}")
-
-
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    if hasattr(sys.stderr, "reconfigure"):
+        sys.stderr.reconfigure(encoding="utf-8", errors="replace")
     args = parse_args()
     try:
         if args.replay:
@@ -1599,7 +1674,6 @@ def main() -> int:
                 f"Replay result: {coverage['completedMatches']}/{EXPECTED_MATCHES} "
                 f"matches, {coverage['failedMatches']} failures -> {args.output}"
             )
-            write_merged_outputs(args, state)
         return 0 if not state.get("errors") else 1
     except (
         RuntimeError,

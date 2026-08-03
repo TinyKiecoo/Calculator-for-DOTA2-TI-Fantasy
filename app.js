@@ -81,7 +81,7 @@
       scoringRelativeChange: "相对变化",
       scoringChanges: {
         kills: { label: "击杀", previous: "每个击杀 +121", current: "每个击杀 +107" },
-        deaths: { label: "死亡", previous: "初始积分为 1800，每次阵亡 −180", current: "初始积分为 1950，每次阵亡 −195" },
+        deaths: { label: "死亡", previous: "初始积分为 1800，每次阵亡 -180", current: "初始积分为 1950，每次阵亡 -195" },
         creep_score: { label: "正反补", previous: "每个正补/反补 +3", current: "每个正补/反补 +3" },
         gpm: { label: "GPM", previous: "得分为选手 GPM 乘以 2", current: "得分为选手 GPM 乘以 2" },
         madstone_collected: { label: "狂石收集数量", previous: "每收集一块狂石 +19", current: "每收集一块狂石 +13" },
@@ -134,7 +134,7 @@
       knownLimitations: "数据说明",
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
-      dataSourcesBody: "常规赛后数据来自 OpenDota；狂石、观察者与莲花直接读取 Valve 回放最终状态字段。",
+      dataSourcesBody: "全部比赛信息与梦幻统计均直接读取 Valve 比赛录像；OpenDota 仅用于查找联赛录像下载链接。",
       roles: { core: "核心", mid: "中单", support: "辅助" },
       colors: { red: "红色", blue: "蓝色", green: "绿色" },
       qualityLabels: {
@@ -219,7 +219,7 @@
       scoringRelativeChange: "Relative change",
       scoringChanges: {
         kills: { label: "KILLS", previous: "+121 per kill", current: "+107 per kill" },
-        deaths: { label: "DEATHS", previous: "1800 starting points, −180 per death", current: "1950 starting points, −195 per death" },
+        deaths: { label: "DEATHS", previous: "1800 starting points, -180 per death", current: "1950 starting points, -195 per death" },
         creep_score: { label: "CREEP SCORE", previous: "+3 per last hit or deny", current: "+3 per last hit or deny" },
         gpm: { label: "GPM", previous: "Scores player's GPM Multiplied by 2", current: "Scores player's GPM Multiplied by 2" },
         madstone_collected: { label: "MADSTONE COLLECTED", previous: "+19 per Madstone collected", current: "+13 per Madstone collected" },
@@ -272,7 +272,7 @@
       knownLimitations: "Data Notes",
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
-      dataSourcesBody: "Regular post-game stats come from OpenDota. Madstone, Watcher, and Lotus values are read directly from final-state fields in Valve replays.",
+      dataSourcesBody: "All match information and Fantasy statistics are read directly from Valve replays. OpenDota is used only to discover league replay download URLs.",
       roles: { core: "Core", mid: "Mid", support: "Support" },
       colors: { red: "Red", blue: "Blue", green: "Green" },
       qualityLabels: {
