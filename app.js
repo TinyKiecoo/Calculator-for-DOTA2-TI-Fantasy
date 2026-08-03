@@ -1310,6 +1310,18 @@
     window.alert(text("tormentorCorrectionBody"));
   }
 
+  function scheduleTormentorCorrectionNotice() {
+    if (!shouldShowTormentorCorrection) return;
+    const showAfterPaint = () => {
+      window.setTimeout(showTormentorCorrectionNotice, 0);
+    };
+    if (typeof window.requestAnimationFrame === "function") {
+      window.requestAnimationFrame(showAfterPaint);
+    } else {
+      showAfterPaint();
+    }
+  }
+
   function manualMultiplierTarget(control) {
     if (
       !(control instanceof HTMLInputElement) ||
@@ -1499,7 +1511,7 @@
     updateMultiplierSwitcher();
     updateAdvisorTitleSelectors();
     render();
-    showTormentorCorrectionNotice();
+    scheduleTormentorCorrectionNotice();
   } catch (error) {
     console.error(error);
     bannerGrid.hidden = true;
