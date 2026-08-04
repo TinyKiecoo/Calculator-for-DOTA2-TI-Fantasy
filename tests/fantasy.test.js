@@ -7,6 +7,7 @@ const {
   calculateTitleBonus,
   calculateEmblemModifiers,
   cloneDefaultConfig,
+  countedGamesForSeries,
   formatScore,
   internationalRoleColors,
   scorePair,
@@ -307,7 +308,7 @@ test("takes the best two maps from the highest-scoring series", () => {
   assertEmblemScoresSum(scorePlayer(player, emblems, "highest"));
 });
 
-test("takes the best three maps from a best-of-five series", () => {
+test("temporarily takes only the best two maps from a best-of-five series", () => {
   const emblems = [
     { color: "red", stat: "kills", quality: 1, trait: "unique" },
     { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
@@ -336,9 +337,16 @@ test("takes the best three maps from a best-of-five series", () => {
   );
   const result = scorePlayer(player, emblems, "highest");
 
-  assert.equal(result.score, isolated[4] + isolated[3] + isolated[2]);
-  assert.deepEqual(result.matchIds, [5, 4, 3]);
+  assert.equal(result.score, isolated[4] + isolated[3]);
+  assert.deepEqual(result.matchIds, [5, 4]);
   assertEmblemScoresSum(result);
+});
+
+test("keeps the TI best-of-five three-map rule ready to enable", () => {
+  assert.equal(countedGamesForSeries(1, true), 2);
+  assert.equal(countedGamesForSeries(2, true), 3);
+  assert.equal(countedGamesForSeries(3, true), 2);
+  assert.equal(countedGamesForSeries(2), 2);
 });
 
 test("average mode doubles the average across every valid map", () => {

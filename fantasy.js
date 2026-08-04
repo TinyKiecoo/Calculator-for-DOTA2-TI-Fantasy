@@ -13,6 +13,10 @@
   const bannerRoles = ["core", "mid", "support"];
   const stageKeys = ["groupStage", "international"];
   const scoreModes = ["highest", "average"];
+  // EWC 2026 is currently used as a TI score forecast, so counting a third
+  // Bo5 map would inflate the two finalist teams. Enable this once real TI
+  // matches replace the proxy dataset.
+  const enableTiBestOfFiveScoring = false;
   const countedGamesBySeriesType = { 1: 2, 2: 3, 3: 2 };
   const emblemColors = ["red", "blue", "green"];
   const qualities = [1, 2, 3, 4, 5];
@@ -515,7 +519,11 @@
     return `match:${result.matchId}`;
   }
 
-  function countedGamesForSeries(seriesType) {
+  function countedGamesForSeries(
+    seriesType,
+    enableBestOfFiveScoring = enableTiBestOfFiveScoring,
+  ) {
+    if (!enableBestOfFiveScoring) return 2;
     return countedGamesBySeriesType[Number(seriesType)] ?? 2;
   }
 
@@ -979,6 +987,7 @@
     scoreRawStat,
     scoreStatistics,
     calculateTitleBonus,
+    countedGamesForSeries,
     scoreMap,
     aggregateMapResults,
     scorePlayer,

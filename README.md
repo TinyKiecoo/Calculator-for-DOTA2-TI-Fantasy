@@ -86,8 +86,10 @@ The browser supports advisor prefix and suffix titles. Prefix hero categories
 are maintained in `fantasy.js` from `heroids.txt`; suffix conditions are read
 from each replay checkpoint. The default highest-map method scores every map,
 averages the two players on a two-player banner within each map, sums the best
-two maps in a Bo2/Bo3 or the best three maps in a Bo5, then keeps the best
-series. **All-Map Average ×2**
+two maps in every series format, then keeps the best series. This temporary
+forecast setting avoids inflating EWC 2026 finalists before TI begins; the Bo5
+three-map rule remains behind `enableTiBestOfFiveScoring` in `fantasy.js`.
+**All-Map Average ×2**
 is an optional comparison method that averages every valid map in the full
 scoring period and doubles the result without selecting a best series.
 

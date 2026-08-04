@@ -68,6 +68,20 @@ test("uses classic scripts and file-safe relative paths", () => {
   }
 });
 
+test("orders the topbar actions and links to the Candyworks Calculator", () => {
+  const navSource = html.match(/<nav aria-label="页面操作"[\s\S]*?<\/nav>/)?.[0];
+  assert.ok(navSource, "the page-actions navigation must exist");
+  assert.ok(navSource.indexOf('data-open-modal="data"') < navSource.indexOf('github.com'));
+  assert.ok(navSource.indexOf('github.com') < navSource.indexOf('id="language-toggle"'));
+  assert.ok(navSource.indexOf('id="language-toggle"') < navSource.indexOf('www.candyworks.site'));
+  assert.match(
+    navSource,
+    /href="https:\/\/www\.candyworks\.site\/"[\s\S]*?target="_blank"[\s\S]*?rel="noopener noreferrer"/,
+  );
+  assert.match(navSource, /data-i18n="candyworksCalculator"/);
+  assert.match(app, /candyworksCalculator:\s*"Candyworks Calculator"/);
+});
+
 test("loads the browser data snapshot without fetch or modules", () => {
   const source = fs.readFileSync(
     path.join(root, "data", "19785", "data.js"),
