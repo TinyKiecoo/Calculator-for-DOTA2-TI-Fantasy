@@ -11,6 +11,26 @@ const root = path.resolve(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
 const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
+const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
+const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+
+test("publishes crawl and discovery metadata for the canonical site", () => {
+  assert.match(robots, /^User-agent: \*\r?\nAllow: \/$/m);
+  assert.match(robots, /^Sitemap: https:\/\/www\.ti-fantasy\.site\/sitemap\.xml$/m);
+  assert.match(sitemap, /<loc>https:\/\/www\.ti-fantasy\.site\/<\/loc>/);
+  assert.match(sitemap, /<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
+  assert.match(html, /<link rel="canonical" href="https:\/\/www\.ti-fantasy\.site\/">/);
+  assert.match(html, /<meta name="robots" content="index, follow,/);
+
+  const structuredDataSource = html.match(
+    /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
+  );
+  assert.ok(structuredDataSource, "WebApplication structured data must exist");
+  const structuredData = JSON.parse(structuredDataSource[1]);
+  assert.equal(structuredData["@type"], "WebApplication");
+  assert.equal(structuredData.url, "https://www.ti-fantasy.site/");
+  assert.equal(structuredData.offers.price, 0);
+});
 
 test("uses classic scripts and file-safe relative paths", () => {
   assert.doesNotMatch(html, /type=["']module["']/i);

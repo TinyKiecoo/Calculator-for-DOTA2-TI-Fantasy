@@ -53,8 +53,8 @@
   const translations = {
     zh: {
       locale: "zh-CN",
-      documentTitle: "DOTA 2 TI 梦幻挑战计算器",
-      description: "开源的 DOTA 2 TI 梦幻挑战预测计算器。",
+      documentTitle: "Dota 2 TI 2026 梦幻挑战计算器",
+      description: "免费的开源 Dota 2 TI 2026 梦幻挑战计算器，基于 2026 电竞世界杯比赛录像数据比较选手表现并估算梦幻积分。",
       backToTop: "返回梦幻挑战顶部",
       brandName: "梦幻挑战",
       pageHeading: "开源的 Dota 2 梦幻挑战计算器",
@@ -198,8 +198,8 @@
     },
     en: {
       locale: "en-US",
-      documentTitle: "Calculator for DOTA 2 TI Fantasy",
-      description: "An open-source calculator for DOTA 2 TI Fantasy predictions.",
+      documentTitle: "Dota 2 TI 2026 Fantasy Calculator",
+      description: "Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator using Esports World Cup 2026 replay data to compare players and estimate fantasy scores.",
       backToTop: "Back to the Fantasy Challenge top",
       brandName: "FANTASY",
       pageHeading: "An open-source calculator for DOTA 2 TI Fantasy predictions.",
@@ -463,6 +463,16 @@
     document.querySelector('meta[name="description"]')?.setAttribute("content", text("description"));
     document.querySelector('meta[property="og:title"]')?.setAttribute("content", text("documentTitle"));
     document.querySelector('meta[property="og:description"]')?.setAttribute("content", text("description"));
+    document.querySelector('meta[property="og:locale"]')?.setAttribute(
+      "content",
+      currentLanguage === "zh" ? "zh_CN" : "en_US",
+    );
+    document.querySelector('meta[property="og:locale:alternate"]')?.setAttribute(
+      "content",
+      currentLanguage === "zh" ? "en_US" : "zh_CN",
+    );
+    document.querySelector('meta[name="twitter:title"]')?.setAttribute("content", text("documentTitle"));
+    document.querySelector('meta[name="twitter:description"]')?.setAttribute("content", text("description"));
 
     languageToggle.textContent = currentLanguage === "zh" ? "English" : "中文";
     languageToggle.setAttribute("aria-label", text("switchLanguage"));
