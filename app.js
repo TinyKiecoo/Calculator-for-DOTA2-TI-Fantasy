@@ -77,7 +77,7 @@
       advisorTitles: "指导员称号",
       prefixTitle: "前缀",
       suffixTitle: "后缀",
-      scoringChangeNotice: "温馨提示：请注意今年积分规则的改变。",
+      scoringChangeNotice: "请注意今年积分规则的改变。",
       openScoringChangeNotice: "查看 2025 与 2026 积分规则变化",
       closeScoringChangeNotice: "关闭积分规则变化提示",
       scoringChangesKicker: "SCORING CHANGES",
@@ -226,7 +226,7 @@
       advisorTitles: "Advisor titles",
       prefixTitle: "Prefix",
       suffixTitle: "Suffix",
-      scoringChangeNotice: "Kind reminder: Please note this year's changes to the scoring rules.",
+      scoringChangeNotice: "Please note this year's changes to the scoring rules.",
       openScoringChangeNotice: "View the 2025 and 2026 scoring-rule changes",
       closeScoringChangeNotice: "Dismiss scoring-rule change notice",
       scoringChangesKicker: "SCORING CHANGES",
@@ -1103,42 +1103,44 @@
       <section class="banner-column" data-banner-column-role="${role}">
         <article class="war-banner war-banner--${role}${state.config[role].length === 5 ? " war-banner--five" : ""}" data-banner-role="${role}">
           <div class="banner-rope is-top" aria-hidden="true"></div>
-          <header class="banner-heading">
-            <h2>${escapeHtml(currentLanguage === "en" ? roleName(role).toUpperCase() : roleName(role))}</h2>
-            <span class="selected-roster" title="${escapeHtml(selectedLabel)}">
-              ${escapeHtml(selectedLabel)}
-              <small>${escapeHtml(selectedSubtitle)}</small>
-            </span>
-            <fieldset class="score-method">
-              <legend>${escapeHtml(text("scoreMethod"))}</legend>
-              <div>
-                <button
-                  type="button"
-                  data-score-role="${role}"
-                  data-score-mode="highest"
-                  aria-pressed="${state.scoreMode[role] === "highest"}"
-                  class="${state.scoreMode[role] === "highest" ? "is-active" : ""}"
-                >${escapeHtml(text("highestScore"))}</button>
-                <button
-                  type="button"
-                  data-score-role="${role}"
-                  data-score-mode="average"
-                  aria-pressed="${state.scoreMode[role] === "average"}"
-                  class="${state.scoreMode[role] === "average" ? "is-active" : ""}"
-                >${escapeHtml(text("averageScore"))}</button>
-              </div>
-            </fieldset>
-            <div
-              class="banner-score"
-              aria-label="${escapeHtml(text("bannerScore", { role: roleName(role) }))}"
-            >${escapeHtml(selectedScore)}</div>
-          </header>
+          <div class="banner-main">
+            <header class="banner-heading">
+              <h2>${escapeHtml(currentLanguage === "en" ? roleName(role).toUpperCase() : roleName(role))}</h2>
+              <span class="selected-roster" title="${escapeHtml(selectedLabel)}">
+                ${escapeHtml(selectedLabel)}
+                <small>${escapeHtml(selectedSubtitle)}</small>
+              </span>
+              <fieldset class="score-method">
+                <legend>${escapeHtml(text("scoreMethod"))}</legend>
+                <div>
+                  <button
+                    type="button"
+                    data-score-role="${role}"
+                    data-score-mode="highest"
+                    aria-pressed="${state.scoreMode[role] === "highest"}"
+                    class="${state.scoreMode[role] === "highest" ? "is-active" : ""}"
+                  >${escapeHtml(text("highestScore"))}</button>
+                  <button
+                    type="button"
+                    data-score-role="${role}"
+                    data-score-mode="average"
+                    aria-pressed="${state.scoreMode[role] === "average"}"
+                    class="${state.scoreMode[role] === "average" ? "is-active" : ""}"
+                  >${escapeHtml(text("averageScore"))}</button>
+                </div>
+              </fieldset>
+              <div
+                class="banner-score"
+                aria-label="${escapeHtml(text("bannerScore", { role: roleName(role) }))}"
+              >${escapeHtml(selectedScore)}</div>
+            </header>
+
+            ${rankingMarkup(role, rankings, selected)}
+          </div>
 
           <section class="emblem-pennant" aria-label="${escapeHtml(text("emblemPennant", { role: roleName(role) }))}">
             <div class="emblem-stack">${emblems}</div>
           </section>
-
-          ${rankingMarkup(role, rankings, selected)}
 
           <div class="banner-rope is-bottom" aria-hidden="true"></div>
         </article>

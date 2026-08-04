@@ -256,12 +256,38 @@ test("renders all three banners with a minimal classic-script DOM", () => {
 
   const rendered = element("banner-grid").innerHTML;
   assert.equal((rendered.match(/class="war-banner /g) || []).length, 3);
+  assert.equal((rendered.match(/class="banner-main"/g) || []).length, 3);
   assert.equal((rendered.match(/class="emblem-card /g) || []).length, 9);
   assert.equal((rendered.match(/class="banner-score"/g) || []).length, 3);
   assert.match(
     css,
     /\.emblem-pennant\s*\{[\s\S]*?height:\s*auto;/,
     "the pennant height must follow its content stack",
+  );
+  assert.match(
+    css,
+    /\.war-banner\s*\{[\s\S]*?height:\s*auto;[\s\S]*?display:\s*grid;/,
+    "the war banner must be sized by its two content columns",
+  );
+  assert.match(
+    css,
+    /\.banner-main,\s*\n\.emblem-pennant\s*\{\s*grid-area:\s*1\s*\/\s*1;/,
+    "the leaderboard column and variable-height pennant must share the sizing row",
+  );
+  assert.match(
+    css,
+    /\.banner-main\s*\{[\s\S]*?align-self:\s*stretch;[\s\S]*?display:\s*flex;[\s\S]*?flex-direction:\s*column;/,
+    "the leaderboard column must stretch to the pennant-driven banner height",
+  );
+  assert.match(
+    css,
+    /\.leaderboard\s*\{[\s\S]*?height:\s*274px;[\s\S]*?min-height:\s*274px;[\s\S]*?flex:\s*1\s+1\s+274px;[\s\S]*?overflow:\s*hidden;/,
+    "the leaderboard must start at 5.5 rows and only grow to fill the banner",
+  );
+  assert.match(
+    rendered,
+    /class="banner-main"[\s\S]*?class="banner-heading"[\s\S]*?class="leaderboard"[\s\S]*?class="emblem-pennant"/,
+    "the leaderboard must follow the banner heading",
   );
   assert.match(
     css,

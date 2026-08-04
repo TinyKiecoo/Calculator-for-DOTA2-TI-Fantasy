@@ -426,12 +426,18 @@ a:focus-visible {
 
 .banner-column {
   min-width: 0;
+  height: auto;
 }
 
 .war-banner {
   min-width: 0;
-  min-height: 600px;
+  height: auto;
+  min-height: 0;
   position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  padding-bottom: 18px;
   overflow: hidden;
   color: var(--ink);
   border: 2px solid #c8a64f;
@@ -491,6 +497,19 @@ a:focus-visible {
   min-height: 170px;
   padding: 35px 10px 12px;
   text-align: center;
+}
+
+.banner-main,
+.emblem-pennant {
+  grid-area: 1 / 1;
+}
+
+.banner-main {
+  min-width: 0;
+  z-index: 2;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
 }
 
 .banner-heading h2 {
@@ -581,13 +600,14 @@ a:focus-visible {
 
 .emblem-pennant {
   --emblem-pennant-tip-depth: 28px;
-  position: absolute;
-  top: 32px;
-  right: 3.3%;
+  position: relative;
   z-index: 3;
   width: 43.5%;
   height: auto;
+  margin: 32px 3.3% 0 0;
   padding: 10px 9px 45px;
+  align-self: start;
+  justify-self: end;
   background: rgba(238, 232, 199, .92);
   clip-path: polygon(
     0 0,
@@ -858,12 +878,14 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 }
 
 .leaderboard {
-  position: absolute;
-  left: 2%;
-  bottom: 18px;
+  position: relative;
   z-index: 3;
   width: 50%;
   height: 274px;
+  min-height: 274px;
+  margin: 0 0 0 2%;
+  flex: 1 1 274px;
+  overflow: hidden;
   color: #1e1912;
   border: 1px solid rgba(72, 51, 21, .42);
   background: rgba(229, 221, 185, .7);
@@ -1194,12 +1216,13 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .war-banner {
-    min-height: 590px;
+    height: auto;
+    min-height: 0;
   }
 
   .emblem-pennant {
     width: 44%;
-    right: 2.6%;
+    margin-right: 2.6%;
   }
 
   .banner-heading,
@@ -1249,7 +1272,8 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .war-banner {
-    min-height: 580px;
+    height: auto;
+    min-height: 0;
   }
 
   .banner-heading h2 {
@@ -1278,8 +1302,8 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .leaderboard {
-    left: 2.6%;
     width: 50%;
+    margin-left: 2.6%;
   }
 }
 
@@ -1528,6 +1552,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 
   .war-banner {
     width: 100%;
+    height: auto;
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -1561,9 +1586,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .emblem-pennant {
-    position: relative;
-    top: auto;
-    right: auto;
     width: calc(100% - 24px);
     height: auto;
     margin: 0 auto;
@@ -1646,9 +1668,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .leaderboard {
-    position: relative;
-    left: auto;
-    bottom: auto;
     width: calc(100% - 24px);
     height: min(300px, 48vh);
     min-height: 238px;
