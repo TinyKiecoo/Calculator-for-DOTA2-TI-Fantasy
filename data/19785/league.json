@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 7,
+  "schemaVersion": 8,
   "leagueId": 19785,
   "leagueName": "Esports World Cup 2026",
   "liquipediaUrl": "https://liquipedia.net/dota2/Esports_World_Cup/2026",
-  "generatedAt": "2026-08-03T17:46:20.065159Z",
+  "generatedAt": "2026-08-04T13:24:30.886029Z",
   "replayCache": "D:\\Program Files\\Document\\fantasy\\my_fantasy\\replays\\19785",
   "coverage": {
     "matches": 157,
@@ -16,13 +16,9 @@
   "files": {
     "manifest": "manifest.json",
     "matches": "matches/<MATCH_ID>.json",
+    "errors": "errors.json",
     "full": "full.json",
     "summary": "summary.json",
     "browser": "data.js"
-  },
-  "gpmBackfill": {
-    "method": "matchId + accountId",
-    "matches": 157,
-    "sourceSchemaVersion": 5
   }
 }
