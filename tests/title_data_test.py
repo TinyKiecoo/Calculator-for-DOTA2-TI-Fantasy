@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import io
+import json
 import sys
 import tempfile
 import unittest
@@ -50,6 +52,95 @@ class TitleDataTests(unittest.TestCase):
             verify.assert_called_once_with(cached)
             download.assert_not_called()
             self.assertEqual(parse.call_args.args[0], cached)
+
+    def test_build_records_a_replay_failure_and_continues(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            args = SimpleNamespace(
+                data_root=root / "data",
+                league_id=19785,
+                expected_matches=None,
+                timeout=1,
+                replay_cache=root / "replays",
+                force=False,
+                tool_cache=root / "tools",
+                retries=1,
+                league_name="Test 2026",
+                liquipedia_url="https://example.invalid/test",
+                allow_missing_replay_fields=False,
+                parse_timeout=1,
+            )
+            manifest = [
+                {
+                    "matchId": match_id,
+                    "filename": f"{match_id}_salt.dem.bz2",
+                    "replayUrl": f"https://example.invalid/{match_id}",
+                }
+                for match_id in (1, 2, 3)
+            ]
+
+            def parse(item, _args, _java_runtime):
+                if item["matchId"] == 2:
+                    raise RuntimeError("Replay lacks exact GPM inputs")
+                return {"parsedMatchId": item["matchId"]}
+
+            def checkpoint(item, _replay, _league_id):
+                return {
+                    "matchId": item["matchId"],
+                    "match": {"matchId": item["matchId"], "players": []},
+                }
+
+            with (
+                patch.object(replay_tools, "fetch_manifest", return_value=manifest),
+                patch.object(
+                    replay_tools,
+                    "ensure_java_helper",
+                    return_value=("java", "classpath"),
+                ),
+                patch.object(
+                    build_league,
+                    "parse_downloaded_match",
+                    side_effect=parse,
+                ) as parse_match,
+                patch.object(
+                    build_league,
+                    "checkpoint_from_replay",
+                    side_effect=checkpoint,
+                ),
+                patch.object(
+                    build_league,
+                    "validate_checkpoint",
+                    side_effect=lambda value, _league_id, _match_id: value["match"],
+                ),
+                patch.object(build_league, "assign_series_ids"),
+                patch.object(build_league, "echo_match"),
+                patch.object(
+                    league_data,
+                    "build_dataset",
+                    return_value={"meta": {"coverage": {"parsedMatches": 2}}},
+                ),
+                patch.object(
+                    league_data,
+                    "build_summary",
+                    return_value={"ok": True},
+                ),
+                patch.object(build_league.sys, "stdout", io.StringIO()),
+                patch.object(build_league.sys, "stderr", io.StringIO()),
+            ):
+                build_league.build(args)
+
+            self.assertEqual(parse_match.call_count, 3)
+            league_dir = args.data_root / str(args.league_id)
+            errors = json.loads(
+                (league_dir / "errors.json").read_text(encoding="utf-8")
+            )
+            self.assertEqual(len(errors), 1)
+            self.assertEqual(errors[0]["matchId"], 2)
+            self.assertIn("exact GPM inputs", errors[0]["error"])
+            self.assertTrue((league_dir / "matches" / "1.json").exists())
+            self.assertFalse((league_dir / "matches" / "2.json").exists())
+            self.assertTrue((league_dir / "matches" / "3.json").exists())
+            self.assertTrue((league_dir / "full.json").exists())
 
     def test_legacy_question_marks_are_repaired_by_account_id(self) -> None:
         checkpoint = {
@@ -109,7 +200,7 @@ class TitleDataTests(unittest.TestCase):
                     "heroId": index + 1,
                     "heroName": f"npc_dota_hero_{index + 1}",
                     "stats": dict(stats),
-                    "rawStats": {},
+                    "rawStats": {"totalEarnedGold": 18_000 + index},
                     "madstonesCollected": 9,
                     "currentMadstones": 3,
                     "neutralTokensFound": 7,
@@ -154,9 +245,19 @@ class TitleDataTests(unittest.TestCase):
         match = checkpoint["match"]
         self.assertEqual(match["startTime"], 10_000)
         self.assertEqual(match["endTime"], 11_800)
-        self.assertEqual(match["players"][0]["stats"]["gpm"], 555)
+        self.assertEqual(match["players"][0]["stats"]["gpm"], 600)
         self.assertEqual(match["players"][0]["stats"]["tormentors_killed"], 1)
+        self.assertNotIn("gpm", checkpoint["replay"]["exactFields"])
+        self.assertEqual(checkpoint["replay"]["calculatedFields"], ["gpm"])
         self.assertTrue(checkpoint["replay"]["allFantasyStatsFromReplay"])
+
+    def test_gpm_uses_total_gold_and_exact_replay_duration(self) -> None:
+        self.assertAlmostEqual(
+            replay_tools.calculate_gpm(22_964, 925.4, 2965.7334),
+            675.3013992713152,
+        )
+        with self.assertRaisesRegex(RuntimeError, "totalEarnedGold"):
+            replay_tools.calculate_gpm(None, 925.4, 2965.7334)
 
     def test_both_madstone_counters_are_kept_separate(self) -> None:
         player = replay_tools.normalize_player(
@@ -175,13 +276,16 @@ class TitleDataTests(unittest.TestCase):
                 "lotusesCollected": 2,
                 "stats": {
                     key: (
-                        0.5 if key == "teamfight_participation"
-                        else 1.25 if key == "stun_seconds"
+                        0.8518518805503845
+                        if key == "teamfight_participation"
+                        else 1.9023056030273438
+                        if key == "stun_seconds"
                         else 30 if key == "madstones_collected"
                         else 2 if key == "tormentors_killed"
                         else 0
                     )
                     for key in league_data.STAT_KEYS
+                    if key != "gpm"
                 },
             },
             allow_missing=False,
@@ -190,6 +294,12 @@ class TitleDataTests(unittest.TestCase):
         self.assertEqual(player["neutralTokensFound"], 30)
         self.assertEqual(player["stats"]["madstones_collected"], 30)
         self.assertEqual(player["stats"]["tormentors_killed"], 2)
+        self.assertIsNone(player["stats"]["gpm"])
+        self.assertEqual(
+            player["stats"]["teamfight_participation"],
+            0.8518518805503845,
+        )
+        self.assertEqual(player["stats"]["stun_seconds"], 1.9023056030273438)
         self.assertIn(
             "m_iTormentorKills",
             league_data.FIELD_PROVENANCE["tormentors_killed"],
@@ -261,6 +371,7 @@ class TitleDataTests(unittest.TestCase):
                 "endTime": 1_700_001_000,
                 "duration": 900.75,
                 "gameStartTime": 100.0,
+                "gameEndTime": 1000.75,
                 "firstBloodTime": 5.0,
                 "seriesType": 0,
                 "radiantSeriesWins": 0,
@@ -290,7 +401,8 @@ class TitleDataTests(unittest.TestCase):
         self.assertEqual(record["ownFountainDeaths"][0]["teamNumber"], 3)
         self.assertEqual(record["matchId"], 1234567890)
         self.assertEqual(record["endTime"], 1_700_001_000)
-        self.assertEqual(record["startTime"], 1_700_000_100)
+        self.assertEqual(record["duration"], 900.75)
+        self.assertEqual(record["startTime"], 1_700_000_099.25)
 
 
 if __name__ == "__main__":

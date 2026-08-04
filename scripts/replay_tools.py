@@ -2,9 +2,10 @@
 """Low-level Dota 2 replay download and Fantasy-field parsing tools.
 
 All Fantasy statistics are read from the replay. Most come from its final
-player-data arrays; GPM comes from the authoritative post-match message. The
-helper also emits player/team identities, match result and duration, hero
-selection, and combat-log evidence required by advisor-title conditions.
+player-data arrays; GPM is calculated from total earned gold and the exact
+replay game duration. The helper also emits player/team identities, match
+result and duration, hero selection, and combat-log evidence required by
+advisor-title conditions.
 
 The script is intentionally self-contained and has no Python package
 dependencies.  It downloads Clarity 4.0.1 and its small Java dependency set
@@ -26,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import bz2
+import copy
 import hashlib
 import json
 import math
@@ -77,6 +79,9 @@ FANTASY_STAT_KEYS = (
     "couriers_killed",
 )
 
+DIRECT_REPLAY_STAT_KEYS = tuple(
+    key for key in FANTASY_STAT_KEYS if key != "gpm"
+)
 FLOAT_STAT_KEYS = {"teamfight_participation", "stun_seconds"}
 
 
@@ -138,11 +143,9 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import skadistats.clarity.io.Util;
 import skadistats.clarity.model.CombatLogEntry;
@@ -155,7 +158,6 @@ import skadistats.clarity.processor.reader.OnMessage;
 import skadistats.clarity.processor.runner.Context;
 import skadistats.clarity.processor.runner.SimpleRunner;
 import skadistats.clarity.source.MappedFileSource;
-import skadistats.clarity.wire.dota.s2.proto.DOTAS2GcMessagesCommon.CMsgDOTAMatch;
 import skadistats.clarity.wire.shared.demo.proto.Demo.CDemoFileInfo;
 import skadistats.clarity.wire.shared.demo.proto.Demo.CGameInfo.CDotaGameInfo;
 
@@ -165,10 +167,8 @@ public final class ReplayFantasyStats {
     // are within 5.45 grid units, while the nearest preceding outside death is
     // 11.41 units away. Eight cells equal 1024 Source 2 world units.
     private static final double FOUNTAIN_RADIUS = 8.0;
-    private static final long STEAM_ID64_BASE = 76561197960265728L;
     private final List<DeathRecord> tormentorDeaths = new ArrayList<>();
     private final List<DeathRecord> fountainDeaths = new ArrayList<>();
-    private final Map<Long, Integer> postMatchGpmByAccountId = new HashMap<>();
     private Float firstBloodTimestamp;
     private Float firstHeroDeathTimestamp;
     private Long replayMatchId;
@@ -205,17 +205,6 @@ public final class ReplayFantasyStats {
         replayEndTime = dota.hasEndTime() ? dota.getEndTime() : null;
     }
 
-    @OnMessage(CMsgDOTAMatch.class)
-    public void onDotaMatch(CMsgDOTAMatch match) {
-        for (CMsgDOTAMatch.Player player : match.getPlayersList()) {
-            if (!player.hasAccountId() || !player.hasGoldPerMin()) continue;
-            postMatchGpmByAccountId.put(
-                Integer.toUnsignedLong(player.getAccountId()),
-                player.getGoldPerMin()
-            );
-        }
-    }
-
     @SuppressWarnings("unchecked")
     private static <T> T property(Entity entity, String name) {
         if (entity == null) return null;
@@ -225,7 +214,14 @@ public final class ReplayFantasyStats {
     }
 
     private static String jsonNumber(Object value) {
-        return value == null ? "null" : String.valueOf(value);
+        if (value == null) return "null";
+        if (value instanceof Float number) {
+            return Double.toString(number.doubleValue());
+        }
+        if (value instanceof Double number) {
+            return Double.toString(number);
+        }
+        return String.valueOf(value);
     }
 
     private static String jsonString(String value) {
@@ -252,7 +248,7 @@ public final class ReplayFantasyStats {
     }
 
     private static String fixed(Double value) {
-        return value == null ? "null" : String.format(Locale.ROOT, "%.4f", value);
+        return value == null ? "null" : Double.toString(value);
     }
 
     private static Double coordinate(Entity entity, String axis) {
@@ -532,14 +528,6 @@ public final class ReplayFantasyStats {
             Object creepScore = lastHits instanceof Number && denies instanceof Number
                 ? ((Number) lastHits).longValue() + ((Number) denies).longValue()
                 : null;
-            long steamId64 = steamId instanceof Number
-                ? ((Number) steamId).longValue()
-                : identity == null ? 0L : identity.steamId();
-            long accountId = steamId64 - STEAM_ID64_BASE;
-            Object gpm = accountId >= 0L && accountId <= 0xFFFFFFFFL
-                ? postMatchGpmByAccountId.get(accountId)
-                : null;
-
             System.out.printf(
                 "{\"recordType\":\"player\",\"teamNumber\":%d," +
                 "\"position\":%d,\"playerSlot\":%d,\"steamId\":%s," +
@@ -548,11 +536,10 @@ public final class ReplayFantasyStats {
                 "\"currentMadstones\":%s,\"neutralTokensFound\":%s," +
                 "\"watchersCaptured\":%s," +
                 "\"lotusesCollected\":%s," +
-                "\"rawStats\":{\"totalEarnedGold\":%s,\"postMatchGpm\":%s," +
-                "\"lastHits\":%s," +
+                "\"rawStats\":{\"totalEarnedGold\":%s,\"lastHits\":%s," +
                 "\"denies\":%s,\"assists\":%s}," +
                 "\"stats\":{\"kills\":%s,\"deaths\":%s," +
-                "\"creep_score\":%s,\"gpm\":%s," +
+                "\"creep_score\":%s," +
                 "\"madstones_collected\":%s,\"towers_destroyed\":%s," +
                 "\"observer_wards_placed\":%s,\"camps_stacked\":%s," +
                 "\"runes_picked_up\":%s,\"watchers_captured\":%s," +
@@ -573,14 +560,12 @@ public final class ReplayFantasyStats {
                 jsonNumber(watchers),
                 jsonNumber(lotuses),
                 jsonNumber(totalEarnedGold),
-                jsonNumber(gpm),
                 jsonNumber(lastHits),
                 jsonNumber(denies),
                 jsonNumber(assists),
                 jsonNumber(kills),
                 jsonNumber(deaths),
                 jsonNumber(creepScore),
-                jsonNumber(gpm),
                 jsonNumber(neutralTokens),
                 jsonNumber(towerKills),
                 jsonNumber(observerWards),
@@ -603,7 +588,7 @@ public final class ReplayFantasyStats {
 
     private static void emitDeathArray(
         List<DeathRecord> events,
-        double gameStartTime
+        Double gameStartTime
     ) {
         System.out.print("[");
         for (int index = 0; index < events.size(); index++) {
@@ -612,12 +597,16 @@ public final class ReplayFantasyStats {
             PlayerIdentity player = event.player();
             System.out.printf(
                 Locale.ROOT,
-                "{\"time\":%.4f,\"teamNumber\":%d,\"teamPosition\":%d," +
+                "{\"time\":%s,\"teamNumber\":%d,\"teamPosition\":%d," +
                 "\"playerSlot\":%d,\"steamId\":%d,\"heroId\":%d," +
                 "\"heroName\":%s,\"attacker\":%s," +
                 "\"fountainTeamNumber\":%s,\"isOwnFountain\":%s," +
                 "\"fountainDistance\":%s}",
-                event.timestamp() - gameStartTime,
+                fixed(
+                    gameStartTime == null
+                        ? null
+                        : event.timestamp() - gameStartTime
+                ),
                 player.teamNumber(),
                 player.teamPosition(),
                 player.playerSlot(),
@@ -644,7 +633,7 @@ public final class ReplayFantasyStats {
         Number radiantSeriesWins = property(rules, "m_pGameRules.m_nRadiantSeriesWins");
         Number direSeriesWins = property(rules, "m_pGameRules.m_nDireSeriesWins");
         String lobbyGameName = property(rules, "m_pGameRules.m_lobbyGameName");
-        double gameStartTime = gameStart == null ? 0.0 : gameStart.doubleValue();
+        Double gameStartTime = gameStart == null ? null : gameStart.doubleValue();
         Double duration = gameStart == null || gameEnd == null
             ? null
             : Math.max(0.0, gameEnd.doubleValue() - gameStart.doubleValue());
@@ -663,7 +652,11 @@ public final class ReplayFantasyStats {
         System.out.print("\"lobbyGameName\":" + jsonString(lobbyGameName) + ",");
         System.out.print(
             "\"firstBloodTime\":"
-            + (firstBlood == null ? "null" : fixed(firstBlood.doubleValue() - gameStartTime))
+            + (
+                firstBlood == null || gameStartTime == null
+                    ? "null"
+                    : fixed(firstBlood.doubleValue() - gameStartTime)
+            )
             + ","
         );
         System.out.print("\"seriesType\":" + jsonNumber(seriesType) + ",");
@@ -1179,7 +1172,9 @@ def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]
         missing.append("stats")
         raw_stats = {}
     missing.extend(
-        f"stats.{key}" for key in FANTASY_STAT_KEYS if raw_stats.get(key) is None
+        f"stats.{key}"
+        for key in DIRECT_REPLAY_STAT_KEYS
+        if raw_stats.get(key) is None
     )
     if missing and not allow_missing:
         raise RuntimeError(f"Replay player is missing fields: {', '.join(missing)}")
@@ -1214,7 +1209,7 @@ def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]
                 number = min(1.0, max(0.0, number))
             else:
                 number = max(0.0, number)
-            stats[key] = normalized_number(number, 6)
+            stats[key] = number
         else:
             number = int(value)
             if number < 0:
@@ -1241,14 +1236,7 @@ def normalize_player(raw: dict[str, Any], allow_missing: bool) -> dict[str, Any]
         "neutralTokensFound": optional_nonnegative_int("neutralTokensFound"),
         "watchersCaptured": optional_nonnegative_int("watchersCaptured"),
         "lotusesCollected": optional_nonnegative_int("lotusesCollected"),
-        "rawStats": {
-            key: (
-                normalized_number(float(value), 6)
-                if isinstance(value, (int, float))
-                else value
-            )
-            for key, value in (raw.get("rawStats") or {}).items()
-        },
+        "rawStats": copy.deepcopy(raw.get("rawStats") or {}),
         "stats": stats,
     }
 
@@ -1275,7 +1263,7 @@ def normalize_death_event(raw: dict[str, Any]) -> dict[str, Any]:
         if account_id < 0 or account_id > 0xFFFFFFFF:
             raise RuntimeError(f"Invalid death-event Steam ID 64: {steam_id}")
     return {
-        "time": normalized_number(float(raw["time"]), 4),
+        "time": float(raw["time"]),
         "accountId": account_id,
         "steamId": str(steam_id) if steam_id else None,
         "teamNumber": int(raw["teamNumber"]),
@@ -1295,7 +1283,7 @@ def normalize_death_event(raw: dict[str, Any]) -> dict[str, Any]:
             else None
         ),
         "fountainDistance": (
-            normalized_number(float(raw["fountainDistance"]), 4)
+            float(raw["fountainDistance"])
             if raw.get("fountainDistance") is not None
             else None
         ),
@@ -1303,11 +1291,13 @@ def normalize_death_event(raw: dict[str, Any]) -> dict[str, Any]:
 
 
 def normalize_match_record(raw: dict[str, Any]) -> dict[str, Any]:
+    if raw.get("gameStartTime") is None or raw.get("gameEndTime") is None:
+        raise RuntimeError("Replay lacks exact game start or end time")
     fountain_deaths = [
         normalize_death_event(event) for event in raw.get("fountainDeaths", [])
     ]
     duration = (
-        max(0, int(math.floor(float(raw["duration"]))))
+        max(0.0, float(raw["duration"]))
         if raw.get("duration") is not None
         else None
     )
@@ -1327,9 +1317,9 @@ def normalize_match_record(raw: dict[str, Any]) -> dict[str, Any]:
         "matchId": match_id,
         "startTime": start_time,
         "endTime": end_time,
-        "gameStartTime": normalized_number(float(raw["gameStartTime"]), 4),
+        "gameStartTime": float(raw["gameStartTime"]),
         "gameEndTime": (
-            normalized_number(float(raw["gameEndTime"]), 4)
+            float(raw["gameEndTime"])
             if raw.get("gameEndTime") is not None
             else None
         ),
@@ -1345,7 +1335,7 @@ def normalize_match_record(raw: dict[str, Any]) -> dict[str, Any]:
             else None
         ),
         "firstBloodTime": (
-            normalized_number(float(raw["firstBloodTime"]), 4)
+            float(raw["firstBloodTime"])
             if raw.get("firstBloodTime") is not None
             else None
         ),
@@ -1362,7 +1352,7 @@ def normalize_match_record(raw: dict[str, Any]) -> dict[str, Any]:
             if raw.get("direSeriesWins") is not None
             else None
         ),
-        "fountainRadius": normalized_number(float(raw["fountainRadius"]), 4),
+        "fountainRadius": float(raw["fountainRadius"]),
         "tormentorDeaths": [
             normalize_death_event(event) for event in raw.get("tormentorDeaths", [])
         ],
@@ -1371,6 +1361,30 @@ def normalize_match_record(raw: dict[str, Any]) -> dict[str, Any]:
             event for event in fountain_deaths if event["isOwnFountain"] is True
         ],
     }
+
+
+def calculate_gpm(
+    total_earned_gold: Any,
+    game_start_time: Any,
+    game_end_time: Any,
+) -> float:
+    """Calculate Fantasy GPM entirely from precise replay-owned values."""
+
+    if total_earned_gold is None:
+        raise RuntimeError("Replay player lacks rawStats.totalEarnedGold")
+    if game_start_time is None or game_end_time is None:
+        raise RuntimeError("Replay lacks exact game start or end time")
+    total_gold = float(total_earned_gold)
+    start = float(game_start_time)
+    end = float(game_end_time)
+    if not all(math.isfinite(value) for value in (total_gold, start, end)):
+        raise RuntimeError("Replay GPM inputs must be finite numbers")
+    if total_gold < 0:
+        raise RuntimeError("Replay total earned gold cannot be negative")
+    duration = end - start
+    if duration <= 0:
+        raise RuntimeError("Replay exact game duration must be positive")
+    return total_gold * 60.0 / duration
 
 
 def parse_replay(
@@ -1431,6 +1445,12 @@ def parse_replay(
         raise RuntimeError("Replay helper did not emit match title data")
     if len(teams) != 2 or {team["teamNumber"] for team in teams} != {2, 3}:
         raise RuntimeError(f"Expected Radiant and Dire replay teams, found {teams}")
+    for player in players:
+        player["stats"]["gpm"] = calculate_gpm(
+            (player.get("rawStats") or {}).get("totalEarnedGold"),
+            match_record.get("gameStartTime"),
+            match_record.get("gameEndTime"),
+        )
     players.sort(key=lambda player: player["playerSlot"])
     teams.sort(key=lambda team: team["teamNumber"])
     return {
@@ -1444,7 +1464,7 @@ def parse_replay(
 def new_state() -> dict[str, Any]:
     return {
         "meta": {
-            "schemaVersion": 7,
+            "schemaVersion": 8,
             "leagueId": LEAGUE_ID,
             "leagueName": LEAGUE_NAME,
             "artifact": "replayFantasyStats",
@@ -1452,7 +1472,10 @@ def new_state() -> dict[str, Any]:
             "parser": "Clarity 4.0.1",
             "fieldProvenance": {
                 "stats": "Valve replay final player-data arrays",
-                "gpm": "CMsgDOTAMatch.Player gold_per_min",
+                "gpm": (
+                    "Calculated from CDOTA_Data* m_iTotalEarnedGold and exact "
+                    "replay game duration"
+                ),
                 "tormentors_killed": "CDOTA_Data* m_iTormentorKills",
                 "heroId/heroName": "CDOTA_PlayerResource selected hero",
                 "player/team identities": "CDOTA_PlayerResource and CDOTATeam",
@@ -1479,7 +1502,7 @@ def load_state(path: Path) -> dict[str, Any]:
     state = json.loads(path.read_text(encoding="utf-8"))
     if state.get("meta", {}).get("leagueId") != LEAGUE_ID:
         raise RuntimeError(f"Checkpoint {path} is for a different league")
-    if int(state.get("meta", {}).get("schemaVersion", -1)) != 7:
+    if int(state.get("meta", {}).get("schemaVersion", -1)) != 8:
         return new_state()
     if not isinstance(state.get("matches"), list):
         raise RuntimeError(f"Checkpoint {path} has no matches array")
@@ -1651,11 +1674,6 @@ def process_manifest(args: argparse.Namespace) -> dict[str, Any]:
         save_state(args.output, match_map, error_map)
 
     return save_state(args.output, match_map, error_map)
-
-
-def normalized_number(value: float, digits: int = 6) -> int | float:
-    rounded = round(value, digits)
-    return int(rounded) if math.isclose(rounded, int(rounded)) else rounded
 
 
 def main() -> int:

@@ -69,32 +69,25 @@ rerun validates and prints those saved player stats without downloading or
 parsing the replay again. Compressed and decompressed replay files are kept in
 `replays/<LEAGUE_ID>/`. An existing `.dem` is parsed directly; otherwise an
 existing `.dem.bz2` is decompressed, and only a missing replay is downloaded.
-Neither file is deleted automatically.
-
-For the one-time schema-6 GPM correction, the existing schema-5 post-match
-values can be copied without reparsing replays. The migration validates every
-match/player identity first and then rebuilds all browser artifacts locally:
-
-```powershell
-python scripts/migrate_gpm_from_legacy.py --dry-run
-python scripts/migrate_gpm_from_legacy.py
-```
+Neither file is deleted automatically. A replay that cannot be parsed is
+recorded in `errors.json`; the builder continues with all later matches.
 
 Most Fantasy counters are stored together in each replay under
 `CDOTA_DataRadiant/Dire.m_vecDataTeam[*]`. Kills, deaths, teamfight
 participation and first blood are in the corresponding
-`CDOTA_PlayerResource.m_vecPlayerTeamData[*]` rows. GPM uses the authoritative
-post-match `CMsgDOTAMatch.Player.gold_per_min` value embedded in the replay;
-deriving it from total earned gold and duration can overcount some players. In
-particular, Tormentor kills use the official per-player `m_iTormentorKills`
+`CDOTA_PlayerResource.m_vecPlayerTeamData[*]` rows. GPM is calculated from
+`m_iTotalEarnedGold` and the precise difference between the replay's game end
+and start times; rounded post-match GPM and remote stat fallbacks are not used.
+In particular, Tormentor kills use the official per-player `m_iTormentorKills`
 participation counter, not OpenDota's last-hit-only
 `killed.npc_dota_miniboss` value.
 
 The browser supports advisor prefix and suffix titles. Prefix hero categories
 are maintained in `fantasy.js` from `heroids.txt`; suffix conditions are read
-from each replay checkpoint. The default **Best Two Maps** method scores every
-map, averages the two players on a two-player banner within each map, sums the
-best two maps in each series, then keeps the best series. **All-Map Average ×2**
+from each replay checkpoint. The default highest-map method scores every map,
+averages the two players on a two-player banner within each map, sums the best
+two maps in a Bo2/Bo3 or the best three maps in a Bo5, then keeps the best
+series. **All-Map Average ×2**
 is an optional comparison method that averages every valid map in the full
 scoring period and doubles the result without selecting a best series.
 
@@ -116,7 +109,7 @@ comparison. Roles are inferred from event-wide creep-score ordering: the two
 lowest farmers are supports and the middle of the remaining three is mid.
 Unusual rosters can be corrected by account ID in `LEAGUE_ROLE_OVERRIDES` near the top
 of `scripts/build_league.py`, without adding a remote role-data source.
-Checkpoints made with schema 5 or older are
+Checkpoints made with schema 7 or older are
 automatically treated as stale and reparsed on the next build.
 
 To display another generated league, set the same `LEAGUE_ID` and

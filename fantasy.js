@@ -13,6 +13,7 @@
   const bannerRoles = ["core", "mid", "support"];
   const stageKeys = ["groupStage", "international"];
   const scoreModes = ["highest", "average"];
+  const countedGamesBySeriesType = { 1: 2, 2: 3, 3: 2 };
   const emblemColors = ["red", "blue", "green"];
   const qualities = [1, 2, 3, 4, 5];
   const traits = [
@@ -514,6 +515,10 @@
     return `match:${result.matchId}`;
   }
 
+  function countedGamesForSeries(seriesType) {
+    return countedGamesBySeriesType[Number(seriesType)] ?? 2;
+  }
+
   function aggregateMapResults(mapResults, mode) {
     if (!scoreModes.includes(mode)) {
       throw new Error(`未知的积分方式：${mode}`);
@@ -566,7 +571,10 @@
 
     const seriesResults = Array.from(bySeries.values()).map((series) => {
       const ranked = [...series].sort((left, right) => right.score - left.score);
-      const counted = ranked.slice(0, 2);
+      const counted = ranked.slice(
+        0,
+        countedGamesForSeries(series[0].seriesType),
+      );
       const score = counted.reduce((sum, result) => sum + result.score, 0);
       return {
         score,

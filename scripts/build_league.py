@@ -69,8 +69,10 @@ LEAGUE_ROLE_OVERRIDES: dict[int, dict[int, str]] = {
     }
 }
 
-CHECKPOINT_SCHEMA_VERSION = 7
-REPLAY_GPM_SOURCE = "Valve replay CMsgDOTAMatch.Player gold_per_min"
+CHECKPOINT_SCHEMA_VERSION = 8
+REPLAY_GPM_SOURCE = (
+    "Calculated from Valve replay m_iTotalEarnedGold / exact game duration"
+)
 SERIES_MAX_GAMES = {0: 1, 1: 3, 2: 5, 3: 2}
 
 
@@ -263,6 +265,12 @@ def checkpoint_from_replay(
         stats = copy.deepcopy(exact.get("stats"))
         if not isinstance(stats, dict):
             raise RuntimeError(f"Replay player {account_id} lacks stats")
+        raw_stats = copy.deepcopy(exact.get("rawStats") or {})
+        stats["gpm"] = replay_tools.calculate_gpm(
+            raw_stats.get("totalEarnedGold"),
+            match_data.get("gameStartTime"),
+            match_data.get("gameEndTime"),
+        )
         is_radiant = int(exact["teamNumber"]) == 2
         won = bool(match_data["radiantWin"]) == is_radiant
         players.append(
@@ -274,7 +282,7 @@ def checkpoint_from_replay(
                 "heroId": int(exact["heroId"]),
                 "heroName": str(exact["heroName"]),
                 "stats": stats,
-                "rawReplayStats": copy.deepcopy(exact.get("rawStats") or {}),
+                "rawReplayStats": raw_stats,
                 "replayCounters": {
                     "acquiredMadstones": exact.get("madstonesCollected"),
                     "currentMadstones": exact.get("currentMadstones"),
@@ -308,9 +316,9 @@ def checkpoint_from_replay(
         "matchId": int(replay_match_id),
         "seriesId": None,
         "seriesType": match_data.get("seriesType"),
-        "startTime": int(match_data["startTime"]),
-        "endTime": int(match_data["endTime"]),
-        "duration": int(match_data["duration"]),
+        "startTime": match_data["startTime"],
+        "endTime": match_data["endTime"],
+        "duration": match_data["duration"],
         "radiantTeamId": int(radiant["teamId"]),
         "direTeamId": int(dire["teamId"]),
         "radiantTeamName": str(radiant["name"]),
@@ -337,7 +345,10 @@ def checkpoint_from_replay(
             "parser": "Clarity 4.0.1",
             "outputEncoding": "UTF-8",
             "gpmSource": REPLAY_GPM_SOURCE,
-            "exactFields": list(league_data.STAT_KEYS),
+            "exactFields": [
+                key for key in league_data.STAT_KEYS if key != "gpm"
+            ],
+            "calculatedFields": ["gpm"],
             "allFantasyStatsFromReplay": True,
         },
         "match": match,
@@ -524,6 +535,7 @@ def parse_downloaded_match(
 def build(args: argparse.Namespace) -> None:
     league_dir = args.data_root.resolve() / str(args.league_id)
     matches_dir = league_dir / "matches"
+    errors_path = league_dir / "errors.json"
     matches_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = replay_tools.fetch_manifest(
@@ -532,6 +544,7 @@ def build(args: argparse.Namespace) -> None:
     replay_tools.atomic_write_json(league_dir / "manifest.json", manifest)
 
     checkpoints: list[dict[str, Any]] = []
+    errors: list[dict[str, Any]] = []
     known_player_names: dict[int, str] = {}
     java_runtime: tuple[str, str] | None = None
     for index, item in enumerate(manifest, start=1):
@@ -565,13 +578,33 @@ def build(args: argparse.Namespace) -> None:
             java_runtime = replay_tools.ensure_java_helper(
                 args.tool_cache, args.timeout, args.retries, quiet=False
             )
-        replay = parse_downloaded_match(item, args, java_runtime)
-        checkpoint = checkpoint_from_replay(item, replay, args.league_id)
-        replay_tools.atomic_write_json(checkpoint_path, checkpoint, compact=True)
-        match = validate_checkpoint(checkpoint, args.league_id, match_id)
-        remember_player_names(match, known_player_names)
-        echo_match(match, f"解析完成 {index}/{len(manifest)}")
-        checkpoints.append(checkpoint)
+        try:
+            replay = parse_downloaded_match(item, args, java_runtime)
+            checkpoint = checkpoint_from_replay(item, replay, args.league_id)
+            match = validate_checkpoint(checkpoint, args.league_id, match_id)
+            replay_tools.atomic_write_json(
+                checkpoint_path, checkpoint, compact=True
+            )
+            remember_player_names(match, known_player_names)
+            echo_match(match, f"解析完成 {index}/{len(manifest)}")
+            checkpoints.append(checkpoint)
+        except Exception as exc:  # Keep one unusable replay from stopping the event.
+            error = {
+                "matchId": match_id,
+                "replayFile": item.get("filename"),
+                "error": str(exc),
+                "recordedAt": utc_now(),
+            }
+            errors.append(error)
+            replay_tools.atomic_write_json(errors_path, errors)
+            print(
+                f"比赛 {match_id} 处理失败 {index}/{len(manifest)}，"
+                f"将继续处理后续录像：{exc}",
+                file=sys.stderr,
+            )
+            continue
+
+    replay_tools.atomic_write_json(errors_path, errors)
 
     assign_series_ids(checkpoints)
     for checkpoint in checkpoints:
@@ -611,6 +644,7 @@ def build(args: argparse.Namespace) -> None:
         "files": {
             "manifest": "manifest.json",
             "matches": "matches/<MATCH_ID>.json",
+            "errors": "errors.json",
             "full": "full.json",
             "summary": "summary.json",
             "browser": "data.js",
@@ -619,8 +653,10 @@ def build(args: argparse.Namespace) -> None:
     replay_tools.atomic_write_json(league_dir / "league.json", league_info)
     print(
         f"\n完成：{args.league_name}（LEAGUE_ID={args.league_id}），"
-        f"{len(checkpoints)} 场 -> {league_dir}"
+        f"{len(checkpoints)} 场成功，{len(errors)} 场失败 -> {league_dir}"
     )
+    if errors:
+        print(f"失败详情：{errors_path}", file=sys.stderr)
     print(
         "录像缓存保留于："
         f"{args.replay_cache.resolve() / str(args.league_id)}"

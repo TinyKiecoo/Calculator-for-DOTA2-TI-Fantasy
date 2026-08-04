@@ -256,26 +256,31 @@ test("takes the best two maps from the highest-scoring series", () => {
       {
         matchId: 1,
         seriesId: 10,
+        seriesType: 1,
         stats: { kills: 2, stun_seconds: 4, gpm: 200 },
       },
       {
         matchId: 2,
         seriesId: 10,
+        seriesType: 1,
         stats: { kills: 4, stun_seconds: 8, gpm: 400 },
       },
       {
         matchId: 3,
         seriesId: 10,
+        seriesType: 1,
         stats: { kills: 3, stun_seconds: 6, gpm: 300 },
       },
       {
         matchId: 4,
         seriesId: 20,
+        seriesType: 3,
         stats: { kills: 5, stun_seconds: 10, gpm: 500 },
       },
       {
         matchId: 5,
         seriesId: 20,
+        seriesType: 3,
         stats: { kills: 1, stun_seconds: 2, gpm: 100 },
       },
     ],
@@ -300,6 +305,40 @@ test("takes the best two maps from the highest-scoring series", () => {
     [2, 3],
   );
   assertEmblemScoresSum(scorePlayer(player, emblems, "highest"));
+});
+
+test("takes the best three maps from a best-of-five series", () => {
+  const emblems = [
+    { color: "red", stat: "kills", quality: 1, trait: "unique" },
+    { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
+    { color: "red", stat: "gpm", quality: 1, trait: "benevolent" },
+  ];
+  const player = {
+    id: "p1",
+    role: "mid",
+    maps: [1, 2, 3, 4, 5].map((value) => ({
+      matchId: value,
+      seriesId: 10,
+      seriesType: 2,
+      stats: {
+        kills: value,
+        stun_seconds: value * 2,
+        gpm: value * 100,
+      },
+    })),
+  };
+  const isolated = player.maps.map((map) =>
+    scorePlayer(
+      { ...player, maps: [{ ...map, seriesId: map.matchId }] },
+      emblems,
+      "highest",
+    ).score,
+  );
+  const result = scorePlayer(player, emblems, "highest");
+
+  assert.equal(result.score, isolated[4] + isolated[3] + isolated[2]);
+  assert.deepEqual(result.matchIds, [5, 4, 3]);
+  assertEmblemScoresSum(result);
 });
 
 test("average mode doubles the average across every valid map", () => {

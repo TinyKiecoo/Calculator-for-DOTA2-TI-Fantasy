@@ -43,7 +43,9 @@ FIELD_PROVENANCE = {
     "creep_score": (
         "Valve replay CDOTA_Data* m_iLastHitCount + m_iDenyCount"
     ),
-    "gpm": "Valve replay CMsgDOTAMatch.Player gold_per_min",
+    "gpm": (
+        "Calculated from Valve replay m_iTotalEarnedGold and exact game duration"
+    ),
     "madstones_collected": (
         "Valve replay CDOTA_Data* m_iNeutralTokensFound"
     ),
@@ -67,11 +69,13 @@ FIELD_PROVENANCE = {
 }
 
 
-def normalize_number(value: float, digits: int = 6) -> int | float:
-    rounded = round(value, digits)
-    if rounded == int(rounded):
-        return int(rounded)
-    return rounded
+def normalize_number(value: float) -> int | float:
+    """Preserve source precision while keeping exact integers compact."""
+
+    number = float(value)
+    if number.is_integer():
+        return int(number)
+    return number
 
 
 def iso_utc(epoch_seconds: int) -> str:
@@ -189,10 +193,10 @@ def infer_roles(
                 "confidence": confidence,
                 "evidence": {
                     "averageCreepScore": normalize_number(
-                        _average(accumulator, "creep_score"), 4
+                        _average(accumulator, "creep_score")
                     ),
                     "averageGpm": normalize_number(
-                        _average(accumulator, "gpm"), 4
+                        _average(accumulator, "gpm")
                     ),
                     "farmRankAscending": farm_rank[key],
                     "manualOverride": role_overrides.get(key[1]),
@@ -267,11 +271,11 @@ def build_dataset(
         role_info = role_map[key]
         games = int(accumulator["games"])
         totals = {
-            stat: normalize_number(value, 6)
+            stat: normalize_number(value)
             for stat, value in accumulator["totals"].items()
         }
         averages = {
-            stat: normalize_number(float(value) / games, 6)
+            stat: normalize_number(float(value) / games)
             for stat, value in totals.items()
         }
         teams[key[0]]["players"].append(
@@ -333,7 +337,7 @@ def build_dataset(
 
     return {
         "meta": {
-            "schemaVersion": 7,
+            "schemaVersion": 8,
             "leagueId": league_id,
             "leagueName": league_name,
             "generatedAt": generated_at,
@@ -374,7 +378,8 @@ def build_dataset(
             "replayFantasyStats": {
                 "parser": "Clarity 4.0.1",
                 "matchesParsed": len(sorted_matches),
-                "exactFields": list(STAT_KEYS),
+                "exactFields": [key for key in STAT_KEYS if key != "gpm"],
+                "calculatedFields": ["gpm"],
                 "allFantasyStatsFromValveReplay": True,
             },
         },
