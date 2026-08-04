@@ -1559,7 +1559,12 @@ input.emblem-multiplier::-webkit-outer-spin-button {
     overflow: hidden;
   }
 
+  .banner-main {
+    display: contents;
+  }
+
   .banner-heading {
+    order: 1;
     width: 100%;
     min-height: 0;
     padding: 34px 18px 16px;
@@ -1586,6 +1591,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .emblem-pennant {
+    order: 2;
     width: calc(100% - 24px);
     height: auto;
     margin: 0 auto;
@@ -1668,6 +1674,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .leaderboard {
+    order: 3;
     width: calc(100% - 24px);
     height: min(300px, 48vh);
     min-height: 238px;

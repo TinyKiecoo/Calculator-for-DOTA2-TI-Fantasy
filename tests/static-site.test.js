@@ -291,6 +291,11 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   );
   assert.match(
     css,
+    /@media \(max-width:\s*900px\)[\s\S]*?\.banner-main\s*\{\s*display:\s*contents;[\s\S]*?\.banner-heading\s*\{[\s\S]*?order:\s*1;[\s\S]*?\.emblem-pennant\s*\{[\s\S]*?order:\s*2;[\s\S]*?\.leaderboard\s*\{[\s\S]*?order:\s*3;/,
+    "mobile banners must show the pennant before the leaderboard",
+  );
+  assert.match(
+    css,
     /--emblem-pennant-tip-depth:\s*28px;[\s\S]*?50%\s+calc\(100%\s+-\s+var\(--emblem-pennant-tip-depth\)\)/,
     "the pennant tip must keep a fixed depth instead of growing with the stack",
   );
