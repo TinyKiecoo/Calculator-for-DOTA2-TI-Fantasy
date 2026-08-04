@@ -139,6 +139,12 @@
       limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
       dataSources: "数据来源",
       dataSourcesBody: "全部比赛信息与梦幻统计均直接读取 Valve 比赛录像；OpenDota 仅用于查找联赛录像下载链接。",
+      disclaimerTitle: "免责声明",
+      disclaimerProject: "这是一个免费、开源、非商业的玩家项目，与 Valve、Steam 或 Dota 2 官方无关联。计算结果可能不准确，数据仅供参考。",
+      disclaimerAssets: "本项目使用了 Dota 2 / Valve 相关图片、字体、名称和界面素材。这些素材仍归 Valve 及相应权利方所有；本项目的开源许可证不授予这些素材的使用权。",
+      disclaimerCounterBefore: "本站使用第三方访问计数服务。公开的计数值可在",
+      disclaimerCounterLink: "这里",
+      disclaimerCounterAfter: " 查看。",
       roles: { core: "核心", mid: "中单", support: "辅助" },
       colors: { red: "红色", blue: "蓝色", green: "绿色" },
       qualityLabels: {
@@ -278,6 +284,12 @@
       limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
       dataSources: "Data Sources",
       dataSourcesBody: "All match information and Fantasy statistics are read directly from Valve replays. OpenDota is used only to discover league replay download URLs.",
+      disclaimerTitle: "Disclaimer",
+      disclaimerProject: "This is a free, open-source, non-commercial fan project and is not affiliated with Valve, Steam, or Dota 2. Results may be inaccurate and are for reference only.",
+      disclaimerAssets: "It uses Dota 2 / Valve-derived images, fonts, names, and UI materials. Those materials remain the property of Valve and their respective rights holders; this project's open-source license does not grant rights to them.",
+      disclaimerCounterBefore: "This website uses third-party visit counters. The public counter value can be viewed",
+      disclaimerCounterLink: "here",
+      disclaimerCounterAfter: ".",
       roles: { core: "Core", mid: "Mid", support: "Support" },
       colors: { red: "Red", blue: "Blue", green: "Green" },
       qualityLabels: {
@@ -1214,6 +1226,15 @@
         <section class="data-card">
           <h3>${escapeHtml(text("dataSources"))}</h3>
           <p>${escapeHtml(text("dataSourcesBody"))}</p>
+        </section>
+        <section class="data-card data-card-disclaimer">
+          <h3>${escapeHtml(text("disclaimerTitle"))}</h3>
+          <p>${escapeHtml(text("disclaimerProject"))}</p>
+          <p>${escapeHtml(text("disclaimerAssets"))}</p>
+          <p>
+            ${escapeHtml(text("disclaimerCounterBefore"))}
+            <a href="https://www.busuanzi.cc/count.php?search=www.ti-fantasy.site" target="_blank" rel="noopener noreferrer">${escapeHtml(text("disclaimerCounterLink"))}</a>${escapeHtml(text("disclaimerCounterAfter"))}
+          </p>
         </section>
       </div>`;
   }
