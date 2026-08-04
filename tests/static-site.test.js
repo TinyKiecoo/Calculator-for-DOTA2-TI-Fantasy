@@ -249,6 +249,11 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     /\.emblem-pennant\s*\{[\s\S]*?height:\s*auto;/,
     "the pennant height must follow its content stack",
   );
+  assert.match(
+    css,
+    /--emblem-pennant-tip-depth:\s*28px;[\s\S]*?50%\s+calc\(100%\s+-\s+var\(--emblem-pennant-tip-depth\)\)/,
+    "the pennant tip must keep a fixed depth instead of growing with the stack",
+  );
   assert.equal((rendered.match(/class="leaderboard"/g) || []).length, 3);
   assert.equal((rendered.match(/data-score-mode="highest"/g) || []).length, 3);
   assert.equal((rendered.match(/data-field="multiplier"/g) || []).length, 9);

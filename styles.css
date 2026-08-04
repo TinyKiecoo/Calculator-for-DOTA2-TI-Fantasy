@@ -579,6 +579,7 @@ a:focus-visible {
 }
 
 .emblem-pennant {
+  --emblem-pennant-tip-depth: 28px;
   position: absolute;
   top: 32px;
   right: 3.3%;
@@ -587,7 +588,13 @@ a:focus-visible {
   height: auto;
   padding: 10px 9px 45px;
   background: rgba(238, 232, 199, .92);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 90%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    50% calc(100% - var(--emblem-pennant-tip-depth)),
+    0 100%
+  );
   filter: drop-shadow(0 4px 4px rgba(55, 39, 18, .35));
 }
 
@@ -600,7 +607,13 @@ a:focus-visible {
   background:
     linear-gradient(90deg, rgba(255, 255, 255, .14), transparent 28%, rgba(91, 72, 39, .08)),
     rgba(165, 157, 123, .5);
-  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 89%, 0 100%);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 100%,
+    50% calc(100% - var(--emblem-pennant-tip-depth) - 1px),
+    0 100%
+  );
 }
 
 .war-banner--five .emblem-pennant {
