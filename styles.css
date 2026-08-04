@@ -135,7 +135,7 @@ a:focus-visible {
   background:
     radial-gradient(circle at 50% -12%, rgba(137, 91, 28, .26), transparent 36rem),
     linear-gradient(180deg, rgba(4, 3, 2, .26), rgba(4, 3, 2, .7)),
-    url("fantasy-assets/ti2026_background_png.png") center top / cover fixed,
+    url("fantasy-assets/ti2026_background_png.jpg") center top / cover fixed,
     #080604;
   position: relative;
 }
