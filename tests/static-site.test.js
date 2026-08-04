@@ -128,15 +128,14 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   const listeners = new Map();
   const alerts = [];
   const timers = [];
-  const storage = new Map([
-    ["ti-fantasy-page-state-v1", JSON.stringify({
+  const returningVisitorPageState = JSON.stringify({
       version: 3,
       stage: "groupStage",
       pages: {},
       titles: { prefix: "none", suffix: "none" },
       multiplierMode: "manual",
-    })],
-  ]);
+    });
+  const storage = new Map();
 
   class FakeElement {}
   class FakeInput extends FakeElement {
@@ -215,6 +214,20 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   };
 
   vm.runInNewContext(dataSource, sandbox);
+
+  vm.runInNewContext(app, sandbox);
+  assert.deepEqual(alerts, [], "a first-time visitor must not see the notice");
+  assert.equal(timers.length, 0);
+  assert.equal(
+    storage.get("ti-fantasy-tormentor-correction-notice-v1"),
+    "shown",
+    "a first-time visitor must remain excluded on later visits",
+  );
+
+  // Simulate an existing visitor at deployment time: an old page-state key
+  // exists, while this newly introduced notice key does not exist yet.
+  storage.set("ti-fantasy-page-state-v1", returningVisitorPageState);
+  storage.delete("ti-fantasy-tormentor-correction-notice-v1");
   vm.runInNewContext(app, sandbox);
 
   const rendered = element("banner-grid").innerHTML;

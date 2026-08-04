@@ -418,8 +418,11 @@
   }
 
   function shouldShowTormentorCorrectionNotice() {
-    if (!wasReturningVisitorBeforeThisLoad()) return false;
     try {
+      if (!wasReturningVisitorBeforeThisLoad()) {
+        localStorage.setItem(TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY, "shown");
+        return false;
+      }
       return (
         localStorage.getItem(TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY) !== "shown"
       );
