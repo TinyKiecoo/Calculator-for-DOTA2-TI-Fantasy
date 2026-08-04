@@ -85,7 +85,7 @@
       document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260804-info-modal-type">
+  <link rel="stylesheet" href="styles.css?v=20260804-mobile-switchers">
 </head>
 <body>
   <aside class="correction-banner" id="correction-banner" role="status" hidden>
@@ -110,45 +110,47 @@
       <header class="topbar" id="challenge">
         <div class="brand">
           <strong data-i18n="brandName">梦幻挑战</strong>
-          <div
-            class="stage-switcher"
-            id="stage-switcher"
-            role="group"
-            aria-label="赛事阶段"
-            data-i18n-aria-label="stageSwitcher"
-          >
-            <button
-              type="button"
-              class="is-active"
-              data-stage="groupStage"
-              aria-pressed="true"
-            >Group Stage</button>
-            <button
-              type="button"
-              data-stage="international"
-              aria-pressed="false"
-            >The International</button>
-          </div>
-          <div
-            class="stage-switcher multiplier-switcher"
-            id="multiplier-switcher"
-            role="group"
-            aria-label="徽标倍率方式"
-            data-i18n-aria-label="multiplierSwitcher"
-          >
-            <button
-              type="button"
-              class="is-active"
-              data-multiplier-mode="calculated"
-              aria-pressed="true"
-              data-i18n="calculatedMultiplier"
-            >品质与特性</button>
-            <button
-              type="button"
-              data-multiplier-mode="manual"
-              aria-pressed="false"
-              data-i18n="manualMultiplier"
-            >手动倍率</button>
+          <div class="stage-switcher-row">
+            <div
+              class="stage-switcher"
+              id="stage-switcher"
+              role="group"
+              aria-label="赛事阶段"
+              data-i18n-aria-label="stageSwitcher"
+            >
+              <button
+                type="button"
+                class="is-active"
+                data-stage="groupStage"
+                aria-pressed="true"
+              >Group Stage</button>
+              <button
+                type="button"
+                data-stage="international"
+                aria-pressed="false"
+              >The International</button>
+            </div>
+            <div
+              class="stage-switcher multiplier-switcher"
+              id="multiplier-switcher"
+              role="group"
+              aria-label="徽标倍率方式"
+              data-i18n-aria-label="multiplierSwitcher"
+            >
+              <button
+                type="button"
+                class="is-active"
+                data-multiplier-mode="calculated"
+                aria-pressed="true"
+                data-i18n="calculatedMultiplier"
+              >品质与特性</button>
+              <button
+                type="button"
+                data-multiplier-mode="manual"
+                aria-pressed="false"
+                data-i18n="manualMultiplier"
+              >手动倍率</button>
+            </div>
           </div>
         </div>
 

@@ -189,6 +189,10 @@ a:focus-visible {
   letter-spacing: .035em;
 }
 
+.stage-switcher-row {
+  display: contents;
+}
+
 .stage-switcher {
   margin-top: 10px;
   display: flex;
@@ -1308,19 +1312,62 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   .topbar {
     min-height: 0;
     grid-template-columns: 1fr;
+    grid-auto-flow: row;
     justify-items: center;
-    gap: 14px;
+    gap: 6px;
     padding: 18px 0 16px;
     text-align: center;
   }
 
-  .brand {
+  /* Flatten the desktop groups so mobile can follow one visual reading order. */
+  .topbar > .brand,
+  .topbar > .challenge-title,
+  .topbar > .topbar-actions {
+    display: contents;
+  }
+
+  .topbar > .brand > strong {
+    order: 2;
     justify-self: center;
-    justify-items: center;
   }
 
   .brand strong {
     font-size: clamp(1.65rem, 7vw, 2rem);
+  }
+
+  .topbar > .challenge-title > .event-script {
+    order: 1;
+    justify-self: center;
+  }
+
+  .topbar > .challenge-title > .subtitle-row {
+    order: 3;
+  }
+
+  .topbar > .brand > .stage-switcher-row {
+    order: 5;
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .topbar > .brand > .stage-switcher-row > .stage-switcher {
+    margin-top: 0;
+  }
+
+  .topbar > .topbar-actions > nav {
+    order: 4;
+  }
+
+  .topbar > .challenge-title > .advisor-titles {
+    order: 7;
+    margin-top: 0;
+  }
+
+  .topbar > .topbar-actions > .total-score {
+    order: 8;
   }
 
   .stage-switcher button {
