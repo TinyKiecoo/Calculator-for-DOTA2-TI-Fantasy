@@ -151,6 +151,16 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     }
   }
   class FakeSelect extends FakeElement {}
+  class FakeModeButton extends FakeElement {
+    constructor(mode) {
+      super();
+      this.dataset = { multiplierMode: mode };
+    }
+
+    closest() {
+      return this;
+    }
+  }
 
   function element(id) {
     if (!elements.has(id)) {
@@ -244,6 +254,44 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.equal((rendered.match(/data-field="multiplier"/g) || []).length, 9);
   assert.doesNotMatch(rendered, /class="emblem-detail"/);
   assert.match(html, /id="multiplier-switcher"/);
+  assert.match(html, /id="detailed-score-toggle"/);
+  assert.ok(
+    html.indexOf('id="detailed-score-toggle"') > html.indexOf('id="multiplier-switcher"'),
+  );
+  assert.match(html, />显示详细得分</);
+  assert.doesNotMatch(rendered, /class="emblem-score-detail"/);
+  const detailedScoreToggle = element("detailed-score-toggle");
+  detailedScoreToggle.checked = true;
+  listeners.get("detailed-score-toggle:change")();
+  const detailedRendered = element("banner-grid").innerHTML;
+  assert.equal(
+    (detailedRendered.match(/class="emblem-score-detail"/g) || []).length,
+    9,
+  );
+  assert.equal(
+    (detailedRendered.match(/class="emblem-score-detail"[^>]*>\s*<output>/g) || []).length,
+    9,
+  );
+  assert.equal(
+    (detailedRendered.match(/class="emblem-card [^"]*has-score-detail/g) || []).length,
+    9,
+  );
+  assert.equal(
+    JSON.parse(storage.get("ti-fantasy-page-state-v1")).showDetailedScores,
+    true,
+  );
+  const multiplierClick = listeners.get("multiplier-switcher:click");
+  multiplierClick({ target: new FakeModeButton("calculated") });
+  assert.equal(
+    (element("banner-grid").innerHTML.match(/class="emblem-score-detail"/g) || []).length,
+    9,
+  );
+  assert.match(element("banner-grid").innerHTML, /class="emblem-detail"/);
+  multiplierClick({ target: new FakeModeButton("manual") });
+  assert.equal(
+    (element("banner-grid").innerHTML.match(/class="emblem-score-detail"/g) || []).length,
+    9,
+  );
   assert.match(html, /data-multiplier-mode="manual"/);
   assert.match(element("prefix-title-select").innerHTML, /value="crimson"/);
   assert.match(element("suffix-title-select").innerHTML, /value="loser"/);

@@ -189,6 +189,27 @@ a:focus-visible {
   letter-spacing: .035em;
 }
 
+.score-details-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+  color: rgba(238, 224, 194, .82);
+  cursor: pointer;
+  font-size: .7rem;
+  line-height: 1;
+  letter-spacing: .025em;
+  text-shadow: none;
+}
+
+.score-details-toggle input {
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  accent-color: #b67a35;
+  cursor: pointer;
+}
+
 .stage-switcher-row {
   display: contents;
 }
@@ -640,7 +661,8 @@ a:focus-visible {
 }
 
 .emblem-head,
-.emblem-detail {
+.emblem-detail,
+.emblem-score-detail {
   display: grid;
   align-items: center;
 }
@@ -771,6 +793,18 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   min-height: 40px;
 }
 
+.emblem-card.has-score-detail,
+.war-banner--five .emblem-card.has-score-detail {
+  height: 100px;
+  min-height: 100px;
+}
+
+.emblem-card--manual.has-score-detail,
+.war-banner--five .emblem-card--manual.has-score-detail {
+  height: 62px;
+  min-height: 62px;
+}
+
 .emblem-detail {
   min-height: 22px;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -789,6 +823,24 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   font-size: .59rem;
   letter-spacing: .04em;
   font-family: 'Reaver';
+}
+
+.emblem-score-detail {
+  min-height: 22px;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 2px 6px;
+  border-top: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(0, 0, 0, .12);
+}
+
+.emblem-score-detail output {
+  color: #fff8e9;
+  font-family: 'Reaver';
+  font-size: .68rem;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 0 7px rgba(255, 236, 191, .22);
+  white-space: nowrap;
 }
 
 .leaderboard {
@@ -1357,6 +1409,12 @@ input.emblem-multiplier::-webkit-outer-spin-button {
     margin-top: 0;
   }
 
+  .topbar > .brand > .stage-switcher-row > .score-details-toggle {
+    flex-basis: 100%;
+    justify-content: center;
+    margin-top: 0;
+  }
+
   .topbar > .topbar-actions > nav {
     order: 4;
   }
@@ -1523,6 +1581,18 @@ input.emblem-multiplier::-webkit-outer-spin-button {
     min-height: 46px;
   }
 
+  .emblem-card.has-score-detail,
+  .war-banner--five .emblem-card.has-score-detail {
+    height: auto;
+    min-height: 108px;
+  }
+
+  .emblem-card--manual.has-score-detail,
+  .war-banner--five .emblem-card--manual.has-score-detail {
+    height: auto;
+    min-height: 60px;
+  }
+
   .emblem-head {
     min-height: 36px;
     grid-template-columns: 30px minmax(0, 1fr) auto;
@@ -1542,6 +1612,11 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .emblem-detail {
+    min-height: 24px;
+    padding: 2px 8px;
+  }
+
+  .emblem-score-detail {
     min-height: 24px;
     padding: 2px 8px;
   }

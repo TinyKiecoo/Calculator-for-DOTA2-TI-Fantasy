@@ -432,7 +432,20 @@
       coverage,
       missing,
       components,
+      emblemScores: missing.length
+        ? components.map(() => null)
+        : components.map((component) => component.points),
     };
+  }
+
+  function combineEmblemScores(results, scale = 1) {
+    const count = results[0]?.emblemScores?.length ?? 0;
+    return Array.from({ length: count }, (_, index) => {
+      const values = results.map((result) => result.emblemScores?.[index]);
+      return values.every(Number.isFinite)
+        ? values.reduce((sum, value) => sum + value, 0) * scale
+        : null;
+    });
   }
 
   function normalizeTitleSelection(titles = {}) {
@@ -478,6 +491,12 @@
         result.score === null
           ? null
           : result.score * (1 + titleBonus.total),
+      emblemScores:
+        result.score === null
+          ? result.emblemScores
+          : result.emblemScores.map(
+              (value) => value * (1 + titleBonus.total),
+            ),
       matchId: map?.matchId ?? null,
       seriesId: map?.seriesId ?? null,
       seriesType: map?.seriesType ?? null,
@@ -509,6 +528,10 @@
           new Set(mapResults.flatMap((result) => result.missing || [])),
         ),
         components: mapResults[0]?.components ?? [],
+        emblemScores: Array.from(
+          { length: mapResults[0]?.emblemScores?.length ?? 0 },
+          () => null,
+        ),
         matchId: null,
         matchIds: [],
         seriesId: null,
@@ -523,6 +546,10 @@
         coverage: complete.length,
         missing: [],
         components: [],
+        emblemScores: combineEmblemScores(
+          complete,
+          2 / complete.length,
+        ),
         matchId: null,
         matchIds: complete.map((result) => result.matchId),
         seriesId: null,
@@ -556,6 +583,7 @@
       coverage: complete.length,
       missing: [],
       components: [],
+      emblemScores: combineEmblemScores(bestSeries.counted),
       matchId:
         bestSeries.counted.length === 1
           ? bestSeries.counted[0].matchId
@@ -625,6 +653,9 @@
         missing: Array.from(
           new Set([...firstScore.missing, ...secondScore.missing]),
         ),
+        emblemScores: complete
+          ? combineEmblemScores([firstScore, secondScore], 0.5)
+          : Array.from({ length: emblems.length }, () => null),
         matchId: null,
         matchIds: [],
         seriesId: null,
@@ -663,6 +694,10 @@
         seriesId: secondMap.seriesId ?? firstMap.seriesId ?? null,
         seriesType: secondMap.seriesType ?? firstMap.seriesType ?? null,
         score: (firstResult.score + secondResult.score) / 2,
+        emblemScores: combineEmblemScores(
+          [firstResult, secondResult],
+          0.5,
+        ),
         missing: [],
       });
     }
@@ -672,6 +707,7 @@
         score: null,
         coverage: 0,
         missing: Array.from(new Set(missing)),
+        emblemScores: Array.from({ length: emblems.length }, () => null),
         matchId: null,
         matchIds: [],
         seriesId: null,
@@ -716,6 +752,7 @@
             label: player.name,
             subtitle: player.teamName,
             score: result.score,
+            emblemScores: result.emblemScores,
             coverage: result.coverage,
             players: [player],
             missing: result.missing,
@@ -756,6 +793,7 @@
             label: `${first.name} & ${second.name}`,
             subtitle: first.teamName,
             score: pairScore.score,
+            emblemScores: pairScore.emblemScores,
             coverage: pairScore.coverage,
             players: [first, second],
             missing: pairScore.missing,

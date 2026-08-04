@@ -16,6 +16,12 @@ const {
   validateBannerConfig,
 } = require("../fantasy.js");
 
+function assertEmblemScoresSum(result) {
+  assert.equal(result.emblemScores.length > 0, true);
+  const total = result.emblemScores.reduce((sum, value) => sum + value, 0);
+  assert.ok(Math.abs(total - result.score) < 1e-8);
+}
+
 test("uses the current EWC 2026 base point rules", () => {
   assert.equal(scoreRawStat("kills", 2), 214);
   assert.equal(scoreRawStat("deaths", 0), 1950);
@@ -84,6 +90,7 @@ test("manual emblem multipliers replace all quality and trait effects", () => {
     1,
     [1.25, 2, 0.5],
   );
+  assertEmblemScoresSum(result);
 
   assert.equal(result.score, (214 * 1.25) + (50 * 2) + (1000 * 0.5));
   assert.deepEqual(
@@ -292,6 +299,7 @@ test("takes the best two maps from the highest-scoring series", () => {
     scorePlayer(player, emblems, "highest").matchIds,
     [2, 3],
   );
+  assertEmblemScoresSum(scorePlayer(player, emblems, "highest"));
 });
 
 test("average mode doubles the average across every valid map", () => {
@@ -325,6 +333,7 @@ test("average mode doubles the average across every valid map", () => {
     scorePlayer(player, emblems, "average").matchIds,
     [1, 2, 3],
   );
+  assertEmblemScoresSum(scorePlayer(player, emblems, "average"));
 });
 
 test("treats a missing series ID as a standalone match", () => {
@@ -409,6 +418,7 @@ test("averages a pair within each map before summing the series' best two", () =
     firstMapPair > secondMapPair ? 101 : 102,
     firstMapPair > secondMapPair ? 102 : 101,
   ]);
+  assertEmblemScoresSum(pair);
 });
 
 test("applies matching prefix and suffix bonuses to each map additively", () => {

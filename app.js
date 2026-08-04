@@ -15,6 +15,7 @@
   const modalClose = document.getElementById("modal-close");
   const stageSwitcher = document.getElementById("stage-switcher");
   const multiplierSwitcher = document.getElementById("multiplier-switcher");
+  const detailedScoreToggle = document.getElementById("detailed-score-toggle");
   const prefixTitleSelect = document.getElementById("prefix-title-select");
   const suffixTitleSelect = document.getElementById("suffix-title-select");
   const correctionBanner = document.getElementById("correction-banner");
@@ -66,6 +67,8 @@
       dataNotes: "数据说明",
       stageSwitcher: "赛事阶段",
       multiplierSwitcher: "徽标倍率方式",
+      showDetailedScores: "显示详细得分",
+      detailedEmblemScore: "{stat}得分",
       calculatedMultiplier: "品质与特性",
       manualMultiplier: "手动倍率",
       manualMultiplierInput: "{role}第 {index} 枚徽标的手动倍率",
@@ -211,6 +214,8 @@
       dataNotes: "Data Notes",
       stageSwitcher: "Tournament stage",
       multiplierSwitcher: "Emblem multiplier mode",
+      showDetailedScores: "Show detailed scores",
+      detailedEmblemScore: "{stat} score",
       calculatedMultiplier: "Quality & Trait",
       manualMultiplier: "Manual Multiplier",
       manualMultiplierInput: "Manual multiplier for {role} emblem {index}",
@@ -693,6 +698,7 @@
       multiplierMode: MULTIPLIER_MODES.includes(saved?.multiplierMode)
         ? saved.multiplierMode
         : "calculated",
+      showDetailedScores: saved?.showDetailedScores === true,
       titles: {
         prefix: engine.prefixTitles[saved?.titles?.prefix]
           ? saved.titles.prefix
@@ -705,6 +711,7 @@
   }
 
   const state = loadPageState();
+  detailedScoreToggle.checked = state.showDetailedScores;
 
   function activateStage(stage) {
     if (!engine.stageKeys.includes(stage)) return false;
@@ -727,6 +734,7 @@
           pages: state.pages,
           titles: state.titles,
           multiplierMode: state.multiplierMode,
+          showDetailedScores: state.showDetailedScores,
         }),
       );
     } catch (error) {
@@ -905,7 +913,7 @@
     }>${escapeHtml(label)}</option>`;
   }
 
-  function emblemMarkup(role, emblem, index, modifier, manualValue) {
+  function emblemMarkup(role, emblem, index, modifier, manualValue, selected) {
     const availableStats = engine.statKeys.filter(
       (stat) => engine.statDefinitions[stat].color === emblem.color,
     );
@@ -984,10 +992,22 @@
           </label>
           <output title="${escapeHtml(text("totalTraitEffect"))}">${signedPercent(traitEffect)}</output>
         </div>`;
+    const selectedEmblemScore = selected?.emblemScores?.[index];
+    const scoreDetailMarkup = state.showDetailedScores
+      ? `
+        <div
+          class="emblem-score-detail"
+          aria-label="${escapeHtml(text("detailedEmblemScore", {
+            stat: statDefinition(emblem.stat).label,
+          }))}"
+        >
+          <output>${escapeHtml(Number.isFinite(selectedEmblemScore) ? formatScore(selectedEmblemScore) : "—")}</output>
+        </div>`
+      : "";
 
     return `
       <article
-        class="emblem-card emblem-card--${emblem.color}${manualMode ? " emblem-card--manual" : ""}"
+        class="emblem-card emblem-card--${emblem.color}${manualMode ? " emblem-card--manual" : ""}${state.showDetailedScores ? " has-score-detail" : ""}"
         aria-label="${escapeHtml(text("emblemAria", {
           role: roleName(role),
           index: index + 1,
@@ -1008,6 +1028,7 @@
           ${multiplierMarkup}
         </div>
         ${detailMarkup}
+        ${scoreDetailMarkup}
       </article>`;
   }
 
@@ -1065,6 +1086,7 @@
           index,
           modifiers[index],
           manualValues[index],
+          selected,
         ),
       )
       .join("");
@@ -1482,6 +1504,12 @@
     if (!button || !MULTIPLIER_MODES.includes(mode)) return;
     state.multiplierMode = mode;
     updateMultiplierSwitcher();
+    persistPageState();
+    render();
+  });
+
+  detailedScoreToggle.addEventListener("change", () => {
+    state.showDetailedScores = detailedScoreToggle.checked;
     persistPageState();
     render();
   });
