@@ -456,7 +456,7 @@ a:focus-visible {
   pointer-events: none;
   content: "";
   opacity: .105;
-  background: url("fantasy-assets/aegis_tile_texture_png.png") 0 0 / 68px 68px repeat;
+  background: url("fantasy-assets/aegis_tile_texture_png.webp") 0 0 / 68px 68px repeat;
   filter: sepia(1) saturate(.55) brightness(.55);
 }
 
@@ -477,7 +477,7 @@ a:focus-visible {
   right: 0;
   z-index: 5;
   height: 6px;
-  background: url("fantasy-assets/rope_texture_png.png") center / auto 6px repeat-x;
+  background: url("fantasy-assets/rope_texture_png.webp") center / auto 6px repeat-x;
   filter: sepia(.38) saturate(1.22) brightness(.86);
 }
 
