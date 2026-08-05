@@ -213,12 +213,18 @@ def build_dataset(
     team_name_overrides: dict[int, str] | None = None,
     team_tag_overrides: dict[int, str] | None = None,
     role_overrides: dict[int, str] | None = None,
+    excluded_team_names: set[str] | None = None,
 ) -> dict[str, Any]:
     if not matches:
         raise RuntimeError(f"No replay matches were parsed for league {league_id}")
 
     team_name_overrides = team_name_overrides or {}
     team_tag_overrides = team_tag_overrides or {}
+    excluded_team_names = excluded_team_names or set()
+    excluded_name_keys = {
+        name.strip().casefold() for name in excluded_team_names
+    }
+    excluded_team_ids: set[int] = set()
     teams: dict[int, dict[str, Any]] = {}
     players: dict[tuple[int, int], dict[str, Any]] = {}
 
@@ -227,13 +233,20 @@ def build_dataset(
             raise RuntimeError(f"Match {match.get('matchId')} does not have ten players")
         for side in ("radiant", "dire"):
             team_id = int(match[f"{side}TeamId"])
+            team_name = team_name_overrides.get(
+                team_id, match[f"{side}TeamName"]
+            )
+            if team_name.strip().casefold() in excluded_name_keys:
+                excluded_team_ids.add(team_id)
+                teams.pop(team_id, None)
+                continue
+            if team_id in excluded_team_ids:
+                continue
             teams.setdefault(
                 team_id,
                 {
                     "teamId": team_id,
-                    "name": team_name_overrides.get(
-                        team_id, match[f"{side}TeamName"]
-                    ),
+                    "name": team_name,
                     "tag": team_tag_overrides.get(
                         team_id, match.get(f"{side}TeamTag") or ""
                     ),
@@ -242,8 +255,11 @@ def build_dataset(
                 },
             )
 
+    for match in matches:
         for player in match["players"]:
             team_id = int(player["teamId"])
+            if team_id in excluded_team_ids:
+                continue
             account_id = int(player["accountId"])
             key = (team_id, account_id)
             accumulator = players.setdefault(
@@ -293,9 +309,10 @@ def build_dataset(
 
     for match in matches:
         for player in match["players"]:
-            player["role"] = role_map[
+            role_info = role_map.get(
                 (int(player["teamId"]), int(player["accountId"]))
-            ]["role"]
+            )
+            player["role"] = role_info["role"] if role_info else None
         match["players"].sort(key=lambda player: int(player["playerSlot"]))
 
     role_order = {"core": 0, "mid": 1, "support": 2}
@@ -356,7 +373,7 @@ def build_dataset(
                 "matches": len(sorted_matches),
                 "parsedMatches": len(sorted_matches),
                 "playerGameRows": sum(
-                    len(match["players"]) for match in sorted_matches
+                    int(player["games"]) for player in players.values()
                 ),
                 "teams": len(sorted_teams),
                 "players": len(players),
@@ -366,13 +383,14 @@ def build_dataset(
             },
             "roleMethod": {
                 "description": (
-                    "Replay-only event farm ranking; two lowest creep-score "
-                    "players are supports and the median creep-score farmer "
-                    "is mid. "
-                    "Account-ID overrides are supported in build_league.py."
+                    "Global account-ID assignments in build_league.py, with "
+                    "replay-only farm ranking for unknown players."
                 ),
                 "usesRemoteRoleData": False,
             },
+            "excludedTeamNames": sorted(
+                excluded_team_names, key=str.casefold
+            ),
             "fieldProvenance": dict(FIELD_PROVENANCE),
             "caveats": [],
             "replayFantasyStats": {
@@ -402,6 +420,8 @@ def build_summary(
     for match in dataset["matches"]:
         title_conditions = match.get("titleConditions")
         for player in match["players"]:
+            if player.get("role") is None:
+                continue
             player_maps[(player["teamId"], player["accountId"])].append(
                 {
                     "matchId": match["matchId"],

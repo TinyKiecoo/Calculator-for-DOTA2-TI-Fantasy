@@ -3,14 +3,14 @@
   "leagueId": 19785,
   "leagueName": "Esports World Cup 2026",
   "liquipediaUrl": "https://liquipedia.net/dota2/Esports_World_Cup/2026",
-  "generatedAt": "2026-08-04T13:24:30.886029Z",
+  "generatedAt": "2026-08-05T05:10:59.644130Z",
   "replayCache": "D:\\Program Files\\Document\\fantasy\\my_fantasy\\replays\\19785",
   "coverage": {
     "matches": 157,
     "parsedMatches": 157,
-    "playerGameRows": 1570,
-    "teams": 24,
-    "players": 120,
+    "playerGameRows": 1010,
+    "teams": 14,
+    "players": 70,
     "allMatchesHaveTenPlayers": true
   },
   "files": {

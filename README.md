@@ -70,7 +70,11 @@ parsing the replay again. Compressed and decompressed replay files are kept in
 `replays/<LEAGUE_ID>/`. An existing `.dem` is parsed directly; otherwise an
 existing `.dem.bz2` is decompressed, and only a missing replay is downloaded.
 Neither file is deleted automatically. A replay that cannot be parsed is
-recorded in `errors.json`; the builder continues with all later matches.
+recorded in `errors.json`; the builder continues with all later matches. After
+each newly parsed replay, `data.js` is atomically rebuilt from every successful
+checkpoint available so far, allowing the site to publish partial live-event
+results while later replays are still processing. A cached-only run refreshes
+the file once after all checkpoints are loaded.
 
 Most Fantasy counters are stored together in each replay under
 `CDOTA_DataRadiant/Dire.m_vecDataTeam[*]`. Kills, deaths, teamfight
@@ -109,8 +113,10 @@ both `m_nAcquiredMadstone` and `m_iNeutralTokensFound`. Fantasy scoring uses
 `m_iNeutralTokensFound`; `m_nAcquiredMadstone` remains available for
 comparison. Roles are inferred from event-wide creep-score ordering: the two
 lowest farmers are supports and the middle of the remaining three is mid.
-Unusual rosters can be corrected by account ID in `LEAGUE_ROLE_OVERRIDES` near the top
-of `scripts/build_league.py`, without adding a remote role-data source.
+The current roster and all manual corrections are stored globally by account
+ID in `PLAYER_ROLE_OVERRIDES` near the top of `scripts/build_league.py`; unknown
+players still use replay-only inference. `EXCLUDED_TEAM_NAMES` globally removes
+teams from selection and rankings without removing their opponents' scores.
 Checkpoints made with schema 7 or older are
 automatically treated as stale and reparsed on the next build.
 

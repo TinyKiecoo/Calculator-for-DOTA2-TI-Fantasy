@@ -98,13 +98,24 @@ test("loads the browser data snapshot without fetch or modules", () => {
     ),
   );
   assert.equal(dataset.meta.coverage.matches, 157);
-  assert.equal(dataset.meta.coverage.teams, 24);
-  assert.equal(dataset.meta.coverage.players, 120);
-  assert.equal(dataset.teams.length, 24);
+  assert.equal(dataset.meta.coverage.teams, 14);
+  assert.equal(dataset.meta.coverage.players, 70);
+  assert.equal(dataset.teams.length, 14);
   assert.equal(
     dataset.teams.flatMap((team) => team.players)
       .reduce((sum, player) => sum + player.maps.length, 0),
-    1570,
+    1010,
+  );
+  assert.deepEqual(
+    Array.from(dataset.meta.excludedTeamNames),
+    [
+      "IC x Insanity", "L1 TEAM", "Level UP", "MOUZ", "Poor Rangers",
+      "PTime", "REKONIX", "Rune Eaters", "Team Nemesis", "Virtus.pro",
+    ],
+  );
+  assert.equal(
+    dataset.teams.some((team) => dataset.meta.excludedTeamNames.includes(team.name)),
+    false,
   );
   const requiredStats = [
     "kills", "deaths", "creep_score", "gpm", "madstones_collected",
@@ -304,32 +315,16 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.equal((rendered.match(/data-field="multiplier"/g) || []).length, 9);
   assert.doesNotMatch(rendered, /class="emblem-detail"/);
   assert.match(html, /id="multiplier-switcher"/);
-  assert.match(html, /id="detailed-score-toggle"/);
-  assert.ok(
-    html.indexOf('id="detailed-score-toggle"') > html.indexOf('id="multiplier-switcher"'),
-  );
-  assert.match(html, />显示详细得分</);
-  assert.doesNotMatch(rendered, /class="emblem-score-detail"/);
-  const detailedScoreToggle = element("detailed-score-toggle");
-  detailedScoreToggle.checked = true;
-  listeners.get("detailed-score-toggle:change")();
-  const detailedRendered = element("banner-grid").innerHTML;
+  assert.doesNotMatch(html, /detailed-score-toggle|显示详细得分/);
   assert.equal(
-    (detailedRendered.match(/class="emblem-score-detail"/g) || []).length,
+    (rendered.match(/class="emblem-score-detail"/g) || []).length,
     9,
   );
   assert.equal(
-    (detailedRendered.match(/class="emblem-score-detail"[^>]*>\s*<output>/g) || []).length,
+    (rendered.match(/class="emblem-score-detail"[^>]*>\s*<output>/g) || []).length,
     9,
   );
-  assert.equal(
-    (detailedRendered.match(/class="emblem-card [^"]*has-score-detail/g) || []).length,
-    9,
-  );
-  assert.equal(
-    JSON.parse(storage.get("ti-fantasy-page-state-v1")).showDetailedScores,
-    true,
-  );
+  assert.doesNotMatch(rendered, /has-score-detail/);
   const multiplierClick = listeners.get("multiplier-switcher:click");
   multiplierClick({ target: new FakeModeButton("calculated") });
   assert.equal(

@@ -189,27 +189,6 @@ a:focus-visible {
   letter-spacing: .035em;
 }
 
-.score-details-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 5px;
-  color: rgba(238, 224, 194, .82);
-  cursor: pointer;
-  font-size: .7rem;
-  line-height: 1;
-  letter-spacing: .025em;
-  text-shadow: none;
-}
-
-.score-details-toggle input {
-  width: 15px;
-  height: 15px;
-  margin: 0;
-  accent-color: #b67a35;
-  cursor: pointer;
-}
-
 .stage-switcher-row {
   display: contents;
 }
@@ -642,8 +621,8 @@ a:focus-visible {
 }
 
 .war-banner--five .emblem-card {
-  height: 77px;
-  min-height: 77px;
+  height: 100px;
+  min-height: 100px;
 }
 
 .emblem-stack {
@@ -657,8 +636,8 @@ a:focus-visible {
 .emblem-card {
   --card-main: #653037;
   --card-dark: #32151a;
-  height: 77px;
-  min-height: 77px;
+  height: 100px;
+  min-height: 100px;
   color: #f9f1dd;
   border: 1px solid rgba(255, 255, 255, .08);
   background:
@@ -823,18 +802,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 
 .emblem-card--manual,
 .war-banner--five .emblem-card--manual {
-  height: 40px;
-  min-height: 40px;
-}
-
-.emblem-card.has-score-detail,
-.war-banner--five .emblem-card.has-score-detail {
-  height: 100px;
-  min-height: 100px;
-}
-
-.emblem-card--manual.has-score-detail,
-.war-banner--five .emblem-card--manual.has-score-detail {
   height: 62px;
   min-height: 62px;
 }
@@ -1386,7 +1353,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
     background:
       radial-gradient(circle at 50% -8%, rgba(137, 91, 28, .24), transparent 28rem),
       linear-gradient(180deg, rgba(4, 3, 2, .28), rgba(4, 3, 2, .74)),
-      url("fantasy-assets/ti2026_background_png.png") center top / auto 100vh scroll,
+      url("fantasy-assets/ti2026_background_png.jpg") center top / auto 100vh scroll,
       #080604;
   }
 
@@ -1444,12 +1411,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .topbar > .brand > .stage-switcher-row > .stage-switcher {
-    margin-top: 0;
-  }
-
-  .topbar > .brand > .stage-switcher-row > .score-details-toggle {
-    flex-basis: 100%;
-    justify-content: center;
     margin-top: 0;
   }
 
@@ -1604,7 +1565,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 
   .war-banner--five .emblem-card {
     height: auto;
-    min-height: 82px;
+    min-height: 108px;
   }
 
   .emblem-stack {
@@ -1614,23 +1575,11 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 
   .emblem-card {
     height: auto;
-    min-height: 82px;
+    min-height: 108px;
   }
 
   .emblem-card--manual,
   .war-banner--five .emblem-card--manual {
-    height: 46px;
-    min-height: 46px;
-  }
-
-  .emblem-card.has-score-detail,
-  .war-banner--five .emblem-card.has-score-detail {
-    height: auto;
-    min-height: 108px;
-  }
-
-  .emblem-card--manual.has-score-detail,
-  .war-banner--five .emblem-card--manual.has-score-detail {
     height: auto;
     min-height: 60px;
   }

@@ -58,15 +58,169 @@ LEAGUE_TEAM_OVERRIDES: dict[int, dict[str, dict[int, str]]] = {
     }
 }
 
-# Replay-only farm ranking correctly identifies almost every five-player EWC
-# roster. These two mids are the unusual cases; future events can add account
-# IDs here without adding a remote role-data dependency.
-LEAGUE_ROLE_OVERRIDES: dict[int, dict[int, str]] = {
-    19785: {
-        898455820: "mid",   # Malr1ne
-        312436974: "mid",   # CHIRA_JUNIOR
-        106573901: "mid",   # No[o]ne-
-    }
+# Global account-ID role assignments. The current inferred EWC roster is
+# written out in full so any incorrect role can be corrected here directly.
+# Players absent from this table still use replay-only farm inference.
+PLAYER_ROLE_OVERRIDES: dict[int, str] = {
+    # 1w
+    86698277: "core",  # 33
+    331855530: "core",  # Pure
+    93618577: "mid",  # bzm
+    346412363: "support",  # Ari
+    136829091: "support",  # Whitemon
+    # Aurora Gaming
+    124801257: "core",  # Nightfall
+    126842529: "core",  # Ws`
+    301750126: "mid",  # Mikoto
+    320219866: "support",  # kaori
+    256156323: "support",  # Mira
+    # BB Team
+    172099728: "core",  # Kiritych~
+    165564598: "core",  # MieRo
+    480412663: "mid",  # gpk~
+    196878136: "support",  # Kataomi`
+    317880638: "support",  # Save-
+    # GamerLegion
+    160119017: "core",  # Fayde
+    206642367: "core",  # Ghost
+    154974246: "mid",  # RCY
+    90423751: "support",  # Bignum
+    191362875: "support",  # Speeed
+    # IC x Insanity
+    458287006: "core",  # 423
+    117514269: "core",  # laise
+    262476000: "mid",  # Stojkov
+    1172719712: "support",  # Fernans
+    196400041: "support",  # Se
+    # L1 TEAM
+    92487440: "core",  # Corrupted
+    320017600: "core",  # ssnovv1
+    140251702: "mid",  # Mirage`雨
+    123787715: "support",  # RESPECT
+    111030315: "support",  # ww_zayac
+    # Level UP
+    93526520: "core",  # bb3px
+    1092267175: "core",  # WoE
+    196482746: "mid",  # darkniA
+    340421206: "support",  # Htrd
+    206097366: "support",  # queezy
+    # LGD Gaming
+    292921272: "core",  # Wisper
+    177203952: "core",  # Yuma
+    1026694469: "mid",  # TaiLung
+    81306398: "support",  # KingJungles
+    105045291: "support",  # Thiolicor
+    # MOUZ
+    190826739: "core",  # BOOM
+    127617979: "core",  # Crystallis
+    116585378: "mid",  # MidOne
+    108958769: "support",  # panto
+    9403474: "support",  # yamich
+    # Nigma Galaxy
+    138880576: "core",  # Davai
+    111620041: "core",  # SumaiL-
+    210053851: "mid",  # lorenof
+    101356886: "support",  # GH
+    152168157: "support",  # OmaR
+    # OG
+    355168766: "core",  # Natsumi
+    132309493: "core",  # Raven
+    324277900: "mid",  # Yopaj-
+    100594231: "support",  # skem
+    155494381: "support",  # TIMS
+    # Poor Rangers
+    363739653: "core",  # alberkaaa
+    96183976: "core",  # naive-
+    294135421: "mid",  # Nicky`Cool
+    295697470: "support",  # Immersion
+    185059559: "support",  # Till The End
+    # PTime
+    252737052: "core",  # Fr△nk
+    363758022: "core",  # Wits
+    352545711: "mid",  # DarkMago♥
+    1031547092: "support",  # Elmisho
+    157989498: "support",  # Scofield
+    # PVISION
+    195108598: "core",  # Noticed
+    1044002267: "core",  # Satanic
+    106573901: "mid",  # No[o]ne-
+    164199202: "support",  # 9Class
+    73401082: "support",  # Dukalis
+    # REKONIX
+    156328257: "core",  # Fbz
+    140411011: "core",  # jikroy
+    181716137: "mid",  # inYourdreaM
+    155447692: "support",  # dalul
+    118559150: "support",  # Varizh
+    # Rune Eaters
+    879017980: "core",  # Darklord,,`
+    203351055: "core",  # Malik
+    115651292: "mid",  # Copy
+    1202267677: "support",  # aik
+    230487729: "support",  # Ekki
+    # Team Falcons
+    183719386: "core",  # AMMAR_THE_F
+    100058342: "core",  # skiter
+    898455820: "mid",  # Malr1ne
+    25907144: "support",  # Cr1t-
+    10366616: "support",  # Sneyking
+    # Team Liquid
+    97590558: "core",  # Ace ♠
+    152962063: "core",  # m1CKe
+    201358612: "mid",  # Nisha
+    77490514: "support",  # Boxi
+    16497807: "support",  # tOfu
+    # Team Nemesis
+    100471531: "core",  # J
+    968545762: "core",  # rubikon155
+    131303632: "mid",  # 4nalog丶01
+    87063175: "support",  # Lelis
+    81475303: "support",  # Yamsun
+    # Team Spirit
+    302214028: "core",  # Collapse
+    321580662: "core",  # Yatoro
+    106305042: "mid",  # Larl
+    218231587: "support",  # not_me
+    847565596: "support",  # rue
+    # Team Yandex
+    56351509: "core",  # DM
+    171262902: "core",  # 医者watson`
+    312436974: "mid",  # CHIRA_JUNIOR
+    93817671: "support",  # Maladych
+    103735745: "support",  # Saksa
+    # Vici Gaming
+    118134220: "core",  # Bach
+    320252024: "core",  # shiro
+    137129583: "mid",  # Xm
+    157475523: "support",  # XinQ
+    111114687: "support",  # y`
+    # Virtus.pro
+    126212866: "core",  # Saberlight
+    97658618: "core",  # Timado
+    154715080: "mid",  # Abed
+    94155156: "support",  # Fly
+    241884166: "support",  # Hellscream
+    # Xtreme Gaming
+    898754153: "core",  # Ame
+    129958758: "core",  # Xxs
+    173978074: "mid",  # NothingToSay
+    101695162: "support",  # fy
+    94296097: "support",  # xNova
+}
+
+# Global display-name exclusions. Excluded teams are hidden from selection and
+# rankings, while their opponents still receive points from shared matches.
+EXCLUDED_TEAM_NAMES = {
+    "Virtus.pro",
+    "Rune Eaters",
+    "REKONIX",
+    "MOUZ",
+    "PTime",
+    "Level UP",
+    "Team Nemesis",
+    "Poor Rangers",
+    "L1 TEAM",
+    "IC x Insanity",
 }
 
 CHECKPOINT_SCHEMA_VERSION = 8
@@ -532,6 +686,33 @@ def parse_downloaded_match(
     )
 
 
+def refresh_browser_data(
+    checkpoints: list[dict[str, Any]],
+    args: argparse.Namespace,
+    league_dir: Path,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Atomically refresh data.js from every successful checkpoint so far."""
+
+    assign_series_ids(checkpoints)
+    overrides = LEAGUE_TEAM_OVERRIDES.get(args.league_id, {})
+    dataset = league_data.build_dataset(
+        [checkpoint["match"] for checkpoint in checkpoints],
+        args.league_id,
+        args.league_name,
+        args.liquipedia_url or None,
+        overrides.get("names"),
+        overrides.get("tags"),
+        PLAYER_ROLE_OVERRIDES,
+        EXCLUDED_TEAM_NAMES,
+    )
+    summary = league_data.build_summary(dataset, "full.json")
+    payload = json.dumps(summary, ensure_ascii=False, separators=(",", ":"))
+    replay_tools.atomic_write_text(
+        league_dir / "data.js", "window.FANTASY_DATA=" + payload + ";\n"
+    )
+    return dataset, summary
+
+
 def build(args: argparse.Namespace) -> None:
     league_dir = args.data_root.resolve() / str(args.league_id)
     matches_dir = league_dir / "matches"
@@ -547,6 +728,9 @@ def build(args: argparse.Namespace) -> None:
     errors: list[dict[str, Any]] = []
     known_player_names: dict[int, str] = {}
     java_runtime: tuple[str, str] | None = None
+    dataset: dict[str, Any] | None = None
+    summary: dict[str, Any] | None = None
+    published_checkpoint_count = 0
     for index, item in enumerate(manifest, start=1):
         match_id = int(item["matchId"])
         checkpoint_path = matches_dir / f"{match_id}.json"
@@ -603,34 +787,29 @@ def build(args: argparse.Namespace) -> None:
                 file=sys.stderr,
             )
             continue
+        dataset, summary = refresh_browser_data(checkpoints, args, league_dir)
+        published_checkpoint_count = len(checkpoints)
 
     replay_tools.atomic_write_json(errors_path, errors)
+
+    if not checkpoints:
+        raise RuntimeError(
+            f"No replay matches were parsed for league {args.league_id}"
+        )
+    if published_checkpoint_count != len(checkpoints):
+        dataset, summary = refresh_browser_data(checkpoints, args, league_dir)
+    if dataset is None or summary is None:
+        raise RuntimeError("Could not assemble browser data")
 
     assign_series_ids(checkpoints)
     for checkpoint in checkpoints:
         checkpoint_path = matches_dir / f"{checkpoint['matchId']}.json"
         replay_tools.atomic_write_json(checkpoint_path, checkpoint, compact=True)
 
-    overrides = LEAGUE_TEAM_OVERRIDES.get(args.league_id, {})
-    dataset = league_data.build_dataset(
-        [checkpoint["match"] for checkpoint in checkpoints],
-        args.league_id,
-        args.league_name,
-        args.liquipedia_url or None,
-        overrides.get("names"),
-        overrides.get("tags"),
-        LEAGUE_ROLE_OVERRIDES.get(args.league_id),
-    )
-    summary = league_data.build_summary(dataset, "full.json")
     full_path = league_dir / "full.json"
     summary_path = league_dir / "summary.json"
-    browser_path = league_dir / "data.js"
     replay_tools.atomic_write_json(full_path, dataset)
     replay_tools.atomic_write_json(summary_path, summary, compact=True)
-    payload = json.dumps(summary, ensure_ascii=False, separators=(",", ":"))
-    replay_tools.atomic_write_text(
-        browser_path, "window.FANTASY_DATA=" + payload + ";\n"
-    )
     league_info = {
         "schemaVersion": CHECKPOINT_SCHEMA_VERSION,
         "leagueId": args.league_id,

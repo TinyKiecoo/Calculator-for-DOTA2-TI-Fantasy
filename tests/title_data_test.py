@@ -118,18 +118,28 @@ class TitleDataTests(unittest.TestCase):
                     league_data,
                     "build_dataset",
                     return_value={"meta": {"coverage": {"parsedMatches": 2}}},
-                ),
+                ) as build_dataset,
                 patch.object(
                     league_data,
                     "build_summary",
                     return_value={"ok": True},
-                ),
+                ) as build_summary,
                 patch.object(build_league.sys, "stdout", io.StringIO()),
                 patch.object(build_league.sys, "stderr", io.StringIO()),
             ):
                 build_league.build(args)
 
             self.assertEqual(parse_match.call_count, 3)
+            self.assertEqual(
+                [len(call.args[0]) for call in build_dataset.call_args_list],
+                [1, 2],
+                "the first data.js refresh must work with partial match data",
+            )
+            self.assertEqual(
+                build_summary.call_count,
+                2,
+                "data.js must be summarized after each successful replay",
+            )
             league_dir = args.data_root / str(args.league_id)
             errors = json.loads(
                 (league_dir / "errors.json").read_text(encoding="utf-8")
@@ -141,6 +151,72 @@ class TitleDataTests(unittest.TestCase):
             self.assertFalse((league_dir / "matches" / "2.json").exists())
             self.assertTrue((league_dir / "matches" / "3.json").exists())
             self.assertTrue((league_dir / "full.json").exists())
+            self.assertEqual(
+                (league_dir / "data.js").read_text(encoding="utf-8"),
+                'window.FANTASY_DATA={"ok":true};\n',
+            )
+
+    def test_global_roles_and_team_exclusions_keep_the_opponent(self) -> None:
+        roles = ["core", "core", "mid", "support", "support"]
+        role_overrides = {
+            100 + index: role for index, role in enumerate(roles)
+        }
+        role_overrides.update(
+            {200 + index: role for index, role in enumerate(roles)}
+        )
+        stats = {key: 1 for key in league_data.STAT_KEYS}
+        match = {
+            "matchId": 1,
+            "seriesId": 1,
+            "seriesType": 3,
+            "startTime": 100,
+            "endTime": 200,
+            "duration": 100,
+            "radiantTeamId": 10,
+            "direTeamId": 20,
+            "radiantTeamName": "Included Team",
+            "direTeamName": "Excluded Team",
+            "radiantTeamTag": "IN",
+            "direTeamTag": "OUT",
+            "players": [
+                {
+                    "accountId": 100 + index,
+                    "name": f"Included {index}",
+                    "teamId": 10,
+                    "playerSlot": index,
+                    "stats": dict(stats),
+                }
+                for index in range(5)
+            ]
+            + [
+                {
+                    "accountId": 200 + index,
+                    "name": f"Excluded {index}",
+                    "teamId": 20,
+                    "playerSlot": 128 + index,
+                    "stats": dict(stats),
+                }
+                for index in range(5)
+            ],
+        }
+
+        dataset = league_data.build_dataset(
+            [match],
+            999,
+            "Test Event",
+            role_overrides=role_overrides,
+            excluded_team_names={"  excluded TEAM  "},
+        )
+        summary = league_data.build_summary(dataset)
+
+        self.assertEqual([team["name"] for team in summary["teams"]], ["Included Team"])
+        self.assertEqual(len(summary["teams"][0]["players"]), 5)
+        self.assertEqual(dataset["meta"]["coverage"]["playerGameRows"], 5)
+        self.assertEqual(dataset["meta"]["excludedTeamNames"], ["  excluded TEAM  "])
+        self.assertTrue(all(player["role"] for player in match["players"][:5]))
+        self.assertTrue(all(player["role"] is None for player in match["players"][5:]))
+        self.assertEqual(build_league.PLAYER_ROLE_OVERRIDES[93618577], "mid")
+        self.assertNotIn("LEAGUE_ROLE_OVERRIDES", vars(build_league))
 
     def test_legacy_question_marks_are_repaired_by_account_id(self) -> None:
         checkpoint = {
