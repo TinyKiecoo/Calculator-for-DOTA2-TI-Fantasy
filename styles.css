@@ -29,8 +29,9 @@
   --green: #286149;
   --green-deep: #113724;
   --page-font: "Radiance", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
-  --display-font: "Reaver", "Microsoft YaHei", serif;
+  --display-font: "Radiance", "Microsoft YaHei", serif;
   --number-font: "Reaver", serif;
+  --reaver-font: "Reaver", "Microsoft YaHei", serif;
   --kai-font: "Reaver", "KaiTi", "STKaiti", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
 }
 
@@ -746,13 +747,11 @@ a:focus-visible {
   background: #181513;
 }
 
-html[lang="en"] .stat-select {
-  font-family: 'Reaver';
-}
+
 
 .stat-select {
-  font-family: var(--page-font);
-  font-size: .63rem;
+  font-family: var(--reaver-font);
+  font-size: 11px;
 }
 
 .emblem-multiplier {
@@ -814,14 +813,15 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 }
 
 .emblem-detail select {
-  font-size: .62rem;
+  font-family: var(--reaver-font);
+  font-size: 10px;
 }
 
 .emblem-detail output {
   min-width: 32px;
   color: #dfd6c9;
   text-align: right;
-  font-size: .59rem;
+  font-size: 10px;
   letter-spacing: .04em;
   font-family: 'Reaver';
 }
@@ -1735,11 +1735,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
     scroll-behavior: auto !important;
     transition-duration: .01ms !important;
   }
-}
-
-/* English typography: Radiance by default, Reaver only for all-caps titles. */
-html[lang="en"] {
-  --display-font: "Radiance", sans-serif;
 }
 
 html[lang="en"] .is-uppercase-title {
