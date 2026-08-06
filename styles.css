@@ -353,7 +353,7 @@ a:focus-visible {
   border: 0;
   border-bottom: 1px solid rgba(217, 182, 111, .18);
   background: transparent;
-  font-family: var(--display-font);
+  font-family: var(--reaver-font);
   font-size: .76rem;
   letter-spacing: .09em;
   line-height: 1;

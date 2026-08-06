@@ -9,7 +9,6 @@
   const pageShell = document.getElementById("page-shell");
   const modalBackdrop = document.getElementById("modal-backdrop");
   const modal = document.getElementById("info-modal");
-  const modalKicker = document.getElementById("modal-kicker");
   const modalTitle = document.getElementById("modal-title");
   const modalBody = document.getElementById("modal-body");
   const modalClose = document.getElementById("modal-close");
@@ -78,7 +77,6 @@
       scoringChangeNotice: "请注意今年积分规则的改变。",
       openScoringChangeNotice: "查看 2025 与 2026 积分规则变化",
       closeScoringChangeNotice: "关闭积分规则变化提示",
-      scoringChangesKicker: "SCORING CHANGES",
       scoringChangesTitle: "2025 与 2026 积分规则对比",
       scoringChangesLead: "以下项目按基础积分系数的相对涨跌幅从高到低排列。",
       tormentorCorrectionBody: '原有的"消灭痛苦魔方"数值整体偏低，目前已修正。请您知悉。',
@@ -129,7 +127,6 @@
       averageScore: "全部地图平均 ×2",
       emblemPennant: "{role}徽标挂幅",
       bannerScore: "{role}战旗积分",
-      dataKicker: "DATA NOTES",
       dataLead: "本页面使用 {name} 的数据来计算梦幻挑战积分。",
       tournamentSnapshot: "赛事快照",
       leagueId: "联赛 ID",
@@ -137,11 +134,9 @@
       players: "选手",
       generatedDate: "生成日期",
       scoringMethodTitle: "计算口径",
-      scoringMethodBody: "每位选手逐场应用徽标与指导员称号加成；双人战旗在同一场比赛中先取二人平均。“最高两场”目前在所有赛制中统一取系列赛内最高两场之和，再选择全结算期得分最高的系列赛；“全部地图平均 ×2”对全结算期所有有效地图取平均并乘二，不再逐系列赛择优。手动倍率模式会完全替代徽标品质与特性的倍率。",
-      knownLimitations: "数据说明",
-      limitationRoles: "选手角色按赛事内路线与补刀数据推断。",
+      scoringMethodBody: "每位选手逐场应用徽标与指导员称号加成；双人战旗在同一场比赛中先取二人平均。“最高两场”目前在所有赛制中统一取系列赛内最高两场之和，再选择全结算期得分最高的系列赛；“全部地图平均 ×2”对全结算期所有有效地图取平均并乘二。手动倍率模式会完全替代徽标品质与特性的倍率。",
       dataSources: "数据来源",
-      dataSourcesBody: "全部比赛信息与梦幻统计均直接读取 Valve 比赛录像；OpenDota 仅用于查找联赛录像下载链接。",
+      dataSourcesBody: "全部比赛信息与梦幻统计均直接读取 Valve 比赛录像。",
       disclaimerTitle: "免责声明",
       disclaimerProject: "这是一个免费、开源、非商业的玩家项目，与 Valve、Steam 或 Dota 2 官方无关联。计算结果可能不准确，数据仅供参考。",
       disclaimerAssets: "本项目使用了 Dota 2 / Valve 相关图片、字体、名称和界面素材。这些素材仍归 Valve 及相应权利方所有；本项目的开源许可证不授予这些素材的使用权。",
@@ -226,7 +221,6 @@
       scoringChangeNotice: "Please note this year's changes to the scoring rules.",
       openScoringChangeNotice: "View the 2025 and 2026 scoring-rule changes",
       closeScoringChangeNotice: "Dismiss scoring-rule change notice",
-      scoringChangesKicker: "SCORING CHANGES",
       scoringChangesTitle: "2025 vs. 2026 Scoring Rules",
       scoringChangesLead: "Categories are sorted from the largest relative increase in their base scoring coefficient to the largest decrease.",
       tormentorCorrectionBody: "The previous “Tormentor Kills” values were generally too low and have now been corrected. Please take note.",
@@ -277,7 +271,6 @@
       averageScore: "All-Map Average ×2",
       emblemPennant: "{role} emblem pennant",
       bannerScore: "{role} banner score",
-      dataKicker: "DATA NOTES",
       dataLead: "This page uses {name} data to calculate Fantasy scores.",
       tournamentSnapshot: "Tournament Snapshot",
       leagueId: "League ID",
@@ -285,11 +278,9 @@
       players: "Players",
       generatedDate: "Generated",
       scoringMethodTitle: "Scoring Method",
-      scoringMethodBody: "Each player is scored map by map with emblem and advisor-title bonuses. Two-player banners first average both players within the same map. Best Two Maps currently sums the top two maps in every series format, then keeps the highest-scoring series in the period; All-Map Average ×2 averages every valid map in the full scoring period and doubles it without selecting a best series. Manual multiplier mode completely replaces quality and trait multipliers.",
-      knownLimitations: "Data Notes",
-      limitationRoles: "Player roles are inferred from lane and last-hit data within the tournament.",
+      scoringMethodBody: "Each player is scored map by map with emblem and advisor-title bonuses. Two-player banners first average both players within the same map. Best Two Maps currently sums the top two maps in every series format, then keeps the highest-scoring series in the period; All-Map Average ×2 averages every valid map in the full scoring period and doubles it. Manual multiplier mode completely replaces quality and trait multipliers.",
       dataSources: "Data Sources",
-      dataSourcesBody: "All match information and Fantasy statistics are read directly from Valve replays. OpenDota is used only to discover league replay download URLs.",
+      dataSourcesBody: "All match information and Fantasy statistics are read directly from Valve replays.",
       disclaimerTitle: "Disclaimer",
       disclaimerProject: "This is a free, open-source, non-commercial fan project and is not affiliated with Valve, Steam, or Dota 2. Results may be inaccurate and are for reference only.",
       disclaimerAssets: "It uses Dota 2 / Valve-derived images, fonts, names, and UI materials. Those materials remain the property of Valve and their respective rights holders; this project's open-source license does not grant rights to them.",
@@ -447,7 +438,7 @@
 
   function applyEnglishTitleFonts(root = document) {
     const titleElements = root.querySelectorAll(
-      ".brand strong, h1, h2, h3, .score-method legend, #modal-kicker",
+      ".brand strong, h1, h2, h3, .score-method legend",
     );
 
     titleElements.forEach((element) => {
@@ -1251,16 +1242,10 @@
           <p>${escapeHtml(text("scoringMethodBody"))}</p>
         </section>
         <section class="data-card">
-          <h3>${escapeHtml(text("knownLimitations"))}</h3>
-          <ul>
-            <li>${escapeHtml(text("limitationRoles"))}</li>
-          </ul>
-        </section>
-        <section class="data-card">
           <h3>${escapeHtml(text("dataSources"))}</h3>
           <p>${escapeHtml(text("dataSourcesBody"))}</p>
         </section>
-        <section class="data-card data-card-disclaimer">
+        <section class="data-card">
           <h3>${escapeHtml(text("disclaimerTitle"))}</h3>
           <p>${escapeHtml(text("disclaimerProject"))}</p>
           <p>${escapeHtml(text("disclaimerAssets"))}</p>
@@ -1322,11 +1307,9 @@
   function updateModalContent(type) {
     activeModalType = type === "scoringChanges" ? "scoringChanges" : "data";
     if (activeModalType === "scoringChanges") {
-      modalKicker.textContent = text("scoringChangesKicker");
       modalTitle.textContent = text("scoringChangesTitle");
       modalBody.innerHTML = scoringChangesMarkup();
     } else {
-      modalKicker.textContent = text("dataKicker");
       modalTitle.textContent = text("dataNotes");
       modalBody.innerHTML = dataMarkup();
     }
