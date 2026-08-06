@@ -209,7 +209,6 @@ def build_dataset(
     matches: list[dict[str, Any]],
     league_id: int,
     league_name: str,
-    liquipedia_url: str | None = None,
     team_name_overrides: dict[int, str] | None = None,
     team_tag_overrides: dict[int, str] | None = None,
     role_overrides: dict[int, str] | None = None,
@@ -342,16 +341,13 @@ def build_dataset(
     generated_at = datetime.now(tz=timezone.utc).isoformat().replace("+00:00", "Z")
     sources = {
         "openDotaReplayManifest": (
-            "OpenDota is used only to discover the league's Valve replay links"
+            "OpenDota resolves the league name and discovers its Valve replay links"
         ),
         "valveReplays": (
             "http://replay{cluster}.valve.net/570/"
             "{match_id}_{replay_salt}.dem.bz2"
         ),
     }
-    if liquipedia_url:
-        sources["liquipediaEvent"] = liquipedia_url
-
     return {
         "meta": {
             "schemaVersion": 8,

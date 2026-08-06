@@ -123,11 +123,13 @@
                 class="is-active"
                 data-stage="groupStage"
                 aria-pressed="true"
+                data-i18n="groupStageName"
               >Group Stage</button>
               <button
                 type="button"
                 data-stage="international"
                 aria-pressed="false"
+                data-i18n="theInternationalName"
               >The International</button>
             </div>
             <div
@@ -207,11 +209,11 @@
       </header>
 
       <main class="banner-grid" id="banner-grid" aria-label="三面梦幻战旗" data-i18n-aria-label="bannerGrid">
-        <p class="loading-message" data-i18n="loading">正在载入本地赛事数据…</p>
+        <p class="loading-message" data-i18n="loading">正在载入赛事数据…</p>
       </main>
 
       <section class="load-error" id="load-error" hidden>
-        <strong data-i18n="loadErrorTitle">本地数据未能载入</strong>
+        <strong data-i18n="loadErrorTitle">赛事数据未能载入</strong>
         <p data-i18n="loadErrorBody">请确认 index.html、app.js、fantasy.js 与 data 文件夹保持原有相对位置。</p>
       </section>
     </div>
@@ -241,10 +243,9 @@
   </noscript>
 
   <script>
-    // 修改赛事时，只需同步修改这里和 scripts/build_league.py 顶部的配置。
+    // 修改网页赛事时，把这里设为 build_league.py 生成数据所用的 league ID。
     const LEAGUE_ID = 19785;
-    const LEAGUE_NAME = "Esports World Cup 2026";
-    window.FANTASY_LEAGUE_CONFIG = { leagueId: LEAGUE_ID, leagueName: LEAGUE_NAME };
+    window.FANTASY_LEAGUE_CONFIG = { leagueId: LEAGUE_ID };
     document.write('<script src="data/' + LEAGUE_ID + '/data.js"><\/script>');
   </script>
   <script src="fantasy.js?v=20260801-stage"></script>

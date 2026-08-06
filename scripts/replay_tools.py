@@ -57,6 +57,8 @@ OPEN_DOTA_API = "https://api.opendota.com/api"
 USER_AGENT = "DotaFantasyReplayBuilder/2.0"
 STEAM_ID64_BASE = 76561197960265728
 CHUNK_SIZE = 1024 * 1024
+BZIP2_MAGIC = b"BZh"
+ZSTD_MAGIC = b"\x28\xb5\x2f\xfd"
 
 FANTASY_STAT_KEYS = (
     "kills",
@@ -1092,10 +1094,20 @@ def ensure_java_helper(
     return java, runtime_classpath
 
 
-def verify_bz2_header(path: Path) -> None:
+def replay_compression_format(path: Path) -> str:
     with path.open("rb") as handle:
-        if handle.read(3) != b"BZh":
-            raise RuntimeError(f"Not a bzip2 replay: {path}")
+        magic = handle.read(4)
+    if magic.startswith(BZIP2_MAGIC):
+        return "bzip2"
+    if magic == ZSTD_MAGIC:
+        return "zstd"
+    raise RuntimeError(
+        f"Unsupported replay compression (header {magic.hex(' ')}): {path}"
+    )
+
+
+def verify_compressed_replay_header(path: Path) -> None:
+    replay_compression_format(path)
 
 
 def verify_dem_header(path: Path) -> None:
@@ -1126,8 +1138,64 @@ def download_replay(
             resume=True,
             quiet=args.quiet,
         )
-    verify_bz2_header(compressed)
+    verify_compressed_replay_header(compressed)
     return compressed
+
+
+def find_external_zstd_command(compressed: Path) -> list[str] | None:
+    zstd = shutil.which("zstd")
+    if zstd:
+        return [zstd, "--decompress", "--stdout", "--quiet", str(compressed)]
+
+    seven_zip_candidates = [
+        shutil.which("7z"),
+        shutil.which("7zz"),
+    ]
+    for environment_name in ("ProgramFiles", "ProgramFiles(x86)"):
+        root = os.environ.get(environment_name)
+        if root:
+            seven_zip_candidates.append(str(Path(root) / "7-Zip" / "7z.exe"))
+    for candidate in seven_zip_candidates:
+        if candidate and Path(candidate).is_file():
+            return [
+                candidate,
+                "x",
+                "-tzstd",
+                "-so",
+                "-bd",
+                "-y",
+                str(compressed),
+            ]
+    return None
+
+
+def decompress_zstd(compressed: Path, target: BinaryIO) -> None:
+    try:
+        import zstandard  # type: ignore[import-not-found]
+    except ImportError:
+        command = find_external_zstd_command(compressed)
+        if command is None:
+            raise RuntimeError(
+                "Zstandard replay detected, but no decompressor is available. "
+                "Install the Python 'zstandard' package, zstd, or 7-Zip."
+            )
+        completed = subprocess.run(
+            command,
+            stdout=target,
+            stderr=subprocess.PIPE,
+            check=False,
+        )
+        if completed.returncode != 0:
+            detail = completed.stderr.decode("utf-8", errors="replace").strip()
+            raise RuntimeError(
+                f"External Zstandard decompressor failed ({completed.returncode}): "
+                f"{detail[-500:]}"
+            )
+        return
+
+    with compressed.open("rb") as source:
+        with zstandard.ZstdDecompressor().stream_reader(source) as stream:
+            copy_stream(stream, target)
 
 
 def decompress_replay(compressed: Path, dem: Path, quiet: bool) -> Path:
@@ -1139,13 +1207,18 @@ def decompress_replay(compressed: Path, dem: Path, quiet: bool) -> Path:
     if partial.exists():
         partial.unlink()
     try:
-        with bz2.open(compressed, "rb") as source, partial.open("wb") as target:
-            copy_stream(source, target)
+        compression = replay_compression_format(compressed)
+        with partial.open("wb") as target:
+            if compression == "bzip2":
+                with bz2.open(compressed, "rb") as source:
+                    copy_stream(source, target)
+            else:
+                decompress_zstd(compressed, target)
             target.flush()
             os.fsync(target.fileno())
         verify_dem_header(partial)
         os.replace(partial, dem)
-    except (OSError, EOFError) as exc:
+    except Exception as exc:  # Preserve no partial output for any codec failure.
         if partial.exists():
             partial.unlink()
         raise RuntimeError(f"Could not decompress {compressed}: {exc}") from exc
@@ -1545,7 +1618,7 @@ def parse_one_local(args: argparse.Namespace) -> int:
     )
 
     if source.name.endswith(".dem.bz2"):
-        verify_bz2_header(source)
+        verify_compressed_replay_header(source)
         dem = args.replay_root / "dem" / source.name.removesuffix(".bz2")
         dem = decompress_replay(source, dem, args.quiet)
     elif source.suffix == ".dem":

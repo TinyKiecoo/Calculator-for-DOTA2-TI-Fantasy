@@ -52,29 +52,73 @@ OpenDota league ID if it is not known:
 python scripts/build_league.py --find-league "Esports World Cup 2026"
 ```
 
-Then edit `LEAGUE_ID`, `LEAGUE_NAME`, and `LIQUIPEDIA_URL` near the top of
-`scripts/build_league.py` and run:
+There are two equivalent ways to select the league. Either edit the default
+`LEAGUE_ID` near the top of `scripts/build_league.py` and run:
 
 ```powershell
 python scripts/build_league.py
 ```
 
-The Liquipedia URL does not contain OpenDota's league ID, so the ID search is
-the reliable lookup method. OpenDota is used only to discover the league's
-Valve replay links. Player statistics, identities, teams, internal match ID,
-timestamps, match result and duration all come from the downloaded replay.
+Or leave the source unchanged and pass the ID on the command line (the command
+line value takes precedence):
+
+```powershell
+python scripts/build_league.py --league-id 20009
+```
+
+The league name is fetched automatically from OpenDota's exact
+`/leagues/<LEAGUE_ID>` endpoint and is not configured manually. Liquipedia was
+previously stored only as optional source metadata; it did not affect replay
+discovery, parsing, or scoring, so that configuration has been removed.
+OpenDota is otherwise used only to discover the league's Valve replay links.
+Player statistics, identities, teams, internal match ID, timestamps, match
+result and duration all come from the downloaded replay.
 The output is stored under `data/<LEAGUE_ID>/`.
 Every completed match has its own `matches/<MATCH_ID>.json` checkpoint. A
 rerun validates and prints those saved player stats without downloading or
 parsing the replay again. Compressed and decompressed replay files are kept in
 `replays/<LEAGUE_ID>/`. An existing `.dem` is parsed directly; otherwise an
 existing `.dem.bz2` is decompressed, and only a missing replay is downloaded.
-Neither file is deleted automatically. A replay that cannot be parsed is
+Valve replay URLs may retain the `.bz2` suffix while serving either legacy
+bzip2 or newer Zstandard data; the builder detects the actual format from its
+file header. Zstandard replays use the Python `zstandard` package when present,
+with `zstd` or 7-Zip as command-line fallbacks. Neither replay file is deleted
+automatically. A replay that cannot be parsed is
 recorded in `errors.json`; the builder continues with all later matches. After
 each newly parsed replay, `data.js` is atomically rebuilt from every successful
 checkpoint available so far, allowing the site to publish partial live-event
 results while later replays are still processing. A cached-only run refreshes
 the file once after all checkpoints are loaded.
+
+### Parse and preview one match locally
+
+To download and parse only one match from a league, pass both IDs. `--match-id`
+may be repeated when several specific matches are needed:
+
+```powershell
+python scripts/build_league.py --league-id 20009 --match-id 8920584549
+```
+
+The requested match must belong to that league's OpenDota manifest. The
+builder downloads/parses only the requested match, but also includes any valid
+checkpoints already present under `data/<LEAGUE_ID>/matches/` when rebuilding
+the browser data. Add `--force` to reparse an existing selected checkpoint.
+
+Set the same `LEAGUE_ID` in the data-loader block near the bottom of
+`index.html`, then serve the repository directory locally:
+
+```powershell
+python -m http.server 8000
+```
+
+Open `http://localhost:8000/` to preview the generated data. For a replay file
+that has already been downloaded and only needs low-level parser inspection,
+use either its `.dem` or `.dem.bz2` path directly; the parsed JSON is printed to
+the terminal:
+
+```powershell
+python scripts/replay_tools.py --replay "replays\20009\8920584549_1216060693.dem.bz2"
+```
 
 Most Fantasy counters are stored together in each replay under
 `CDOTA_DataRadiant/Dire.m_vecDataTeam[*]`. Kills, deaths, teamfight
@@ -120,8 +164,9 @@ teams from selection and rankings without removing their opponents' scores.
 Checkpoints made with schema 7 or older are
 automatically treated as stale and reparsed on the next build.
 
-To display another generated league, set the same `LEAGUE_ID` and
-`LEAGUE_NAME` in the data-loader block near the bottom of `index.html`.
+To display another generated league, set the same `LEAGUE_ID` in the
+data-loader block near the bottom of `index.html`. The league name is stored in
+the generated dataset after being resolved from OpenDota.
 
 ## Disclaimer
 

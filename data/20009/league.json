@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 8,
+  "leagueId": 20009,
+  "leagueName": "1win Essence II",
+  "generatedAt": "2026-08-06T08:02:24.333413Z",
+  "replayCache": "D:\\Program Files\\Document\\fantasy\\my_fantasy\\replays\\20009",
+  "coverage": {
+    "matches": 60,
+    "parsedMatches": 60,
+    "playerGameRows": 560,
+    "teams": 9,
+    "players": 45,
+    "allMatchesHaveTenPlayers": true
+  },
+  "files": {
+    "manifest": "manifest.json",
+    "matches": "matches/<MATCH_ID>.json",
+    "errors": "errors.json",
+    "full": "full.json",
+    "summary": "summary.json",
+    "browser": "data.js"
+  }
+}

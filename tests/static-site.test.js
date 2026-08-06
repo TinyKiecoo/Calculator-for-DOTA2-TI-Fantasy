@@ -346,9 +346,7 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.deepEqual(alerts, [], "the alert must wait until initial rendering finishes");
   assert.equal(timers.length, 1);
   timers.shift()();
-  assert.deepEqual(alerts, [
-    '原有的"消灭痛苦魔方"数值整体偏低，目前已修正。请您知悉。',
-  ]);
+  assert.deepEqual(alerts, [], "the disabled correction alert must stay hidden");
   assert.equal(element("modal-backdrop").hidden, true);
   assert.equal(
     storage.get("ti-fantasy-tormentor-correction-notice-v1"),

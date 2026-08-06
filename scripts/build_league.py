@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Build one league's static Fantasy dataset from Valve replay files.
 
-OpenDota is used only to discover the league's Valve replay links.
+OpenDota is used to resolve the league name and discover its Valve replay links.
 Every player statistic, identity, team, result, duration, and title condition in
 the generated dataset is read from the corresponding ``.dem`` replay.
 
@@ -28,10 +28,9 @@ import league_data
 import replay_tools
 
 
-# One-stop event configuration.
-LEAGUE_ID = 19785
-LEAGUE_NAME = "Esports World Cup 2026"
-LIQUIPEDIA_URL = "https://liquipedia.net/dota2/Esports_World_Cup/2026"
+# Default event configuration. --league-id overrides this value without
+# requiring a source edit. The league name is always fetched from OpenDota.
+LEAGUE_ID = 20009
 
 APP_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATA_ROOT = APP_ROOT / "data"
@@ -236,9 +235,21 @@ def utc_now() -> str:
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--league-id", type=int, default=LEAGUE_ID)
-    parser.add_argument("--league-name", default=LEAGUE_NAME)
-    parser.add_argument("--liquipedia-url", default=LIQUIPEDIA_URL)
+    parser.add_argument(
+        "--league-id",
+        type=int,
+        default=LEAGUE_ID,
+        help=f"OpenDota league ID (default: LEAGUE_ID={LEAGUE_ID} in this file)",
+    )
+    parser.add_argument(
+        "--match-id",
+        type=int,
+        action="append",
+        help=(
+            "Only download/parse this match from the league; may be supplied "
+            "multiple times. Existing valid checkpoints are still included."
+        ),
+    )
     parser.add_argument("--data-root", type=Path, default=DEFAULT_DATA_ROOT)
     parser.add_argument(
         "--replay-cache",
@@ -267,7 +278,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Reparse even valid current-schema match checkpoints",
     )
-    return parser.parse_args()
+    args = parser.parse_args()
+    if args.league_id < 1:
+        parser.error("--league-id must be positive")
+    if args.match_id and any(match_id < 1 for match_id in args.match_id):
+        parser.error("--match-id must be positive")
+    return args
 
 
 def request_json(url: str, timeout: int) -> Any:
@@ -298,9 +314,47 @@ def find_leagues(query: str, timeout: int) -> None:
         if needle in folded:
             score += 1
         ranked.append((score, league))
-    print("OpenDota 中最接近的赛事（把 leagueid 填入 LEAGUE_ID）：")
+    print("OpenDota 中最接近的赛事（用于 LEAGUE_ID 或 --league-id）：")
     for _, league in sorted(ranked, key=lambda item: item[0], reverse=True)[:10]:
         print(f"  {league.get('leagueid')}: {league.get('name')}")
+
+
+def fetch_league_name(league_id: int, timeout: int) -> str:
+    payload = request_json(
+        f"{replay_tools.OPEN_DOTA_API}/leagues/{league_id}", timeout
+    )
+    if not isinstance(payload, dict):
+        raise RuntimeError(
+            f"OpenDota league {league_id} did not return an object"
+        )
+    returned_id = payload.get("leagueid")
+    if returned_id is not None and int(returned_id) != league_id:
+        raise RuntimeError(
+            f"OpenDota returned league {returned_id} for requested ID {league_id}"
+        )
+    league_name = str(payload.get("name") or "").strip()
+    if not league_name:
+        raise RuntimeError(f"OpenDota league {league_id} has no name")
+    return league_name
+
+
+def select_manifest_matches(
+    manifest: list[dict[str, Any]],
+    match_ids: list[int] | None,
+    league_id: int,
+) -> set[int] | None:
+    """Return explicitly selected IDs, or None when every match is selected."""
+
+    if not match_ids:
+        return None
+    requested = {int(match_id) for match_id in match_ids}
+    available = {int(item["matchId"]) for item in manifest}
+    missing = requested - available
+    if missing:
+        raise RuntimeError(
+            f"Match IDs are not in league {league_id}: {sorted(missing)}"
+        )
+    return requested
 
 
 def replay_series_context(match_data: dict[str, Any]) -> dict[str, int | None]:
@@ -664,7 +718,7 @@ def parse_downloaded_match(
         print(f"Using cached replay: {dem}")
     else:
         if compressed.exists():
-            replay_tools.verify_bz2_header(compressed)
+            replay_tools.verify_compressed_replay_header(compressed)
             print(f"Using cached download: {compressed}")
         else:
             replay_tools.download_file(
@@ -674,7 +728,7 @@ def parse_downloaded_match(
                 args.retries,
                 resume=False,
             )
-        replay_tools.verify_bz2_header(compressed)
+        replay_tools.verify_compressed_replay_header(compressed)
         replay_tools.decompress_replay(compressed, dem, quiet=False)
 
     return replay_tools.parse_replay(
@@ -690,6 +744,7 @@ def refresh_browser_data(
     checkpoints: list[dict[str, Any]],
     args: argparse.Namespace,
     league_dir: Path,
+    league_name: str,
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Atomically refresh data.js from every successful checkpoint so far."""
 
@@ -698,8 +753,7 @@ def refresh_browser_data(
     dataset = league_data.build_dataset(
         [checkpoint["match"] for checkpoint in checkpoints],
         args.league_id,
-        args.league_name,
-        args.liquipedia_url or None,
+        league_name,
         overrides.get("names"),
         overrides.get("tags"),
         PLAYER_ROLE_OVERRIDES,
@@ -714,6 +768,8 @@ def refresh_browser_data(
 
 
 def build(args: argparse.Namespace) -> None:
+    league_name = fetch_league_name(args.league_id, args.timeout)
+    print(f"赛事：{league_name}（LEAGUE_ID={args.league_id}）")
     league_dir = args.data_root.resolve() / str(args.league_id)
     matches_dir = league_dir / "matches"
     errors_path = league_dir / "errors.json"
@@ -723,9 +779,26 @@ def build(args: argparse.Namespace) -> None:
         args.timeout, args.league_id, args.expected_matches
     )
     replay_tools.atomic_write_json(league_dir / "manifest.json", manifest)
+    selected_match_ids = select_manifest_matches(
+        manifest, getattr(args, "match_id", None), args.league_id
+    )
+    if selected_match_ids is not None:
+        print(
+            f"单场模式：将下载/解析 {len(selected_match_ids)} 场指定比赛；"
+            "已有的有效检查点仍会用于生成网页数据。"
+        )
 
     checkpoints: list[dict[str, Any]] = []
     errors: list[dict[str, Any]] = []
+    if selected_match_ids is not None and errors_path.exists():
+        previous_errors = json.loads(errors_path.read_text(encoding="utf-8"))
+        if not isinstance(previous_errors, list):
+            raise RuntimeError(f"Invalid replay error list: {errors_path}")
+        errors = [
+            error
+            for error in previous_errors
+            if int(error.get("matchId", 0)) not in selected_match_ids
+        ]
     known_player_names: dict[int, str] = {}
     java_runtime: tuple[str, str] | None = None
     dataset: dict[str, Any] | None = None
@@ -733,8 +806,11 @@ def build(args: argparse.Namespace) -> None:
     published_checkpoint_count = 0
     for index, item in enumerate(manifest, start=1):
         match_id = int(item["matchId"])
+        is_selected = (
+            selected_match_ids is None or match_id in selected_match_ids
+        )
         checkpoint_path = matches_dir / f"{match_id}.json"
-        if checkpoint_path.exists() and not args.force:
+        if checkpoint_path.exists() and (not args.force or not is_selected):
             checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
             repaired_name = repair_legacy_player_names(
                 checkpoint, known_player_names
@@ -757,6 +833,9 @@ def build(args: argparse.Namespace) -> None:
                 echo_match(match, f"{status} {index}/{len(manifest)}")
                 checkpoints.append(checkpoint)
                 continue
+
+        if not is_selected:
+            continue
 
         if java_runtime is None:
             java_runtime = replay_tools.ensure_java_helper(
@@ -787,7 +866,9 @@ def build(args: argparse.Namespace) -> None:
                 file=sys.stderr,
             )
             continue
-        dataset, summary = refresh_browser_data(checkpoints, args, league_dir)
+        dataset, summary = refresh_browser_data(
+            checkpoints, args, league_dir, league_name
+        )
         published_checkpoint_count = len(checkpoints)
 
     replay_tools.atomic_write_json(errors_path, errors)
@@ -797,7 +878,9 @@ def build(args: argparse.Namespace) -> None:
             f"No replay matches were parsed for league {args.league_id}"
         )
     if published_checkpoint_count != len(checkpoints):
-        dataset, summary = refresh_browser_data(checkpoints, args, league_dir)
+        dataset, summary = refresh_browser_data(
+            checkpoints, args, league_dir, league_name
+        )
     if dataset is None or summary is None:
         raise RuntimeError("Could not assemble browser data")
 
@@ -813,8 +896,7 @@ def build(args: argparse.Namespace) -> None:
     league_info = {
         "schemaVersion": CHECKPOINT_SCHEMA_VERSION,
         "leagueId": args.league_id,
-        "leagueName": args.league_name,
-        "liquipediaUrl": args.liquipedia_url or None,
+        "leagueName": league_name,
         "generatedAt": utc_now(),
         "replayCache": str(
             args.replay_cache.resolve() / str(args.league_id)
@@ -831,7 +913,7 @@ def build(args: argparse.Namespace) -> None:
     }
     replay_tools.atomic_write_json(league_dir / "league.json", league_info)
     print(
-        f"\n完成：{args.league_name}（LEAGUE_ID={args.league_id}），"
+        f"\n完成：{league_name}（LEAGUE_ID={args.league_id}），"
         f"{len(checkpoints)} 场成功，{len(errors)} 场失败 -> {league_dir}"
     )
     if errors:

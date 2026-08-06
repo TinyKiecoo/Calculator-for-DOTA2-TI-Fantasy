@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import bz2
 import io
 import json
 import sys
@@ -19,6 +20,42 @@ import replay_tools  # noqa: E402
 
 
 class TitleDataTests(unittest.TestCase):
+    def test_replay_decompression_accepts_bzip2_and_zstandard_headers(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            replay_bytes = b"PBDEMS2" + b"test replay payload"
+
+            bzip2_path = root / "old.dem.bz2"
+            bzip2_dem = root / "old.dem"
+            bzip2_path.write_bytes(bz2.compress(replay_bytes))
+            self.assertEqual(
+                replay_tools.replay_compression_format(bzip2_path), "bzip2"
+            )
+            replay_tools.decompress_replay(bzip2_path, bzip2_dem, quiet=True)
+            self.assertEqual(bzip2_dem.read_bytes(), replay_bytes)
+
+            zstd_path = root / "new.dem.bz2"
+            zstd_dem = root / "new.dem"
+            zstd_path.write_bytes(replay_tools.ZSTD_MAGIC + b"placeholder")
+
+            def fake_zstd(_compressed, target):
+                target.write(replay_bytes)
+
+            with patch.object(
+                replay_tools, "decompress_zstd", side_effect=fake_zstd
+            ) as decompress:
+                self.assertEqual(
+                    replay_tools.replay_compression_format(zstd_path), "zstd"
+                )
+                replay_tools.decompress_replay(zstd_path, zstd_dem, quiet=True)
+            decompress.assert_called_once()
+            self.assertEqual(zstd_dem.read_bytes(), replay_bytes)
+
+            unsupported = root / "unsupported.dem.bz2"
+            unsupported.write_bytes(b"not compressed")
+            with self.assertRaisesRegex(RuntimeError, "Unsupported replay compression"):
+                replay_tools.verify_compressed_replay_header(unsupported)
+
     def test_cached_dem_is_reused_without_downloading(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -59,14 +96,13 @@ class TitleDataTests(unittest.TestCase):
             args = SimpleNamespace(
                 data_root=root / "data",
                 league_id=19785,
+                match_id=None,
                 expected_matches=None,
                 timeout=1,
                 replay_cache=root / "replays",
                 force=False,
                 tool_cache=root / "tools",
                 retries=1,
-                league_name="Test 2026",
-                liquipedia_url="https://example.invalid/test",
                 allow_missing_replay_fields=False,
                 parse_timeout=1,
             )
@@ -91,6 +127,11 @@ class TitleDataTests(unittest.TestCase):
                 }
 
             with (
+                patch.object(
+                    build_league,
+                    "fetch_league_name",
+                    return_value="Test 2026",
+                ) as fetch_league_name,
                 patch.object(replay_tools, "fetch_manifest", return_value=manifest),
                 patch.object(
                     replay_tools,
@@ -129,6 +170,7 @@ class TitleDataTests(unittest.TestCase):
             ):
                 build_league.build(args)
 
+            fetch_league_name.assert_called_once_with(19785, 1)
             self.assertEqual(parse_match.call_count, 3)
             self.assertEqual(
                 [len(call.args[0]) for call in build_dataset.call_args_list],
@@ -155,6 +197,31 @@ class TitleDataTests(unittest.TestCase):
                 (league_dir / "data.js").read_text(encoding="utf-8"),
                 'window.FANTASY_DATA={"ok":true};\n',
             )
+
+    def test_league_name_is_loaded_from_the_exact_opendota_id(self) -> None:
+        with patch.object(
+            build_league,
+            "request_json",
+            return_value={"leagueid": 20009, "name": "1win Essence II"},
+        ) as request:
+            name = build_league.fetch_league_name(20009, 17)
+
+        self.assertEqual(name, "1win Essence II")
+        request.assert_called_once_with(
+            f"{replay_tools.OPEN_DOTA_API}/leagues/20009", 17
+        )
+
+    def test_single_match_selection_rejects_matches_outside_the_league(self) -> None:
+        manifest = [{"matchId": 10}, {"matchId": 20}]
+        self.assertEqual(
+            build_league.select_manifest_matches(manifest, [20, 20], 99),
+            {20},
+        )
+        self.assertIsNone(
+            build_league.select_manifest_matches(manifest, None, 99)
+        )
+        with self.assertRaisesRegex(RuntimeError, "not in league 99: \\[30\\]"):
+            build_league.select_manifest_matches(manifest, [30], 99)
 
     def test_global_roles_and_team_exclusions_keep_the_opponent(self) -> None:
         roles = ["core", "core", "mid", "support", "support"]

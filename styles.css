@@ -993,13 +993,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   border-bottom: 1px solid rgba(208, 169, 88, .25);
 }
 
-.modal-header span {
-  color: var(--gold);
-  font-family: var(--display-font);
-  font-size: .65rem;
-  letter-spacing: .17em;
-}
-
 .modal-header h2 {
   margin: 2px 0 0;
   font-family: var(--display-font);
@@ -1061,10 +1054,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   color: #a99f90;
   font-size: .82rem;
   line-height: 1.55;
-}
-
-.data-card-disclaimer {
-  grid-column: 1 / -1;
 }
 
 .rule-card ul,
