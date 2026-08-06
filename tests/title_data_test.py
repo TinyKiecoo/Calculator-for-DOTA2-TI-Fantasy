@@ -211,6 +211,54 @@ class TitleDataTests(unittest.TestCase):
             f"{replay_tools.OPEN_DOTA_API}/leagues/20009", 17
         )
 
+    def test_league_catalog_contains_every_published_league(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            data_root = Path(temporary)
+            old_league = data_root / "19785"
+            old_league.mkdir()
+            (old_league / "data.js").write_text("published", encoding="utf-8")
+            (old_league / "league.json").write_text(
+                json.dumps(
+                    {
+                        "leagueId": 19785,
+                        "leagueName": "Esports World Cup 2026",
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            new_league = data_root / "20009"
+            new_league.mkdir()
+            (new_league / "data.js").write_text("published", encoding="utf-8")
+
+            unpublished = data_root / "30000"
+            unpublished.mkdir()
+            (unpublished / "league.json").write_text(
+                '{"leagueId":30000,"leagueName":"Unpublished"}',
+                encoding="utf-8",
+            )
+
+            catalog = build_league.refresh_league_catalog(
+                data_root, 20009, "1win Essence II"
+            )
+
+            self.assertEqual(
+                catalog,
+                [
+                    {
+                        "leagueId": 19785,
+                        "leagueName": "Esports World Cup 2026",
+                    },
+                    {"leagueId": 20009, "leagueName": "1win Essence II"},
+                ],
+            )
+            self.assertEqual(
+                (data_root / "leagues.js").read_text(encoding="utf-8"),
+                "window.FANTASY_LEAGUES="
+                '[{"leagueId":19785,"leagueName":"Esports World Cup 2026"},'
+                '{"leagueId":20009,"leagueName":"1win Essence II"}];\n',
+            )
+
     def test_single_match_selection_rejects_matches_outside_the_league(self) -> None:
         manifest = [{"matchId": 10}, {"matchId": 20}]
         self.assertEqual(

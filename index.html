@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#090704">
   <title>Dota 2 TI 2026 Fantasy Calculator</title>
-  <meta name="description" content="Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator using Esports World Cup 2026 replay data to compare players and estimate fantasy scores.">
+  <meta name="description" content="Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator with selectable replay datasets from parsed 2026 tournaments.">
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
   <link rel="canonical" href="https://www.ti-fantasy.site/">
   <link rel="sitemap" type="application/xml" href="https://www.ti-fantasy.site/sitemap.xml">
@@ -14,7 +14,7 @@
   <meta property="og:url" content="https://www.ti-fantasy.site/">
   <meta property="og:site_name" content="Dota 2 TI Fantasy Calculator">
   <meta property="og:title" content="Dota 2 TI 2026 Fantasy Calculator">
-  <meta property="og:description" content="Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator using Esports World Cup 2026 replay data to compare players and estimate fantasy scores.">
+  <meta property="og:description" content="Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator with selectable replay datasets from parsed 2026 tournaments.">
   <meta property="og:locale" content="en_US">
   <meta property="og:locale:alternate" content="zh_CN">
   <meta property="og:image" content="https://www.ti-fantasy.site/fantasy-assets/ti26_logo_png.png">
@@ -23,7 +23,7 @@
   <meta property="og:image:alt" content="The International 2026 logo">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Dota 2 TI 2026 Fantasy Calculator">
-  <meta name="twitter:description" content="Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator using Esports World Cup 2026 replay data to compare players and estimate fantasy scores.">
+  <meta name="twitter:description" content="Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator with selectable replay datasets from parsed 2026 tournaments.">
   <meta name="twitter:image" content="https://www.ti-fantasy.site/fantasy-assets/ti26_logo_png.png">
   <meta name="twitter:image:alt" content="The International 2026 logo">
   <script type="application/ld+json">
@@ -34,7 +34,7 @@
       "name": "Dota 2 TI 2026 Fantasy Calculator",
       "alternateName": "Calculator for DOTA 2 TI Fantasy",
       "url": "https://www.ti-fantasy.site/",
-      "description": "Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator using Esports World Cup 2026 replay data to compare players and estimate fantasy scores.",
+      "description": "Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator with selectable replay datasets from parsed 2026 tournaments.",
       "applicationCategory": "EntertainmentApplication",
       "operatingSystem": "Any",
       "browserRequirements": "Requires JavaScript and a modern web browser.",
@@ -85,7 +85,7 @@
       document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260804-mobile-switchers">
+  <link rel="stylesheet" href="styles.css?v=20260806-league-hot-swap">
 </head>
 <body>
   <aside class="correction-banner" id="correction-banner" role="status" hidden>
@@ -111,6 +111,14 @@
         <div class="brand">
           <strong data-i18n="brandName">梦幻挑战</strong>
           <div class="stage-switcher-row">
+            <label class="league-selector" for="league-select">
+              <span data-i18n="leagueSelector">赛事数据</span>
+              <select
+                id="league-select"
+                aria-label="赛事数据"
+                data-i18n-aria-label="leagueSelector"
+              ></select>
+            </label>
             <div
               class="stage-switcher"
               id="stage-switcher"
@@ -242,14 +250,118 @@
     <p class="noscript-message">此计算器需要浏览器启用 JavaScript。 / This calculator requires JavaScript.</p>
   </noscript>
 
+  <script>window.FANTASY_LEAGUES = [];</script>
+  <script src="data/leagues.js"></script>
   <script>
-    // 修改网页赛事时，把这里设为 build_league.py 生成数据所用的 league ID。
-    const LEAGUE_ID = 19785;
-    window.FANTASY_LEAGUE_CONFIG = { leagueId: LEAGUE_ID };
-    document.write('<script src="data/' + LEAGUE_ID + '/data.js"><\/script>');
+    const FANTASY_LEAGUES = Array.isArray(window.FANTASY_LEAGUES)
+      ? window.FANTASY_LEAGUES.filter((league) => (
+          Number.isInteger(Number(league?.leagueId)) &&
+          String(league?.leagueName || "").trim()
+        ))
+      : [];
+    const leagueIds = new Set(
+      FANTASY_LEAGUES.map((league) => Number(league.leagueId)),
+    );
+    const requestedLeagueId = Number(
+      new URLSearchParams(window.location.search).get("league"),
+    );
+    const fallbackLeagueId = leagueIds.has(19785)
+      ? 19785
+      : Number(FANTASY_LEAGUES[0]?.leagueId);
+    const LEAGUE_ID = leagueIds.has(requestedLeagueId)
+      ? requestedLeagueId
+      : fallbackLeagueId;
+    window.FANTASY_LEAGUE_CONFIG = {
+      leagueId: LEAGUE_ID,
+      leagues: FANTASY_LEAGUES,
+    };
+
+    const leagueSelect = document.getElementById("league-select");
+    let activeLeagueId = LEAGUE_ID;
+    let leagueLoadSequence = 0;
+    for (const league of FANTASY_LEAGUES) {
+      const option = document.createElement("option");
+      option.value = String(league.leagueId);
+      option.textContent = league.leagueName;
+      option.selected = Number(league.leagueId) === LEAGUE_ID;
+      leagueSelect.append(option);
+    }
+
+    function setLeagueLoading(loading) {
+      leagueSelect.disabled = loading;
+      if (loading) {
+        leagueSelect.setAttribute("aria-busy", "true");
+      } else {
+        leagueSelect.removeAttribute("aria-busy");
+      }
+    }
+
+    function loadLeagueData(leagueId, updateHistory = true) {
+      if (!leagueIds.has(leagueId) || leagueId === activeLeagueId) return;
+      const sequence = ++leagueLoadSequence;
+      const previousDataset = window.FANTASY_DATA;
+      const dataScript = document.createElement("script");
+      dataScript.src = `data/${leagueId}/data.js`;
+      dataScript.async = true;
+      setLeagueLoading(true);
+
+      function restorePreviousLeague() {
+        if (sequence !== leagueLoadSequence) return;
+        window.FANTASY_DATA = previousDataset;
+        leagueSelect.value = String(activeLeagueId);
+        setLeagueLoading(false);
+        dataScript.remove();
+      }
+
+      dataScript.addEventListener("error", restorePreviousLeague, { once: true });
+      dataScript.addEventListener("load", () => {
+        const nextDataset = window.FANTASY_DATA;
+        if (Number(nextDataset?.meta?.leagueId) !== leagueId) {
+          restorePreviousLeague();
+          return;
+        }
+        if (sequence !== leagueLoadSequence) {
+          dataScript.remove();
+          return;
+        }
+
+        activeLeagueId = leagueId;
+        window.FANTASY_LEAGUE_CONFIG.leagueId = leagueId;
+        leagueSelect.value = String(leagueId);
+        setLeagueLoading(false);
+        dataScript.remove();
+
+        if (updateHistory) {
+          const target = new URL(window.location.href);
+          target.searchParams.set("league", String(leagueId));
+          window.history.pushState({ leagueId }, "", target);
+        }
+        window.dispatchEvent(new CustomEvent("fantasy:leaguechange", {
+          detail: { dataset: nextDataset, leagueId },
+        }));
+      }, { once: true });
+      document.head.append(dataScript);
+    }
+
+    leagueSelect.addEventListener("change", () => {
+      loadLeagueData(Number(leagueSelect.value));
+    });
+    window.addEventListener("popstate", () => {
+      const requestedLeagueId = Number(
+        new URLSearchParams(window.location.search).get("league"),
+      );
+      const leagueId = leagueIds.has(requestedLeagueId)
+        ? requestedLeagueId
+        : fallbackLeagueId;
+      loadLeagueData(leagueId, false);
+    });
+
+    if (Number.isInteger(LEAGUE_ID)) {
+      document.write('<script src="data/' + LEAGUE_ID + '/data.js"><\/script>');
+    }
   </script>
   <script src="fantasy.js?v=20260801-stage"></script>
-  <script src="app.js?v=20260804-seo-tormentor-cutover"></script>
+  <script src="app.js?v=20260806-multi-league-copy"></script>
   <script>
     if (window.location.hostname === "www.ti-fantasy.site") {
       const busuanziScript = document.createElement("script");

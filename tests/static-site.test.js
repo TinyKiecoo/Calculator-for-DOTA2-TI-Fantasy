@@ -21,6 +21,9 @@ test("publishes crawl and discovery metadata for the canonical site", () => {
   assert.match(sitemap, /<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
   assert.match(html, /<link rel="canonical" href="https:\/\/www\.ti-fantasy\.site\/">/);
   assert.match(html, /<meta name="robots" content="index, follow,/);
+  assert.match(html, /selectable replay datasets from parsed 2026 tournaments/);
+  assert.doesNotMatch(html, /calculator using Esports World Cup 2026 replay data/);
+  assert.match(app, /Each tournament is scored independently; their data is never combined/);
 
   const structuredDataSource = html.match(
     /<script type="application\/ld\+json">([\s\S]*?)<\/script>/,
@@ -144,6 +147,39 @@ test("loads the browser data snapshot without fetch or modules", () => {
   assert.equal(JSON.stringify(dataset), JSON.stringify(jsonDataset));
 });
 
+test("selects from every generated league snapshot", () => {
+  assert.match(html, /id="league-select"/);
+  assert.match(html, /src="data\/leagues\.js"/);
+  assert.match(html, /option\.textContent = league\.leagueName/);
+  assert.match(html, /history\.pushState\(\{ leagueId \}, "", target\)/);
+  assert.match(html, /CustomEvent\("fantasy:leaguechange"/);
+  assert.doesNotMatch(html, /window\.location\.assign/);
+  assert.match(app, /leagueSelector:\s*"Tournament data"/);
+
+  const catalogSource = fs.readFileSync(
+    path.join(root, "data", "leagues.js"),
+    "utf8",
+  );
+  const catalogSandbox = { window: {} };
+  vm.runInNewContext(catalogSource, catalogSandbox);
+  const catalog = JSON.parse(JSON.stringify(catalogSandbox.window.FANTASY_LEAGUES));
+  assert.deepEqual(catalog, [
+    { leagueId: 19785, leagueName: "Esports World Cup 2026" },
+    { leagueId: 20009, leagueName: "1win Essence II" },
+  ]);
+
+  for (const { leagueId, leagueName } of catalog) {
+    const source = fs.readFileSync(
+      path.join(root, "data", String(leagueId), "data.js"),
+      "utf8",
+    );
+    const sandbox = { window: {} };
+    vm.runInNewContext(source, sandbox);
+    assert.equal(sandbox.window.FANTASY_DATA.meta.leagueId, leagueId);
+    assert.equal(sandbox.window.FANTASY_DATA.meta.leagueName, leagueName);
+  }
+});
+
 test("renders all three banners with a minimal classic-script DOM", () => {
   const dataSource = fs.readFileSync(
     path.join(root, "data", "19785", "data.js"),
@@ -219,6 +255,9 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     window: {
       FantasyEngine: engine,
       __TI_FANTASY_LANGUAGE__: "zh",
+      addEventListener(type, handler) {
+        listeners.set(`window:${type}`, handler);
+      },
       alert(message) {
         alerts.push(String(message));
       },
@@ -342,6 +381,16 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.match(element("suffix-title-select").innerHTML, /value="loser"/);
   assert.doesNotMatch(rendered, /leaderboard-header|有效地图/);
   assert.notEqual(element("total-score").textContent, "—");
+  assert.equal(element("load-error").hidden, true);
+  const leagueChange = listeners.get("window:fantasy:leaguechange");
+  assert.equal(typeof leagueChange, "function");
+  const nextDataset = JSON.parse(
+    fs.readFileSync(path.join(root, "data", "20009", "summary.json"), "utf8"),
+  );
+  leagueChange({
+    detail: { dataset: nextDataset, leagueId: 20009 },
+  });
+  assert.match(element("banner-grid").innerHTML, /BoomBoys/);
   assert.equal(element("load-error").hidden, true);
   assert.deepEqual(alerts, [], "the alert must wait until initial rendering finishes");
   assert.equal(timers.length, 1);

@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const dataset = window.FANTASY_DATA;
+  let dataset = window.FANTASY_DATA;
   const engine = window.FantasyEngine;
   const bannerGrid = document.getElementById("banner-grid");
   const totalScore = document.getElementById("total-score");
@@ -53,7 +53,7 @@
     zh: {
       locale: "zh-CN",
       documentTitle: "Dota 2 TI 2026 梦幻挑战计算器",
-      description: "免费的开源 Dota 2 TI 2026 梦幻挑战计算器，基于 2026 电竞世界杯比赛录像数据比较选手表现并估算梦幻积分。",
+      description: "免费的开源 Dota 2 TI 2026 梦幻挑战计算器，可从已解析的 2026 赛事录像数据中选择赛事，比较选手表现并估算梦幻积分。",
       backToTop: "返回梦幻挑战顶部",
       brandName: "梦幻挑战",
       pageHeading: "开源的 Dota 2 梦幻挑战计算器",
@@ -67,6 +67,7 @@
       candyworksAria: "在新标签页打开糖果车计算器",
       switchLanguage: "切换为英文",
       dataNotes: "数据说明",
+      leagueSelector: "赛事数据",
       stageSwitcher: "赛事阶段",
       multiplierSwitcher: "徽标倍率方式",
       detailedEmblemScore: "{stat}得分",
@@ -129,7 +130,8 @@
       averageScore: "全部地图平均 ×2",
       emblemPennant: "{role}徽标挂幅",
       bannerScore: "{role}战旗积分",
-      dataLead: "本页面使用 {name} 的数据来计算梦幻挑战积分。",
+      dataLead: "本页面使用当前选择的 {name} 录像数据来计算梦幻挑战积分。",
+      dataSelectionBody: "赛事下拉框可从所有已解析存储的赛事间切换；每项赛事单独计算，数据不会相互合并。",
       tournamentSnapshot: "赛事快照",
       leagueId: "联赛 ID",
       parsedMatches: "已解析比赛",
@@ -138,7 +140,7 @@
       scoringMethodTitle: "计算口径",
       scoringMethodBody: "每位选手逐场应用徽标与指导员称号加成；双人战旗在同一场比赛中先取二人平均。“最高两场”目前在所有赛制中统一取系列赛内最高两场之和，再选择全结算期得分最高的系列赛；“全部地图平均 ×2”对全结算期所有有效地图取平均并乘二。手动倍率模式会完全替代徽标品质与特性的倍率。",
       dataSources: "数据来源",
-      dataSourcesBody: "全部比赛信息与梦幻统计均直接读取 Valve 比赛录像。",
+      dataSourcesBody: "当前所选赛事的全部比赛信息与梦幻统计均直接读取 Valve 比赛录像。",
       disclaimerTitle: "免责声明",
       disclaimerProject: "这是一个免费、开源、非商业的玩家项目，与 Valve、Steam 或 Dota 2 官方无关联。计算结果可能不准确，数据仅供参考。",
       disclaimerAssets: "本项目使用了 Dota 2 / Valve 相关图片、字体、名称和界面素材。这些素材仍归 Valve 及相应权利方所有；本项目的开源许可证不授予这些素材的使用权。",
@@ -199,7 +201,7 @@
     en: {
       locale: "en-US",
       documentTitle: "Dota 2 TI 2026 Fantasy Calculator",
-      description: "Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator using Esports World Cup 2026 replay data to compare players and estimate fantasy scores.",
+      description: "Free, open-source Dota 2 TI 2026 Fantasy Challenge calculator with selectable replay datasets from parsed 2026 tournaments.",
       backToTop: "Back to the Fantasy Challenge top",
       brandName: "FANTASY",
       pageHeading: "An open-source calculator for DOTA 2 TI Fantasy predictions.",
@@ -213,6 +215,7 @@
       candyworksAria: "Open the Candyworks Calculator in a new tab",
       switchLanguage: "Switch to Chinese",
       dataNotes: "Data Notes",
+      leagueSelector: "Tournament data",
       stageSwitcher: "Tournament stage",
       multiplierSwitcher: "Emblem multiplier mode",
       detailedEmblemScore: "{stat} score",
@@ -275,7 +278,8 @@
       averageScore: "All-Map Average ×2",
       emblemPennant: "{role} emblem pennant",
       bannerScore: "{role} banner score",
-      dataLead: "This page uses {name} data to calculate Fantasy scores.",
+      dataLead: "This page uses replay data from the currently selected {name} tournament to calculate Fantasy scores.",
+      dataSelectionBody: "The tournament dropdown can switch between every parsed event. Each tournament is scored independently; their data is never combined.",
       tournamentSnapshot: "Tournament Snapshot",
       leagueId: "League ID",
       parsedMatches: "Parsed matches",
@@ -284,7 +288,7 @@
       scoringMethodTitle: "Scoring Method",
       scoringMethodBody: "Each player is scored map by map with emblem and advisor-title bonuses. Two-player banners first average both players within the same map. Best Two Maps currently sums the top two maps in every series format, then keeps the highest-scoring series in the period; All-Map Average ×2 averages every valid map in the full scoring period and doubles it. Manual multiplier mode completely replaces quality and trait multipliers.",
       dataSources: "Data Sources",
-      dataSourcesBody: "All match information and Fantasy statistics are read directly from Valve replays.",
+      dataSourcesBody: "All match information and Fantasy statistics for the selected tournament are read directly from Valve replays.",
       disclaimerTitle: "Disclaimer",
       disclaimerProject: "This is a free, open-source, non-commercial fan project and is not affiliated with Valve, Steam, or Dota 2. Results may be inaccurate and are for reference only.",
       disclaimerAssets: "It uses Dota 2 / Valve-derived images, fonts, names, and UI materials. Those materials remain the property of Valve and their respective rights holders; this project's open-source license does not grant rights to them.",
@@ -767,7 +771,7 @@
   let modalTrigger = null;
   let activeModalType = null;
   let players = normalizePlayers(dataset);
-  const meta = dataset.meta || {};
+  let meta = dataset.meta || {};
 
   function escapeHtml(value) {
     return String(value)
@@ -832,6 +836,32 @@
     }
     return result;
   }
+
+  window.addEventListener("fantasy:leaguechange", (event) => {
+    const nextDataset = event.detail?.dataset;
+    if (
+      !nextDataset ||
+      Number(nextDataset.meta?.leagueId) !== Number(event.detail?.leagueId)
+    ) {
+      return;
+    }
+
+    dataset = nextDataset;
+    meta = dataset.meta || {};
+    players = normalizePlayers(dataset);
+    try {
+      bannerGrid.hidden = false;
+      loadError.hidden = true;
+      render();
+      if (!modalBackdrop.hidden) {
+        updateModalContent(activeModalType || "data");
+      }
+    } catch (error) {
+      console.error(error);
+      bannerGrid.hidden = true;
+      loadError.hidden = false;
+    }
+  });
 
   function formatDate(value) {
     if (!value) return text("localSnapshot");
@@ -1233,6 +1263,7 @@
       <p class="modal-lead">
         ${escapeHtml(text("dataLead", { name: meta.leagueName || "Dota 2" }))}
       </p>
+      <p class="modal-lead">${escapeHtml(text("dataSelectionBody"))}</p>
       <div class="data-grid">
         <section class="data-card">
           <h3>${escapeHtml(text("tournamentSnapshot"))}</h3>

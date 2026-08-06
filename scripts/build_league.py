@@ -338,6 +338,68 @@ def fetch_league_name(league_id: int, timeout: int) -> str:
     return league_name
 
 
+def stored_league_catalog_entry(league_dir: Path) -> dict[str, Any] | None:
+    """Read a completed/partially published league without parsing data.js."""
+
+    if not league_dir.is_dir() or not league_dir.name.isdigit():
+        return None
+    if not (league_dir / "data.js").is_file():
+        return None
+
+    directory_league_id = int(league_dir.name)
+    metadata_paths = (league_dir / "league.json", league_dir / "summary.json")
+    for metadata_path in metadata_paths:
+        if not metadata_path.is_file():
+            continue
+        try:
+            payload = json.loads(metadata_path.read_text(encoding="utf-8"))
+            metadata = payload.get("meta", payload)
+            league_id = int(metadata.get("leagueId"))
+            league_name = str(metadata.get("leagueName") or "").strip()
+        except (
+            AttributeError,
+            json.JSONDecodeError,
+            OSError,
+            TypeError,
+            ValueError,
+        ):
+            continue
+        if league_id == directory_league_id and league_name:
+            return {"leagueId": league_id, "leagueName": league_name}
+    return None
+
+
+def refresh_league_catalog(
+    data_root: Path,
+    current_league_id: int | None = None,
+    current_league_name: str | None = None,
+) -> list[dict[str, Any]]:
+    """Regenerate data/leagues.js from every published league directory."""
+
+    data_root.mkdir(parents=True, exist_ok=True)
+    entries: dict[int, dict[str, Any]] = {}
+    for league_dir in data_root.iterdir():
+        entry = stored_league_catalog_entry(league_dir)
+        if entry is not None:
+            entries[int(entry["leagueId"])] = entry
+
+    if current_league_id is not None and current_league_name:
+        current_data = data_root / str(current_league_id) / "data.js"
+        if current_data.is_file():
+            entries[int(current_league_id)] = {
+                "leagueId": int(current_league_id),
+                "leagueName": str(current_league_name).strip(),
+            }
+
+    catalog = [entries[league_id] for league_id in sorted(entries)]
+    payload = json.dumps(catalog, ensure_ascii=False, separators=(",", ":"))
+    replay_tools.atomic_write_text(
+        data_root / "leagues.js",
+        "window.FANTASY_LEAGUES=" + payload + ";\n",
+    )
+    return catalog
+
+
 def select_manifest_matches(
     manifest: list[dict[str, Any]],
     match_ids: list[int] | None,
@@ -764,6 +826,7 @@ def refresh_browser_data(
     replay_tools.atomic_write_text(
         league_dir / "data.js", "window.FANTASY_DATA=" + payload + ";\n"
     )
+    refresh_league_catalog(league_dir.parent, args.league_id, league_name)
     return dataset, summary
 
 

@@ -231,6 +231,37 @@ a:focus-visible {
   margin-top: 5px;
 }
 
+.league-selector {
+  width: 100%;
+  margin-top: 10px;
+  display: grid;
+  gap: 3px;
+  color: rgba(218, 204, 177, .72);
+  font-family: 'Reaver';
+  font-size: .61rem;
+}
+
+.league-selector select {
+  width: 100%;
+  min-height: 29px;
+  padding: 4px 26px 4px 7px;
+  color: #f6e8c9;
+  border: 1px solid rgba(217, 182, 111, .34);
+  border-radius: 0;
+  background-color: rgba(14, 10, 6, .92);
+  font-family: 'Reaver';
+  font-size: .61rem;
+}
+
+.league-selector select:disabled {
+  cursor: wait;
+  opacity: .68;
+}
+
+.league-selector + .stage-switcher {
+  margin-top: 5px;
+}
+
 .multiplier-switcher button {
   flex: 1 1 0;
 }
