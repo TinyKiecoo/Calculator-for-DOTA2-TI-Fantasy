@@ -100,6 +100,8 @@ test("orders the topbar actions and links to the Candyworks Calculator", () => {
   assert.match(css, /\.emblem-ranking-switcher\s*\{/);
   assert.match(app, /fantasy-assets\/icon_info\.png/);
   assert.match(app, /teamfightContributionHint/);
+  assert.match(app, /deaths:\s*"deathsContributionHint"/);
+  assert.match(app, /stun_seconds:\s*"stunContributionHint"/);
   assert.match(css, /\.emblem-ranking-info:hover \.emblem-ranking-tooltip/);
   assert.ok(fs.existsSync(path.join(root, "fantasy-assets", "icon_info.png")));
 });
