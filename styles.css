@@ -1197,6 +1197,7 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 }
 
 .emblem-ranking-row {
+  position: relative;
   min-height: 52px;
   padding: 7px 9px;
   display: grid;
@@ -1305,6 +1306,24 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   visibility: visible;
   opacity: 1;
   transform: translate(-50%, 0);
+}
+
+.emblem-ranking-info--deaths {
+  position: static;
+}
+
+.emblem-ranking-info--deaths .emblem-ranking-tooltip {
+  left: 8px;
+  transform: translateY(3px);
+}
+
+.emblem-ranking-info--deaths .emblem-ranking-tooltip::after {
+  left: 86px;
+}
+
+.emblem-ranking-info--deaths:hover .emblem-ranking-tooltip,
+.emblem-ranking-info--deaths:focus .emblem-ranking-tooltip {
+  transform: translateY(0);
 }
 
 .emblem-ranking-icon {

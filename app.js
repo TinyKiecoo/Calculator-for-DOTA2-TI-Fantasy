@@ -1484,7 +1484,7 @@
         const infoMarkup = hint
           ? `
                 <span
-                  class="emblem-ranking-info"
+                  class="emblem-ranking-info emblem-ranking-info--${entry.stat}"
                   tabindex="0"
                   aria-label="${escapeHtml(hint)}"
                 >
