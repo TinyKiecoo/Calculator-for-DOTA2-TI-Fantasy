@@ -86,6 +86,9 @@ test("orders the topbar actions and links to the Candyworks Calculator", () => {
   assert.match(app, /candyworksCalculator:\s*"Candyworks Calculator"/);
   assert.match(app, /emblemRankings:\s*"Emblem Rankings"/);
   assert.match(css, /\.emblem-ranking-grid\s*\{[\s\S]*?grid-template-columns:\s*repeat\(3,/);
+  assert.match(app, /role === "core" && color === "blue"/);
+  assert.match(app, /role === "support" && color === "red"/);
+  assert.match(css, /\.emblem-ranking-card--unavailable\s*\{/);
 });
 
 test("loads the browser data snapshot without fetch or modules", () => {

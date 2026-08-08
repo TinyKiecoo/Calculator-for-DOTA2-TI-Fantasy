@@ -1390,6 +1390,9 @@
   }
 
   function emblemRankingColorMarkup(role, color) {
+    const unavailableColor =
+      (role === "core" && color === "blue") ||
+      (role === "support" && color === "red");
     const rows = averageStatContributions(role, color)
       .map((entry, index) => {
         const average = entry.average === null
@@ -1417,7 +1420,7 @@
       .join("");
 
     return `
-      <section class="emblem-ranking-card emblem-ranking-card--${color}">
+      <section class="emblem-ranking-card emblem-ranking-card--${color}${unavailableColor ? " emblem-ranking-card--unavailable" : ""}">
         <h4><span aria-hidden="true"></span>${escapeHtml(colorName(color))}</h4>
         <ol>${rows}</ol>
       </section>`;

@@ -1124,6 +1124,11 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   --ranking-deep: var(--green-deep);
 }
 
+.emblem-ranking-card--unavailable {
+  --ranking-color: #b9bbb6;
+  --ranking-deep: #41423f;
+}
+
 .emblem-ranking-card h4 {
   margin: 0;
   padding: 10px 11px;
