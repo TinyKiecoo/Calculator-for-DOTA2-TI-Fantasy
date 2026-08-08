@@ -98,6 +98,7 @@ test("orders the topbar actions and links to the Candyworks Calculator", () => {
   assert.match(app, /let emblemRankingMode = "highestSeries"/);
   assert.match(app, /highestSeriesStatContributions[\s\S]*?engine\.buildRankings\(/);
   assert.match(css, /\.emblem-ranking-switcher\s*\{/);
+  assert.match(css, /\.emblem-ranking-toolbar\s*\{[\s\S]*?position:\s*sticky;[\s\S]*?top:\s*-24px;/);
   assert.match(app, /fantasy-assets\/icon_info\.png/);
   assert.match(app, /teamfightContributionHint/);
   assert.match(app, /deaths:\s*"deathsContributionHint"/);

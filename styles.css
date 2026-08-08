@@ -1057,9 +1057,17 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 }
 
 .emblem-ranking-toolbar {
-  margin-bottom: 18px;
+  position: sticky;
+  top: -24px;
+  z-index: 5;
+  margin: -24px -24px 18px;
+  padding: 14px 24px 12px;
   display: flex;
   justify-content: center;
+  border-bottom: 1px solid rgba(208, 169, 88, .2);
+  background:
+    linear-gradient(180deg, rgba(31, 24, 15, .99), rgba(18, 16, 13, .98));
+  box-shadow: 0 10px 18px rgba(0, 0, 0, .24);
 }
 
 .emblem-ranking-switcher {
@@ -2003,6 +2011,12 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   .modal-body {
     max-height: calc(100dvh - 96px);
     padding: 16px;
+  }
+
+  .emblem-ranking-toolbar {
+    top: -16px;
+    margin: -16px -16px 16px;
+    padding: 12px 16px 10px;
   }
 
   .rule-grid,
