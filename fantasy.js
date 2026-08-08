@@ -337,6 +337,49 @@
     }
   }
 
+  function rankAverageContributions(contributions) {
+    if (!Array.isArray(contributions)) {
+      throw new Error("徽标平均贡献必须是数组。");
+    }
+
+    const entries = contributions.map((entry, index) => ({
+      stat: entry?.stat,
+      average: Number.isFinite(entry?.average) ? entry.average : null,
+      sourceIndex: index,
+    }));
+    const available = entries.filter((entry) => entry.average !== null);
+
+    if (!available.length) {
+      return entries.map(({ sourceIndex, ...entry }) => ({
+        ...entry,
+        rankingScore: null,
+      }));
+    }
+
+    const averages = available.map((entry) => entry.average);
+    const maximum = Math.max(...averages);
+
+    return entries
+      .map(({ sourceIndex, ...entry }) => ({
+        ...entry,
+        sourceIndex,
+        rankingScore:
+          entry.average === null
+            ? null
+            : maximum === 0
+              ? 100
+              : Math.round((entry.average / maximum) * 100),
+      }))
+      .sort((left, right) => {
+        if (left.average === null) return right.average === null
+          ? left.sourceIndex - right.sourceIndex
+          : 1;
+        if (right.average === null) return -1;
+        return right.average - left.average || left.sourceIndex - right.sourceIndex;
+      })
+      .map(({ sourceIndex, ...entry }) => entry);
+  }
+
   function resolveModifiers(emblems, customMultipliers) {
     if (!Array.isArray(customMultipliers)) {
       return calculateEmblemModifiers(emblems);
@@ -949,6 +992,7 @@
     suffixTitleKeys,
     calculateEmblemModifiers,
     scoreRawStat,
+    rankAverageContributions,
     scoreStatistics,
     calculateTitleBonus,
     countedGamesForSeries,

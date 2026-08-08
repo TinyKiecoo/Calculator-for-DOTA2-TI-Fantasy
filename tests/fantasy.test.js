@@ -10,6 +10,7 @@ const {
   countedGamesForSeries,
   formatScore,
   internationalRoleColors,
+  rankAverageContributions,
   scorePair,
   scorePlayer,
   scoreRawStat,
@@ -52,6 +53,34 @@ test("uses the current EWC 2026 base point rules", () => {
   for (const [stat, raw, expected] of linearCases) {
     assert.equal(scoreRawStat(stat, raw), expected);
   }
+});
+
+test("normalizes average emblem contributions in direct proportion to the maximum", () => {
+  assert.deepEqual(
+    rankAverageContributions([
+      { stat: "lowest", average: 10 },
+      { stat: "highest", average: 30 },
+      { stat: "middle", average: 20 },
+      { stat: "missing", average: null },
+    ]),
+    [
+      { stat: "highest", average: 30, rankingScore: 100 },
+      { stat: "middle", average: 20, rankingScore: 67 },
+      { stat: "lowest", average: 10, rankingScore: 33 },
+      { stat: "missing", average: null, rankingScore: null },
+    ],
+  );
+
+  assert.deepEqual(
+    rankAverageContributions([
+      { stat: "first", average: 12 },
+      { stat: "second", average: 12 },
+    ]),
+    [
+      { stat: "first", average: 12, rankingScore: 100 },
+      { stat: "second", average: 12, rankingScore: 100 },
+    ],
+  );
 });
 
 test("formats every displayed score with exactly two decimals", () => {

@@ -1056,6 +1056,186 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   line-height: 1.65;
 }
 
+.emblem-ranking-method {
+  margin-top: -8px;
+  padding: 10px 12px;
+  color: #a99f90;
+  border-left: 2px solid rgba(212, 174, 96, .55);
+  background: rgba(212, 174, 96, .055);
+  font-size: .8rem;
+}
+
+.emblem-rankings {
+  display: grid;
+  gap: 24px;
+}
+
+.emblem-ranking-role > header {
+  margin-bottom: 10px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(212, 174, 96, .22);
+}
+
+.emblem-ranking-role > header h3 {
+  margin: 0;
+  padding-bottom: 7px;
+  color: #ead5a5;
+  font-family: var(--display-font);
+  font-size: 1.08rem;
+}
+
+.emblem-ranking-role > header p {
+  margin: 0 0 7px;
+  color: #8f8678;
+  font-size: .7rem;
+}
+
+.emblem-ranking-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.emblem-ranking-card {
+  --ranking-color: var(--gold-dark);
+  --ranking-deep: #241b0f;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ranking-color) 68%, transparent);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--ranking-color) 18%, transparent), transparent 42%),
+    color-mix(in srgb, var(--ranking-deep) 62%, #12100d);
+}
+
+.emblem-ranking-card--red {
+  --ranking-color: var(--red);
+  --ranking-deep: var(--red-deep);
+}
+
+.emblem-ranking-card--blue {
+  --ranking-color: var(--blue);
+  --ranking-deep: var(--blue-deep);
+}
+
+.emblem-ranking-card--green {
+  --ranking-color: var(--green);
+  --ranking-deep: var(--green-deep);
+}
+
+.emblem-ranking-card h4 {
+  margin: 0;
+  padding: 10px 11px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #e9ddc8;
+  border-bottom: 1px solid rgba(255, 255, 255, .09);
+  background: color-mix(in srgb, var(--ranking-color) 24%, transparent);
+  font-family: var(--display-font);
+  font-size: .78rem;
+}
+
+.emblem-ranking-card h4 > span {
+  width: 7px;
+  height: 7px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--ranking-color) 70%, #fff);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--ranking-color) 74%, transparent);
+}
+
+.emblem-ranking-card ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.emblem-ranking-row {
+  min-height: 52px;
+  padding: 7px 9px;
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  border-top: 1px solid rgba(255, 255, 255, .055);
+}
+
+.emblem-ranking-row:first-child {
+  border-top: 0;
+  background: linear-gradient(90deg, rgba(239, 213, 142, .09), transparent);
+}
+
+.emblem-ranking-place {
+  color: #81786a;
+  font-family: var(--number-font);
+  font-size: .65rem;
+  text-align: center;
+}
+
+.emblem-ranking-row:first-child .emblem-ranking-place {
+  color: var(--gold-bright);
+}
+
+.emblem-ranking-stat {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.emblem-ranking-stat-name {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #ded1bc;
+  font-size: .7rem;
+  line-height: 1.15;
+}
+
+.emblem-ranking-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 auto;
+  color: color-mix(in srgb, var(--ranking-color) 58%, #fff);
+}
+
+.emblem-ranking-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  fill: currentColor;
+}
+
+.emblem-ranking-stat small {
+  overflow: hidden;
+  color: #898174;
+  font-size: .61rem;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.emblem-ranking-score {
+  min-width: 38px;
+  display: grid;
+  justify-items: end;
+  color: #f1dfb9;
+  font-family: var(--number-font);
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.emblem-ranking-score small {
+  margin-top: 3px;
+  color: #746d62;
+  font-family: var(--page-font);
+  font-size: .53rem;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
 .rule-grid,
 .data-grid {
   display: grid;
@@ -1694,8 +1874,13 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   }
 
   .rule-grid,
-  .data-grid {
+  .data-grid,
+  .emblem-ranking-grid {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .emblem-ranking-role > header {
+    align-items: flex-start;
   }
 
   .rule-card,

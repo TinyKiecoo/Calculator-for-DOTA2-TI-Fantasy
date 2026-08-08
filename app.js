@@ -66,6 +66,13 @@
       candyworksCalculator: "糖果车计算器",
       candyworksAria: "在新标签页打开糖果车计算器",
       switchLanguage: "切换为英文",
+      emblemRankings: "徽标排行",
+      emblemRankingsLead: "以下排行按当前所选赛事的全部已解析比赛，统计各定位使用每项徽标时的场均基础积分贡献。",
+      emblemRankingsMethod: "平均贡献最高的徽标设为 100 分，其余项目按其平均贡献相对于最高项的实际比例进行打分。品质、特性、指导员称号均不参与计算。",
+      rankingScore: "评分",
+      averageContribution: "场均贡献",
+      playerMapSamples: "{count} 条选手逐场记录",
+      rankingUnavailable: "数据不足",
       dataNotes: "数据说明",
       leagueSelector: "赛事数据",
       stageSwitcher: "赛事阶段",
@@ -216,6 +223,13 @@
       candyworksCalculator: "Candyworks Calculator",
       candyworksAria: "Open the Candyworks Calculator in a new tab",
       switchLanguage: "Switch to Chinese",
+      emblemRankings: "Emblem Rankings",
+      emblemRankingsLead: "These rankings use every parsed match in the selected tournament to measure each emblem statistic's average base-score contribution for each role.",
+      emblemRankingsMethod: "The highest average contribution scores 100. Every other value is rounded in direct proportion to that maximum. Quality, traits and advisor titles are excluded.",
+      rankingScore: "Rating",
+      averageContribution: "Avg. contribution",
+      playerMapSamples: "{count} player-map records",
+      rankingUnavailable: "Insufficient data",
       dataNotes: "Data Notes",
       leagueSelector: "Tournament data",
       stageSwitcher: "Tournament stage",
@@ -892,6 +906,36 @@
     }).format(value);
   }
 
+  function roleMapRecords(role) {
+    return players
+      .filter((player) => player.role === role)
+      .flatMap((player) => player.maps || []);
+  }
+
+  function averageStatContributions(role, color) {
+    const maps = roleMapRecords(role);
+    const contributions = engine.statKeys
+      .filter((stat) => engine.statDefinitions[stat].color === color)
+      .map((stat) => {
+        let total = 0;
+        let count = 0;
+        for (const map of maps) {
+          const rawValue = map.stats?.[stat];
+          if (!Number.isFinite(rawValue)) continue;
+          const score = engine.scoreRawStat(stat, rawValue);
+          if (!Number.isFinite(score)) continue;
+          total += score;
+          count += 1;
+        }
+        return {
+          stat,
+          average: count ? total / count : null,
+        };
+      });
+
+    return engine.rankAverageContributions(contributions);
+  }
+
   function statIconMarkup(stat) {
     return `
       <svg viewBox="0 0 32 32" focusable="false" aria-hidden="true">
@@ -1345,11 +1389,74 @@
       </div>`;
   }
 
+  function emblemRankingColorMarkup(role, color) {
+    const rows = averageStatContributions(role, color)
+      .map((entry, index) => {
+        const average = entry.average === null
+          ? text("rankingUnavailable")
+          : formatScore(entry.average);
+        const rankingScore = entry.rankingScore === null
+          ? "—"
+          : String(entry.rankingScore);
+        return `
+          <li class="emblem-ranking-row">
+            <span class="emblem-ranking-place" aria-hidden="true">${index + 1}</span>
+            <span class="emblem-ranking-stat">
+              <span class="emblem-ranking-stat-name">
+                <span class="emblem-ranking-icon" aria-hidden="true">${statIconMarkup(entry.stat)}</span>
+                ${escapeHtml(statDefinition(entry.stat).label)}
+              </span>
+              <small>${escapeHtml(text("averageContribution"))}: ${escapeHtml(average)}</small>
+            </span>
+            <strong class="emblem-ranking-score">
+              ${escapeHtml(rankingScore)}
+              <small>${escapeHtml(text("rankingScore"))}</small>
+            </strong>
+          </li>`;
+      })
+      .join("");
+
+    return `
+      <section class="emblem-ranking-card emblem-ranking-card--${color}">
+        <h4><span aria-hidden="true"></span>${escapeHtml(colorName(color))}</h4>
+        <ol>${rows}</ol>
+      </section>`;
+  }
+
+  function emblemRankingsMarkup() {
+    const roles = engine.bannerRoles
+      .map((role) => {
+        const sampleCount = roleMapRecords(role).length;
+        const colors = engine.emblemColors
+          .map((color) => emblemRankingColorMarkup(role, color))
+          .join("");
+        return `
+          <section class="emblem-ranking-role">
+            <header>
+              <h3>${escapeHtml(roleName(role))}</h3>
+              <p>${escapeHtml(text("playerMapSamples", { count: sampleCount }))}</p>
+            </header>
+            <div class="emblem-ranking-grid">${colors}</div>
+          </section>`;
+      })
+      .join("");
+
+    return `
+      <p class="modal-lead">${escapeHtml(text("emblemRankingsLead"))}</p>
+      <p class="modal-lead emblem-ranking-method">${escapeHtml(text("emblemRankingsMethod"))}</p>
+      <div class="emblem-rankings">${roles}</div>`;
+  }
+
   function updateModalContent(type) {
-    activeModalType = type === "scoringChanges" ? "scoringChanges" : "data";
+    activeModalType = ["data", "emblemRankings", "scoringChanges"].includes(type)
+      ? type
+      : "data";
     if (activeModalType === "scoringChanges") {
       modalTitle.textContent = text("scoringChangesTitle");
       modalBody.innerHTML = scoringChangesMarkup();
+    } else if (activeModalType === "emblemRankings") {
+      modalTitle.textContent = text("emblemRankings");
+      modalBody.innerHTML = emblemRankingsMarkup();
     } else {
       modalTitle.textContent = text("dataNotes");
       modalBody.innerHTML = dataMarkup();
