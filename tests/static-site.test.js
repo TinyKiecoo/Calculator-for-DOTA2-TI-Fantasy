@@ -89,6 +89,19 @@ test("orders the topbar actions and links to the Candyworks Calculator", () => {
   assert.match(app, /role === "core" && color === "blue"/);
   assert.match(app, /role === "support" && color === "red"/);
   assert.match(css, /\.emblem-ranking-card--unavailable\s*\{/);
+  assert.match(app, /data-emblem-ranking-mode="average"/);
+  assert.match(app, /data-emblem-ranking-mode="highestSeries"/);
+  assert.ok(
+    app.indexOf('data-emblem-ranking-mode="highestSeries"') <
+      app.indexOf('data-emblem-ranking-mode="average"'),
+  );
+  assert.match(app, /let emblemRankingMode = "highestSeries"/);
+  assert.match(app, /highestSeriesStatContributions[\s\S]*?engine\.buildRankings\(/);
+  assert.match(css, /\.emblem-ranking-switcher\s*\{/);
+  assert.match(app, /fantasy-assets\/icon_info\.png/);
+  assert.match(app, /teamfightContributionHint/);
+  assert.match(css, /\.emblem-ranking-info:hover \.emblem-ranking-tooltip/);
+  assert.ok(fs.existsSync(path.join(root, "fantasy-assets", "icon_info.png")));
 });
 
 test("loads the browser data snapshot without fetch or modules", () => {
