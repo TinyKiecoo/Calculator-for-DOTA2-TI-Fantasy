@@ -126,8 +126,8 @@
       emblemAria: "{role}第 {index} 枚{color}徽标",
       liveRanking: "{role}实时排名",
       scoreMethod: "积分方式",
-      highestScore: "最高两场",
-      averageScore: "全部地图平均 ×2",
+      highestScore: "最高系列赛",
+      averageScore: "全部比赛平均 ×2",
       emblemPennant: "{role}徽标挂幅",
       bannerScore: "{role}战旗积分",
       dataLead: "本页面使用当前选择的 {name} 录像数据来计算梦幻挑战积分。",
@@ -137,8 +137,10 @@
       parsedMatches: "已解析比赛",
       players: "选手",
       generatedDate: "生成日期",
-      scoringMethodTitle: "计算口径",
-      scoringMethodBody: "每位选手逐场应用徽标与指导员称号加成；双人战旗在同一场比赛中先取二人平均。“最高两场”目前在所有赛制中统一取系列赛内最高两场之和，再选择全结算期得分最高的系列赛；“全部地图平均 ×2”对全结算期所有有效地图取平均并乘二。手动倍率模式会完全替代徽标品质与特性的倍率。",
+      scoringMethodTitle: "积分规则",
+      scoringMethodBodyClientDescription: "对于每个定位，每位选手的梦幻积分是根据他们参与的每场比赛来单独结算。只有战旗上存在的统计数据才会提供积分，如果指导员称号满足特定条件还有加成效果。然后一个定位里两个选手的得分会计算出平均数，作为该场比赛相应的最终积分。",
+      scoringMethodBodyBestSeries: "“最高系列赛”采用的规则与客户端完全一致。每个定位的最终积分来自一个系列赛中积分最高的两场比赛。如果一个定位在一个结算期内参与了多个系列赛，那么会采用得分最高的系列赛。",
+      scoringMethodBodyAllMatchAverage: "“全部比赛平均 ×2”对全结算期所有有效比赛的得分取平均并 ×2。",
       dataSources: "数据来源",
       dataSourcesBody: "当前所选赛事的全部比赛信息与梦幻统计均直接读取 Valve 比赛录像。",
       disclaimerTitle: "免责声明",
@@ -274,8 +276,8 @@
       emblemAria: "{role}, emblem {index}, {color}",
       liveRanking: "Live {role} ranking",
       scoreMethod: "Scoring method",
-      highestScore: "Best Two Maps",
-      averageScore: "All-Map Average ×2",
+      highestScore: "Best Series",
+      averageScore: "All-Match Average ×2",
       emblemPennant: "{role} emblem pennant",
       bannerScore: "{role} banner score",
       dataLead: "This page uses replay data from the currently selected {name} tournament to calculate Fantasy scores.",
@@ -285,8 +287,10 @@
       parsedMatches: "Parsed matches",
       players: "Players",
       generatedDate: "Generated",
-      scoringMethodTitle: "Scoring Method",
-      scoringMethodBody: "Each player is scored map by map with emblem and advisor-title bonuses. Two-player banners first average both players within the same map. Best Two Maps currently sums the top two maps in every series format, then keeps the highest-scoring series in the period; All-Map Average ×2 averages every valid map in the full scoring period and doubles it. Manual multiplier mode completely replaces quality and trait multipliers.",
+      scoringMethodTitle: "Scoring Rules",
+      scoringMethodBodyClientDescription: "For each role, each player's score is calculated individually in every game they participate in. Players receive points only for the stats present on their War Banner, amplified if any of the conditions of your coach Titles are met. We then average the score of all players for a role and use that to decide the final score for the match.",
+      scoringMethodBodyBestSeries: "Best Series use the same rule as the client. The top two scoring games within a series are used to get the role's final score for the match. If a role participates in more than one series in a period, the best scoring series will be used.",
+      scoringMethodBodyAllMatchAverage: "All-Match Average ×2 averages every valid match in the full scoring period and doubles it.",
       dataSources: "Data Sources",
       dataSourcesBody: "All match information and Fantasy statistics for the selected tournament are read directly from Valve replays.",
       disclaimerTitle: "Disclaimer",
@@ -1274,7 +1278,9 @@
         </section>
         <section class="data-card">
           <h3>${escapeHtml(text("scoringMethodTitle"))}</h3>
-          <p>${escapeHtml(text("scoringMethodBody"))}</p>
+          <p>${escapeHtml(text("scoringMethodBodyClientDescription"))}</p>
+          <p>${escapeHtml(text("scoringMethodBodyBestSeries"))}</p>
+          <p>${escapeHtml(text("scoringMethodBodyAllMatchAverage"))}</p>
         </section>
         <section class="data-card">
           <h3>${escapeHtml(text("dataSources"))}</h3>
