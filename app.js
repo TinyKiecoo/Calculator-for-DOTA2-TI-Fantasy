@@ -106,12 +106,13 @@
       closeLiveUpdateNotice: "关闭国际邀请赛数据更新提示",
       liveUpdateNoticeTitle: "2026 年国际邀请赛数据正在更新中",
       liveUpdateNoticeLead: "2026 年国际邀请赛数据正在更新中，如果计算结果与客户端内显示不一致，欢迎通过以下方式之一报告：",
-      liveUpdateGithubIssue: "Create a GitHub Issue",
-      liveUpdateEmail: "Email to tinykiecoo@gmail.com",
-      liveUpdateSteam: "Contact me directly on Steam: Friend code 891593807",
+      liveUpdateGithubIssue: "提交 GitHub Issue",
+      liveUpdateEmail: "发电子邮件至 tinykiecoo@gmail.com",
+      liveUpdateSteam: "在 Steam 中直接联系: 好友代码 891593807",
       liveUpdateNga: "NGA BBS",
       liveUpdateHeybox: "小黑盒",
       liveUpdateNoticeFootnote: "请注意，客户端数据更新可能有一定延迟。报告时请以客户端屏幕截图形式提交。感谢您的帮助！",
+      liveUpdateNoticeThankYou: "另外，如果本计算器对您有帮助，欢迎在 GitHub 中送一颗 Star。非常感谢 :)",
       bannerGrid: "三面梦幻战旗",
       loading: "正在载入赛事数据…",
       loadErrorTitle: "赛事数据未能载入",
@@ -255,9 +256,8 @@
       liveUpdateGithubIssue: "Create a GitHub Issue",
       liveUpdateEmail: "Email to tinykiecoo@gmail.com",
       liveUpdateSteam: "Contact me directly on Steam: Friend code 891593807",
-      liveUpdateNga: "NGA BBS",
-      liveUpdateHeybox: "HeyBox",
       liveUpdateNoticeFootnote: "Please note that client data updates may be delayed. When reporting a discrepancy, please include a screenshot from the Dota 2 client. Thank you for your help!",
+      liveUpdateNoticeThankYou: "By the way, if this calculator helps, please gift me a free Star on GitHub. Thank you :)",
       bannerGrid: "Three fantasy banners",
       loading: "Loading tournament data…",
       loadErrorTitle: "Failed to load tournament data",
@@ -1361,17 +1361,22 @@
   }
 
   function liveUpdateNoticeMarkup() {
+    const regionalContacts = currentLanguage === "zh"
+      ? `
+          <li><a href="https://ngabbs.com/read.php?tid=47289904" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateNga"))}</a></li>
+          <li><a href="https://xiaoheihe.cn/app/bbs/link/187051484" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateHeybox"))}</a></li>`
+      : "";
     return `
       <div class="live-update-notice">
         <p class="modal-lead">${escapeHtml(text("liveUpdateNoticeLead"))}</p>
         <ol class="live-update-contact-list">
           <li><a href="https://github.com/TinyKiecoo/Calculator-for-DOTA2-TI-Fantasy/issues" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateGithubIssue"))}</a></li>
-          <li><a href="mailto:tinykiecoo@gmail.com">${escapeHtml(text("liveUpdateEmail"))}</a></li>
+          <li>${escapeHtml(text("liveUpdateEmail"))}</li>
           <li>${escapeHtml(text("liveUpdateSteam"))}</li>
-          <li><a href="https://ngabbs.com/read.php?tid=47289904" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateNga"))}</a></li>
-          <li><a href="https://xiaoheihe.cn/app/bbs/link/187051484" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateHeybox"))}</a></li>
+          ${regionalContacts}
         </ol>
         <p class="modal-lead live-update-notice-footnote">${escapeHtml(text("liveUpdateNoticeFootnote"))}</p>
+        <p class="modal-lead">${escapeHtml(text("liveUpdateNoticeThankYou"))}</p>
       </div>`;
   }
 
