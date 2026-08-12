@@ -39,12 +39,7 @@ test("uses classic scripts and file-safe relative paths", () => {
   assert.doesNotMatch(html, /type=["']module["']/i);
   assert.doesNotMatch(html, /%BASE_URL%|\/src\/|src=["']\//i);
   assert.doesNotMatch(app, /\b(?:import|export)\b|fetch\s*\(/);
-  assert.match(html, /window\.__TI_FANTASY_RETURNING_VISITOR__/);
-  assert.ok(
-    html.indexOf("returningVisitor = previousVisitKeys.some") <
-      html.indexOf("localStorage.setItem(storageKey, language)"),
-    "returning-visitor state must be captured before a first visit writes storage",
-  );
+  assert.doesNotMatch(html, /__TI_FANTASY_RETURNING_VISITOR__/);
 
   const htmlPaths = Array.from(
     html.matchAll(/(?:src|href)=["']([^"'#]+)["']/gi),
@@ -172,8 +167,16 @@ test("loads the browser data snapshot without fetch or modules", () => {
 
 test("selects from every generated league snapshot", () => {
   assert.match(html, /id="league-select"/);
-  assert.match(html, /src="data\/leagues\.js"/);
+  assert.match(html, /data\/leagues\.js\?v=' \+ Date\.now\(\)/);
   assert.match(html, /option\.textContent = league\.leagueName/);
+  assert.match(html, /league-option--the-international/);
+  assert.match(html, /stageDatasets:\s*nextStageDatasets/);
+  assert.match(html, /data\/\$\{leagueId\}\/data\.js\?v=\$\{Date\.now\(\)\}/);
+  assert.match(html, /LEAGUE_ID \+ '\/data\.js\?v=' \+ Date\.now\(\)/);
+  assert.match(css, /select\.is-the-international/);
+  assert.match(css, /option\.league-option--the-international/);
+  assert.match(app, /leagueStageDatasets\[stage\]/);
+  assert.match(app, /leagueStageDatasets\.groupStage/);
   assert.match(html, /history\.pushState\(\{ leagueId \}, "", target\)/);
   assert.match(html, /CustomEvent\("fantasy:leaguechange"/);
   assert.doesNotMatch(html, /window\.location\.assign/);
@@ -210,8 +213,6 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   );
   const elements = new Map();
   const listeners = new Map();
-  const alerts = [];
-  const timers = [];
   const returningVisitorPageState = JSON.stringify({
       version: 3,
       stage: "groupStage",
@@ -219,7 +220,9 @@ test("renders all three banners with a minimal classic-script DOM", () => {
       titles: { prefix: "none", suffix: "none" },
       multiplierMode: "manual",
     });
-  const storage = new Map();
+  const storage = new Map([
+    ["ti-fantasy-page-state-v1", returningVisitorPageState],
+  ]);
 
   class FakeElement {}
   class FakeInput extends FakeElement {
@@ -239,6 +242,16 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     constructor(mode) {
       super();
       this.dataset = { multiplierMode: mode };
+    }
+
+    closest() {
+      return this;
+    }
+  }
+  class FakeStageButton extends FakeElement {
+    constructor(stage) {
+      super();
+      this.dataset = { stage };
     }
 
     closest() {
@@ -281,12 +294,6 @@ test("renders all three banners with a minimal classic-script DOM", () => {
       addEventListener(type, handler) {
         listeners.set(`window:${type}`, handler);
       },
-      alert(message) {
-        alerts.push(String(message));
-      },
-      setTimeout(callback) {
-        timers.push(callback);
-      },
     },
     localStorage: {
       getItem(key) {
@@ -312,19 +319,6 @@ test("renders all three banners with a minimal classic-script DOM", () => {
 
   vm.runInNewContext(dataSource, sandbox);
 
-  vm.runInNewContext(app, sandbox);
-  assert.deepEqual(alerts, [], "a first-time visitor must not see the notice");
-  assert.equal(timers.length, 0);
-  assert.equal(
-    storage.get("ti-fantasy-tormentor-correction-notice-v1"),
-    "shown",
-    "a first-time visitor must remain excluded on later visits",
-  );
-
-  // Simulate an existing visitor at deployment time: an old page-state key
-  // exists, while this newly introduced notice key does not exist yet.
-  storage.set("ti-fantasy-page-state-v1", returningVisitorPageState);
-  storage.delete("ti-fantasy-tormentor-correction-notice-v1");
   vm.runInNewContext(app, sandbox);
 
   const rendered = element("banner-grid").innerHTML;
@@ -415,15 +409,55 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   });
   assert.match(element("banner-grid").innerHTML, /BoomBoys/);
   assert.equal(element("load-error").hidden, true);
-  assert.deepEqual(alerts, [], "the alert must wait until initial rendering finishes");
-  assert.equal(timers.length, 1);
-  timers.shift()();
-  assert.deepEqual(alerts, [], "the disabled correction alert must stay hidden");
-  assert.equal(element("modal-backdrop").hidden, true);
-  assert.equal(
-    storage.get("ti-fantasy-tormentor-correction-notice-v1"),
-    "shown",
+
+  const groupDataset = structuredClone(nextDataset);
+  const playoffDataset = structuredClone(nextDataset);
+  for (const team of groupDataset.teams) {
+    for (const player of team.players) player.name = "Group Stage Sentinel";
+  }
+  for (const team of playoffDataset.teams) {
+    for (const player of team.players) player.name = "Playoffs Sentinel";
+  }
+  const stageBundle = {
+    meta: { leagueId: 20009 },
+    stages: {
+      groupStage: groupDataset,
+      international: playoffDataset,
+    },
+  };
+  leagueChange({
+    detail: {
+      dataset: groupDataset,
+      stageDatasets: stageBundle,
+      leagueId: 20009,
+    },
+  });
+  assert.match(element("banner-grid").innerHTML, /Group Stage Sentinel/);
+  listeners.get("stage-switcher:click")({
+    target: new FakeStageButton("international"),
+  });
+  assert.match(element("banner-grid").innerHTML, /Playoffs Sentinel/);
+
+  leagueChange({
+    detail: {
+      dataset: groupDataset,
+      stageDatasets: {
+        meta: { leagueId: 20009 },
+        stages: { groupStage: groupDataset },
+      },
+      leagueId: 20009,
+    },
+  });
+  assert.match(
+    element("banner-grid").innerHTML,
+    /Group Stage Sentinel/,
+    "the TI page must fall back to group-stage data before playoffs exist",
   );
+  listeners.get("stage-switcher:click")({
+    target: new FakeStageButton("groupStage"),
+  });
+  assert.equal(element("modal-backdrop").hidden, true);
+  assert.equal(element("correction-banner").hidden, true);
   const saved = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
   assert.equal(saved.version, 3);
   assert.equal(saved.multiplierMode, "manual");
@@ -461,28 +495,32 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.equal(multiplier.focusCount, 0, "committing must not restore input focus");
 
   assert.equal(
-    storage.has("ti-fantasy-scoring-change-notice-v1"),
+    storage.has("ti-fantasy-live-update-notice-v1"),
     false,
-    "merely showing the notice must not dismiss it",
+    "the disabled notice must not write a dismissal record",
   );
-  listeners.get("scoring-change-notice-open:click")();
+  assert.match(app, /const SHOW_TI_LIVE_UPDATE_NOTICE = false;/);
+  listeners.get("live-update-notice-open:click")();
   assert.equal(element("modal-backdrop").hidden, false);
-  assert.equal(element("modal-title").textContent, "2025 与 2026 积分规则对比");
-  const comparison = element("modal-body").innerHTML;
-  const comparisonRows = Array.from(
-    comparison.matchAll(/<tr class="score-change-row [^"]+"[\s\S]*?<\/tr>/g),
-    (match) => match[0],
+  assert.equal(
+    element("modal-title").textContent,
+    "2026 年国际邀请赛数据正在更新中",
   );
-  assert.equal(comparisonRows.length, 18);
-  assert.match(comparisonRows[0], /is-increase[\s\S]*击杀肉山/);
-  assert.match(comparisonRows.at(-1), /is-decrease[\s\S]*眩晕时间/);
-  assert.match(comparison, /\+37\.88%/);
-  assert.match(comparison, /−33\.33%|-33\.33%/);
+  const notice = element("modal-body").innerHTML;
+  assert.match(notice, /如果计算结果与客户端内显示不一致/);
+  assert.match(notice, /github\.com\/TinyKiecoo\/Calculator-for-DOTA2-TI-Fantasy\/issues/);
+  assert.match(notice, /mailto:tinykiecoo@gmail\.com/);
+  assert.match(notice, /Friend code 891593807/);
+  assert.match(notice, /ngabbs\.com\/read\.php\?tid=47289904/);
+  assert.match(notice, /xiaoheihe\.cn\/app\/bbs\/link\/187051484/);
+  assert.match(notice, /客户端数据更新可能有一定延迟/);
+  assert.doesNotMatch(app, /SCORING_CHANGES|scoringChangesMarkup|tormentorCorrectionBody/);
+  assert.doesNotMatch(css, /score-change-table|score-change-row/);
 
   listeners.get("correction-banner-close:click")();
   assert.equal(element("correction-banner").hidden, true);
   assert.equal(
-    storage.get("ti-fantasy-scoring-change-notice-v1"),
+    storage.get("ti-fantasy-live-update-notice-v1"),
     "dismissed",
   );
 });

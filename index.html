@@ -51,19 +51,9 @@
     (function () {
       "use strict";
       const storageKey = "ti-fantasy-language";
-      const previousVisitKeys = [
-        storageKey,
-        "ti-fantasy-page-state-v1",
-        "ti-fantasy-scoring-change-notice-v1",
-        "ti-fantasy-visited-v1",
-      ];
       let language = null;
-      let returningVisitor = false;
 
       try {
-        returningVisitor = previousVisitKeys.some(
-          (key) => localStorage.getItem(key) !== null,
-        );
         const saved = localStorage.getItem(storageKey);
         if (saved === "zh" || saved === "en") language = saved;
       } catch (error) {
@@ -81,28 +71,27 @@
       }
 
       window.__TI_FANTASY_LANGUAGE__ = language;
-      window.__TI_FANTASY_RETURNING_VISITOR__ = returningVisitor;
       document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260806-league-hot-swap">
+  <link rel="stylesheet" href="styles.css?v=20260811-live-update-notice">
 </head>
 <body>
   <aside class="correction-banner" id="correction-banner" role="status" hidden>
     <button
       type="button"
       class="correction-banner-open"
-      id="scoring-change-notice-open"
-      aria-label="查看 2025 与 2026 积分规则变化"
-      data-i18n-aria-label="openScoringChangeNotice"
-      data-i18n="scoringChangeNotice"
-    >请注意今年积分规则的改变。</button>
+      id="live-update-notice-open"
+      aria-label="查看数据更新说明与问题报告方式"
+      data-i18n-aria-label="openLiveUpdateNotice"
+      data-i18n="liveUpdateNotice"
+    >2026 年国际邀请赛数据正在更新中</button>
     <button
       type="button"
       class="correction-banner-close"
       id="correction-banner-close"
-      aria-label="关闭积分规则变化提示"
-      data-i18n-aria-label="closeScoringChangeNotice"
+      aria-label="关闭国际邀请赛数据更新提示"
+      data-i18n-aria-label="closeLiveUpdateNotice"
     >×</button>
   </aside>
   <div class="fantasy-app">
@@ -252,7 +241,11 @@
   </noscript>
 
   <script>window.FANTASY_LEAGUES = [];</script>
-  <script src="data/leagues.js"></script>
+  <script>
+    document.write(
+      '<script src="data/leagues.js?v=' + Date.now() + '"><\/script>',
+    );
+  </script>
   <script>
     const FANTASY_LEAGUES = Array.isArray(window.FANTASY_LEAGUES)
       ? window.FANTASY_LEAGUES.filter((league) => (
@@ -280,13 +273,30 @@
     const leagueSelect = document.getElementById("league-select");
     let activeLeagueId = LEAGUE_ID;
     let leagueLoadSequence = 0;
+    const isTheInternationalLeague = (league) => (
+      /\bThe International 20\d{2}\b/i.test(String(league?.leagueName || ""))
+    );
+    function updateLeagueSelectAppearance(leagueId) {
+      const selectedLeague = FANTASY_LEAGUES.find(
+        (league) => Number(league.leagueId) === Number(leagueId),
+      );
+      leagueSelect.classList.toggle(
+        "is-the-international",
+        isTheInternationalLeague(selectedLeague),
+      );
+    }
     for (const league of FANTASY_LEAGUES) {
       const option = document.createElement("option");
       option.value = String(league.leagueId);
       option.textContent = league.leagueName;
       option.selected = Number(league.leagueId) === LEAGUE_ID;
+      option.classList.toggle(
+        "league-option--the-international",
+        isTheInternationalLeague(league),
+      );
       leagueSelect.append(option);
     }
+    updateLeagueSelectAppearance(LEAGUE_ID);
 
     function setLeagueLoading(loading) {
       leagueSelect.disabled = loading;
@@ -301,15 +311,18 @@
       if (!leagueIds.has(leagueId) || leagueId === activeLeagueId) return;
       const sequence = ++leagueLoadSequence;
       const previousDataset = window.FANTASY_DATA;
+      const previousStageDatasets = window.FANTASY_STAGE_DATA;
       const dataScript = document.createElement("script");
-      dataScript.src = `data/${leagueId}/data.js`;
+      dataScript.src = `data/${leagueId}/data.js?v=${Date.now()}`;
       dataScript.async = true;
       setLeagueLoading(true);
 
       function restorePreviousLeague() {
         if (sequence !== leagueLoadSequence) return;
         window.FANTASY_DATA = previousDataset;
+        window.FANTASY_STAGE_DATA = previousStageDatasets;
         leagueSelect.value = String(activeLeagueId);
+        updateLeagueSelectAppearance(activeLeagueId);
         setLeagueLoading(false);
         dataScript.remove();
       }
@@ -317,6 +330,11 @@
       dataScript.addEventListener("error", restorePreviousLeague, { once: true });
       dataScript.addEventListener("load", () => {
         const nextDataset = window.FANTASY_DATA;
+        const nextStageDatasets = (
+          Number(window.FANTASY_STAGE_DATA?.meta?.leagueId) === leagueId
+            ? window.FANTASY_STAGE_DATA
+            : null
+        );
         if (Number(nextDataset?.meta?.leagueId) !== leagueId) {
           restorePreviousLeague();
           return;
@@ -329,6 +347,7 @@
         activeLeagueId = leagueId;
         window.FANTASY_LEAGUE_CONFIG.leagueId = leagueId;
         leagueSelect.value = String(leagueId);
+        updateLeagueSelectAppearance(leagueId);
         setLeagueLoading(false);
         dataScript.remove();
 
@@ -338,7 +357,11 @@
           window.history.pushState({ leagueId }, "", target);
         }
         window.dispatchEvent(new CustomEvent("fantasy:leaguechange", {
-          detail: { dataset: nextDataset, leagueId },
+          detail: {
+            dataset: nextDataset,
+            stageDatasets: nextStageDatasets,
+            leagueId,
+          },
         }));
       }, { once: true });
       document.head.append(dataScript);
@@ -358,11 +381,13 @@
     });
 
     if (Number.isInteger(LEAGUE_ID)) {
-      document.write('<script src="data/' + LEAGUE_ID + '/data.js"><\/script>');
+      document.write(
+        '<script src="data/' + LEAGUE_ID + '/data.js?v=' + Date.now() + '"><\/script>',
+      );
     }
   </script>
   <script src="fantasy.js?v=20260801-stage"></script>
-  <script src="app.js?v=20260806-multi-league-copy"></script>
+  <script src="app.js?v=20260811-live-update-notice"></script>
   <script>
     if (window.location.hostname === "www.ti-fantasy.site") {
       const busuanziScript = document.createElement("script");

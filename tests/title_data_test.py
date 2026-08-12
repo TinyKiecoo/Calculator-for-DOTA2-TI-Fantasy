@@ -525,6 +525,215 @@ class TitleDataTests(unittest.TestCase):
         self.assertEqual(contexts[11], {"gameNumber": 1, "maxGames": 2})
         self.assertEqual(contexts[12], {"gameNumber": 2, "maxGames": 2})
 
+    def test_ti_series_must_be_complete_before_publication(self) -> None:
+        def match(
+            match_id: int,
+            game_number: int,
+            radiant_win: bool,
+            series_type: int = 1,
+        ) -> dict[str, object]:
+            return {
+                "matchId": match_id,
+                "seriesId": 1,
+                "seriesType": series_type,
+                "startTime": match_id * 100,
+                "endTime": match_id * 100 + 50,
+                "duration": 50,
+                "radiantTeamId": 10,
+                "direTeamId": 20,
+                "radiantWin": radiant_win,
+                "titleData": {"seriesGameNumber": game_number},
+            }
+
+        first = match(1, 1, True)
+        second_win = match(2, 2, True)
+        second_loss = match(2, 2, False)
+        deciding_map = match(3, 3, True)
+        self.assertFalse(build_league.is_complete_series([first]))
+        self.assertTrue(
+            build_league.is_complete_series([first, second_win])
+        )
+        self.assertFalse(
+            build_league.is_complete_series([first, second_loss])
+        )
+        self.assertTrue(
+            build_league.is_complete_series(
+                [first, second_loss, deciding_map]
+            )
+        )
+        self.assertFalse(
+            build_league.is_complete_series([first, deciding_map]),
+            "a missing middle map must invalidate the series",
+        )
+
+        best_of_five = [
+            match(10, 1, True, 2),
+            match(11, 2, False, 2),
+            match(12, 3, True, 2),
+            match(13, 4, False, 2),
+            match(14, 5, True, 2),
+        ]
+        self.assertFalse(
+            build_league.is_complete_series(best_of_five[:4])
+        )
+        self.assertTrue(build_league.is_complete_series(best_of_five))
+
+    def test_ti_stage_split_uses_the_long_inter_stage_break(self) -> None:
+        def series(match_id: int, start_time: int) -> list[dict[str, object]]:
+            return [
+                {
+                    "matchId": match_id,
+                    "startTime": start_time,
+                    "endTime": start_time + 60,
+                    "duration": 60,
+                }
+            ]
+
+        group_one = series(1, 1_000)
+        group_two = series(2, 20_000)
+        playoffs = series(
+            3,
+            20_060 + build_league.TI_STAGE_BREAK_MIN_SECONDS,
+        )
+        stages = build_league.split_ti_stages(
+            [group_one, group_two, playoffs]
+        )
+        self.assertEqual(stages["groupStage"], [group_one, group_two])
+        self.assertEqual(stages["international"], [playoffs])
+        self.assertTrue(
+            build_league.is_the_international("The International 2026")
+        )
+        self.assertFalse(
+            build_league.is_the_international("Esports World Cup 2026")
+        )
+
+    def test_ti_browser_data_keeps_stage_summaries_separate(self) -> None:
+        def series(
+            first_match_id: int,
+            start_time: int,
+        ) -> list[dict[str, object]]:
+            return [
+                {
+                    "matchId": first_match_id,
+                    "seriesId": None,
+                    "seriesType": 1,
+                    "startTime": start_time,
+                    "endTime": start_time + 50,
+                    "duration": 50,
+                    "radiantTeamId": 10,
+                    "direTeamId": 20,
+                    "radiantWin": True,
+                    "titleData": {
+                        "seriesGameNumber": 1,
+                        "maxSeriesGames": 3,
+                    },
+                },
+                {
+                    "matchId": first_match_id + 1,
+                    "seriesId": None,
+                    "seriesType": 1,
+                    "startTime": start_time + 100,
+                    "endTime": start_time + 150,
+                    "duration": 50,
+                    "radiantTeamId": 10,
+                    "direTeamId": 20,
+                    "radiantWin": True,
+                    "titleData": {
+                        "seriesGameNumber": 2,
+                        "maxSeriesGames": 3,
+                    },
+                },
+            ]
+
+        group_matches = series(100, 1_000)
+        playoff_matches = series(
+            200,
+            group_matches[-1]["endTime"]
+            + build_league.TI_STAGE_BREAK_MIN_SECONDS,
+        )
+        args = SimpleNamespace(league_id=30000)
+
+        def build_dataset(matches, league_id, league_name, *_args):
+            return {
+                "meta": {
+                    "leagueId": league_id,
+                    "leagueName": league_name,
+                    "coverage": {"matches": len(matches)},
+                },
+                "matches": matches,
+                "teams": [],
+            }
+
+        def build_summary(dataset, _source):
+            return {"meta": dict(dataset["meta"]), "teams": []}
+
+        with tempfile.TemporaryDirectory() as temporary:
+            league_dir = Path(temporary) / "data" / "30000"
+            checkpoints = [
+                {"matchId": match["matchId"], "match": match}
+                for match in group_matches
+            ]
+            with (
+                patch.object(
+                    league_data, "build_dataset", side_effect=build_dataset
+                ),
+                patch.object(
+                    league_data, "build_summary", side_effect=build_summary
+                ),
+            ):
+                build_league.refresh_browser_data(
+                    checkpoints,
+                    args,
+                    league_dir,
+                    "The International 2026",
+                )
+                first_source = (league_dir / "data.js").read_text(
+                    encoding="utf-8"
+                )
+                first_bundle = json.loads(
+                    first_source.split(
+                        "window.FANTASY_STAGE_DATA=", 1
+                    )[1].split(";window.FANTASY_DATA=", 1)[0]
+                )
+                self.assertEqual(
+                    list(first_bundle["stages"]), ["groupStage"]
+                )
+
+                checkpoints.extend(
+                    {"matchId": match["matchId"], "match": match}
+                    for match in playoff_matches
+                )
+                build_league.refresh_browser_data(
+                    checkpoints,
+                    args,
+                    league_dir,
+                    "The International 2026",
+                )
+
+            source = (league_dir / "data.js").read_text(encoding="utf-8")
+            bundle = json.loads(
+                source.split("window.FANTASY_STAGE_DATA=", 1)[1].split(
+                    ";window.FANTASY_DATA=", 1
+                )[0]
+            )
+            self.assertEqual(
+                list(bundle["stages"]), ["groupStage", "international"]
+            )
+            self.assertEqual(
+                bundle["stages"]["groupStage"]["meta"]["coverage"]["matches"],
+                2,
+            )
+            self.assertEqual(
+                bundle["stages"]["international"]["meta"]["coverage"]["matches"],
+                2,
+            )
+            self.assertTrue(
+                (league_dir / "stages" / "group-stage" / "summary.json").is_file()
+            )
+            self.assertTrue(
+                (league_dir / "stages" / "playoffs" / "summary.json").is_file()
+            )
+
     def test_title_conditions_keep_match_and_player_rules_separate(self) -> None:
         match = {"duration": 1498}
         title_data = {

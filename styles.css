@@ -253,6 +253,18 @@ a:focus-visible {
   font-size: .61rem;
 }
 
+.league-selector select.is-the-international,
+.league-selector option.league-option--the-international {
+  color: #211609;
+  background-color: #c49745;
+}
+
+.league-selector select.is-the-international {
+  border-color: rgba(246, 209, 128, .82);
+  background-image: linear-gradient(180deg, #d3aa5a, #a8752e);
+  box-shadow: inset 0 0 9px rgba(255, 226, 158, .22);
+}
+
 .league-selector select:disabled {
   cursor: wait;
   opacity: .68;
@@ -1436,59 +1448,33 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   color: #8f867a;
 }
 
-.score-change-table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
+.live-update-contact-list {
+  margin: 18px 0;
+  padding: 15px 18px 15px 42px;
+  color: #c8bda9;
+  border: 1px solid rgba(217, 182, 111, .2);
+  background: rgba(255, 255, 255, .025);
 }
 
-.score-change-table {
-  min-width: 760px;
-  margin-top: 0;
+.live-update-contact-list li {
+  padding: 5px 0;
+  font-size: .84rem;
+  line-height: 1.55;
 }
 
-.score-change-table th,
-.score-change-table td {
-  padding: 9px 8px;
-  vertical-align: top;
-  line-height: 1.45;
+.live-update-contact-list a {
+  color: #e9c978;
+  text-decoration-color: rgba(233, 201, 120, .52);
+  text-underline-offset: 3px;
 }
 
-.score-change-table thead th:first-child {
-  width: 20%;
+.live-update-contact-list a:hover {
+  color: #fff0bd;
 }
 
-.score-change-table thead th:nth-child(2),
-.score-change-table thead th:nth-child(3) {
-  width: 31%;
-}
-
-.score-change-table tbody th {
-  color: #d8c9ad;
-  font-family: var(--display-font);
-  font-size: .68rem;
-  font-weight: 400;
-}
-
-.score-change-percent {
-  color: #a69c8c;
-  font-family: var(--number-font);
-  text-align: right;
-  white-space: nowrap;
-}
-
-.score-change-row.is-increase .score-change-percent,
-.score-change-row.is-increase td:nth-child(3) {
-  color: #79c990;
-}
-
-.score-change-row.is-decrease .score-change-percent,
-.score-change-row.is-decrease td:nth-child(3) {
-  color: #df7c74;
-}
-
-.score-change-row.is-neutral .score-change-percent {
-  color: #aaa18f;
+.live-update-notice-footnote {
+  padding-top: 15px;
+  border-top: 1px solid rgba(255, 255, 255, .08);
 }
 
 .sr-only {

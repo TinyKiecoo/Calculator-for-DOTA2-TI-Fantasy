@@ -1,7 +1,35 @@
 (function () {
   "use strict";
 
-  let dataset = window.FANTASY_DATA;
+  let leagueDataset = window.FANTASY_DATA;
+  let leagueStageDatasets = null;
+  let dataset = leagueDataset;
+
+  function normalizeStageDatasets(bundle, fallbackDataset) {
+    if (
+      !bundle ||
+      Number(bundle.meta?.leagueId) !== Number(fallbackDataset?.meta?.leagueId) ||
+      !bundle.stages ||
+      typeof bundle.stages !== "object"
+    ) {
+      return null;
+    }
+    return bundle.stages;
+  }
+
+  function datasetForStage(stage) {
+    if (!leagueStageDatasets) return leagueDataset;
+    return (
+      leagueStageDatasets[stage] ||
+      leagueStageDatasets.groupStage ||
+      leagueDataset
+    );
+  }
+
+  leagueStageDatasets = normalizeStageDatasets(
+    window.FANTASY_STAGE_DATA,
+    leagueDataset,
+  );
   const engine = window.FantasyEngine;
   const bannerGrid = document.getElementById("banner-grid");
   const totalScore = document.getElementById("total-score");
@@ -18,37 +46,17 @@
   const suffixTitleSelect = document.getElementById("suffix-title-select");
   const correctionBanner = document.getElementById("correction-banner");
   const correctionBannerClose = document.getElementById("correction-banner-close");
-  const scoringChangeNoticeOpen = document.getElementById("scoring-change-notice-open");
+  const liveUpdateNoticeOpen = document.getElementById("live-update-notice-open");
 
   const languageToggle = document.getElementById("language-toggle");
   const LANGUAGE_STORAGE_KEY = "ti-fantasy-language";
   const PAGE_STATE_STORAGE_KEY = "ti-fantasy-page-state-v1";
-  const SCORING_CHANGE_NOTICE_STORAGE_KEY = "ti-fantasy-scoring-change-notice-v1";
-  const VISITED_STORAGE_KEY = "ti-fantasy-visited-v1";
-  const TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY =
-    "ti-fantasy-tormentor-correction-notice-v1";
+  // Change this to true when TI 2026 begins and live data starts updating.
+  const SHOW_TI_LIVE_UPDATE_NOTICE = false;
+  const LIVE_UPDATE_NOTICE_STORAGE_KEY =
+    "ti-fantasy-live-update-notice-v1";
   const MULTIPLIER_MODES = ["calculated", "manual"];
   const EMBLEM_RANKING_MODES = ["average", "highestSeries"];
-  const SCORING_CHANGES = [
-    { key: "kills", previous: 121, current: 107 },
-    { key: "deaths", previous: 1800, current: 1950 },
-    { key: "creep_score", previous: 3, current: 3 },
-    { key: "gpm", previous: 2, current: 2 },
-    { key: "madstone_collected", previous: 19, current: 13 },
-    { key: "tower_kills", previous: 340, current: 352 },
-    { key: "observer_wards_placed", previous: 113, current: 117 },
-    { key: "camps_stacked", previous: 170, current: 234 },
-    { key: "runes_grabbed", previous: 121, current: 141 },
-    { key: "watchers_taken", previous: 121, current: 147 },
-    { key: "lotuses_collected", previous: 213, current: 176 },
-    { key: "roshan_kills", previous: 850, current: 1172 },
-    { key: "teamfight_participation", previous: 1895, current: 2124 },
-    { key: "stun_seconds", previous: 15, current: 10 },
-    { key: "tormentor_kills", previous: 850, current: 879 },
-    { key: "courier_kills", previous: 850, current: 703 },
-    { key: "first_blood", previous: 1700, current: 1934 },
-    { key: "smokes_used", previous: 283, current: 293 },
-  ];
 
   const translations = {
     zh: {
@@ -93,36 +101,17 @@
       manualMultiplierInput: "{role}第 {index} 枚徽标的手动倍率",
       prefixTitle: "前缀",
       suffixTitle: "后缀",
-      scoringChangeNotice: "请注意今年积分规则的改变。",
-      openScoringChangeNotice: "查看 2025 与 2026 积分规则变化",
-      closeScoringChangeNotice: "关闭积分规则变化提示",
-      scoringChangesTitle: "2025 与 2026 积分规则对比",
-      scoringChangesLead: "以下项目按基础积分系数的相对涨跌幅从高到低排列。",
-      tormentorCorrectionBody: '原有的"消灭痛苦魔方"数值整体偏低，目前已修正。请您知悉。',
-      scoringCategory: "项目",
-      scoringPreviousYear: "2025",
-      scoringCurrentYear: "2026",
-      scoringRelativeChange: "相对变化",
-      scoringChanges: {
-        kills: { label: "击杀", previous: "每个击杀 +121", current: "每个击杀 +107" },
-        deaths: { label: "死亡", previous: "初始积分为 1800，每次阵亡 -180", current: "初始积分为 1950，每次阵亡 -195" },
-        creep_score: { label: "正反补", previous: "每个正补/反补 +3", current: "每个正补/反补 +3" },
-        gpm: { label: "GPM", previous: "得分为选手 GPM 乘以 2", current: "得分为选手 GPM 乘以 2" },
-        madstone_collected: { label: "狂石收集数量", previous: "每收集一块狂石 +19", current: "每收集一块狂石 +13" },
-        tower_kills: { label: "摧毁防御塔", previous: "摧毁一座防御塔 +340", current: "摧毁一座防御塔 +352" },
-        observer_wards_placed: { label: "放置守卫", previous: "放置一个侦察守卫 +113", current: "放置一个侦察守卫 +117" },
-        camps_stacked: { label: "堆叠野怪", previous: "堆叠一次野怪 +170", current: "堆叠一次野怪 +234" },
-        runes_grabbed: { label: "拾取神符", previous: "装入/激活一个神符 +121", current: "装入/激活一个神符 +141" },
-        watchers_taken: { label: "占领观察者", previous: "占领一个观察者 +121", current: "占领一个观察者 +147" },
-        lotuses_collected: { label: "采集莲花", previous: "采集一朵莲花 +213", current: "采集一朵莲花 +176" },
-        roshan_kills: { label: "击杀肉山", previous: "击杀肉山 +850", current: "击杀肉山 +1172" },
-        teamfight_participation: { label: "参与团战", previous: "参与团战最多可得 1895", current: "参与团战最多可得 2124" },
-        stun_seconds: { label: "眩晕时间", previous: "造成一秒眩晕 +15", current: "造成一秒眩晕 +10" },
-        tormentor_kills: { label: "消灭痛苦魔方", previous: "消灭痛苦魔方 +850", current: "消灭痛苦魔方 +879" },
-        courier_kills: { label: "杀害信使", previous: "杀害一次信使 +850", current: "杀害一次信使 +703" },
-        first_blood: { label: "第一滴血", previous: "选手获得第一滴血时获得 1700 分", current: "选手获得第一滴血时获得 1934 分" },
-        smokes_used: { label: "开雾次数", previous: "每次使用诡计之雾 +283", current: "每次使用诡计之雾 +293" },
-      },
+      liveUpdateNotice: "2026 年国际邀请赛数据正在更新中",
+      openLiveUpdateNotice: "查看数据更新说明与问题报告方式",
+      closeLiveUpdateNotice: "关闭国际邀请赛数据更新提示",
+      liveUpdateNoticeTitle: "2026 年国际邀请赛数据正在更新中",
+      liveUpdateNoticeLead: "2026 年国际邀请赛数据正在更新中，如果计算结果与客户端内显示不一致，欢迎通过以下方式之一报告：",
+      liveUpdateGithubIssue: "Create a GitHub Issue",
+      liveUpdateEmail: "Email to tinykiecoo@gmail.com",
+      liveUpdateSteam: "Contact me directly on Steam: Friend code 891593807",
+      liveUpdateNga: "NGA BBS",
+      liveUpdateHeybox: "小黑盒",
+      liveUpdateNoticeFootnote: "请注意，客户端数据更新可能有一定延迟。报告时请以客户端屏幕截图形式提交。感谢您的帮助！",
       bannerGrid: "三面梦幻战旗",
       loading: "正在载入赛事数据…",
       loadErrorTitle: "赛事数据未能载入",
@@ -258,36 +247,17 @@
       manualMultiplierInput: "Manual multiplier for {role} emblem {index}",
       prefixTitle: "Prefix",
       suffixTitle: "Suffix",
-      scoringChangeNotice: "Please note this year's changes to the scoring rules.",
-      openScoringChangeNotice: "View the 2025 and 2026 scoring-rule changes",
-      closeScoringChangeNotice: "Dismiss scoring-rule change notice",
-      scoringChangesTitle: "2025 vs. 2026 Scoring Rules",
-      scoringChangesLead: "Categories are sorted from the largest relative increase in their base scoring coefficient to the largest decrease.",
-      tormentorCorrectionBody: "The previous “Tormentor Kills” values were generally too low and have now been corrected. Please take note.",
-      scoringCategory: "Category",
-      scoringPreviousYear: "2025",
-      scoringCurrentYear: "2026",
-      scoringRelativeChange: "Relative change",
-      scoringChanges: {
-        kills: { label: "KILLS", previous: "+121 per kill", current: "+107 per kill" },
-        deaths: { label: "DEATHS", previous: "1800 starting points, -180 per death", current: "1950 starting points, -195 per death" },
-        creep_score: { label: "CREEP SCORE", previous: "+3 per last hit or deny", current: "+3 per last hit or deny" },
-        gpm: { label: "GPM", previous: "Scores player's GPM Multiplied by 2", current: "Scores player's GPM Multiplied by 2" },
-        madstone_collected: { label: "MADSTONE COLLECTED", previous: "+19 per Madstone collected", current: "+13 per Madstone collected" },
-        tower_kills: { label: "TOWER KILLS", previous: "+340 per Tower last hit", current: "+352 per Tower last hit" },
-        observer_wards_placed: { label: "WARDS PLACED", previous: "+113 per observer ward placed", current: "+117 per observer ward placed" },
-        camps_stacked: { label: "CAMPS STACKED", previous: "+170 per camp stacked", current: "+234 per camp stacked" },
-        runes_grabbed: { label: "RUNES GRABBED", previous: "+121 per rune bottled or taken", current: "+141 per rune bottled or taken" },
-        watchers_taken: { label: "WATCHERS TAKEN", previous: "+121 per captured Watcher", current: "+147 per captured Watcher" },
-        lotuses_collected: { label: "LOTUSES GRABBED", previous: "+213 per Lotus taken", current: "+176 per Lotus taken" },
-        roshan_kills: { label: "ROSHAN KILLS", previous: "+850 per Roshan kill", current: "+1172 per Roshan kill" },
-        teamfight_participation: { label: "TEAMFIGHT PARTICIPATION", previous: "Up to 1895 points based on participation", current: "Up to 2124 points based on participation" },
-        stun_seconds: { label: "STUNS", previous: "+15 per second of stun", current: "+10 per second of stun" },
-        tormentor_kills: { label: "TORMENTOR KILLS", previous: "+850 per Tormentor kill", current: "+879 per Tormentor kill" },
-        courier_kills: { label: "COURIER KILLS", previous: "+850 per Courier kill", current: "+703 per Courier kill" },
-        first_blood: { label: "FIRST BLOOD", previous: "+1700 if the player gets First Blood", current: "+1934 if the player gets First Blood" },
-        smokes_used: { label: "SMOKES USED", previous: "+283 per Smoke of Deceit used", current: "+293 per Smoke of Deceit used" },
-      },
+      liveUpdateNotice: "The International 2026 data is being updated",
+      openLiveUpdateNotice: "View the live-data notice and reporting options",
+      closeLiveUpdateNotice: "Dismiss The International data-update notice",
+      liveUpdateNoticeTitle: "The International 2026 data is being updated",
+      liveUpdateNoticeLead: "The International 2026 data is being updated. If a calculated result differs from the value shown in the Dota 2 client, please report it through one of the following methods:",
+      liveUpdateGithubIssue: "Create a GitHub Issue",
+      liveUpdateEmail: "Email to tinykiecoo@gmail.com",
+      liveUpdateSteam: "Contact me directly on Steam: Friend code 891593807",
+      liveUpdateNga: "NGA BBS",
+      liveUpdateHeybox: "HeyBox",
+      liveUpdateNoticeFootnote: "Please note that client data updates may be delayed. When reporting a discrepancy, please include a screenshot from the Dota 2 client. Thank you for your help!",
       bannerGrid: "Three fantasy banners",
       loading: "Loading tournament data…",
       loadErrorTitle: "Failed to load tournament data",
@@ -435,48 +405,15 @@
     }
   }
 
-  function initializeScoringChangeNotice() {
+  function initializeLiveUpdateNotice() {
     let dismissed = false;
     try {
       dismissed =
-        localStorage.getItem(SCORING_CHANGE_NOTICE_STORAGE_KEY) === "dismissed";
+        localStorage.getItem(LIVE_UPDATE_NOTICE_STORAGE_KEY) === "dismissed";
     } catch (error) {
       // Keep the notice visible when storage is unavailable.
     }
-    correctionBanner.hidden = dismissed;
-  }
-
-  function wasReturningVisitorBeforeThisLoad() {
-    if (typeof window.__TI_FANTASY_RETURNING_VISITOR__ === "boolean") {
-      return window.__TI_FANTASY_RETURNING_VISITOR__;
-    }
-    try {
-      return localStorage.getItem(PAGE_STATE_STORAGE_KEY) !== null;
-    } catch (error) {
-      return false;
-    }
-  }
-
-  function shouldShowTormentorCorrectionNotice() {
-    try {
-      if (!wasReturningVisitorBeforeThisLoad()) {
-        localStorage.setItem(TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY, "shown");
-        return false;
-      }
-      return (
-        localStorage.getItem(TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY) !== "shown"
-      );
-    } catch (error) {
-      return false;
-    }
-  }
-
-  function rememberCurrentVisit() {
-    try {
-      localStorage.setItem(VISITED_STORAGE_KEY, "visited");
-    } catch (error) {
-      // Future returning-visitor notices remain disabled when storage is blocked.
-    }
+    correctionBanner.hidden = !SHOW_TI_LIVE_UPDATE_NOTICE || dismissed;
   }
 
   function applyEnglishTitleFonts(root = document) {
@@ -541,13 +478,11 @@
   }
 
   applyStaticTranslations();
-  initializeScoringChangeNotice();
-  const shouldShowTormentorCorrection = shouldShowTormentorCorrectionNotice();
-  rememberCurrentVisit();
+  initializeLiveUpdateNotice();
 
   correctionBannerClose.addEventListener("click", () => {
     try {
-      localStorage.setItem(SCORING_CHANGE_NOTICE_STORAGE_KEY, "dismissed");
+      localStorage.setItem(LIVE_UPDATE_NOTICE_STORAGE_KEY, "dismissed");
     } catch (error) {
       // The current page can still hide the notice when storage is blocked.
     }
@@ -751,6 +686,7 @@
   }
 
   const state = loadPageState();
+  dataset = datasetForStage(state.stage);
 
   function activateStage(stage) {
     if (!engine.stageKeys.includes(stage)) return false;
@@ -760,6 +696,10 @@
     state.manualMultipliers = page.manualMultipliers;
     state.selectedKeys = page.selectedKeys;
     state.scoreMode = page.scoreMode;
+    dataset = datasetForStage(stage);
+    meta = dataset.meta || {};
+    players = normalizePlayers(dataset);
+    emblemContributionCache.clear();
     return true;
   }
 
@@ -889,7 +829,12 @@
       return;
     }
 
-    dataset = nextDataset;
+    leagueDataset = nextDataset;
+    leagueStageDatasets = normalizeStageDatasets(
+      event.detail?.stageDatasets,
+      leagueDataset,
+    );
+    dataset = datasetForStage(state.stage);
     meta = dataset.meta || {};
     players = normalizePlayers(dataset);
     emblemContributionCache.clear();
@@ -1415,50 +1360,18 @@
       </div>`;
   }
 
-  function scoringChangesMarkup() {
-    const percentFormatter = new Intl.NumberFormat(copy().locale, {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-    const rows = SCORING_CHANGES
-      .map((item) => ({
-        ...item,
-        change: ((item.current - item.previous) / item.previous) * 100,
-      }))
-      .sort((left, right) => right.change - left.change)
-      .map((item) => {
-        const details = copy().scoringChanges[item.key];
-        const direction =
-          item.change > 0
-            ? "is-increase"
-            : item.change < 0
-              ? "is-decrease"
-              : "is-neutral";
-        const sign = item.change > 0 ? "+" : "";
-        return `
-          <tr class="score-change-row ${direction}" data-score-change="${item.change}">
-            <th scope="row">${escapeHtml(details.label)}</th>
-            <td>${escapeHtml(details.previous)}</td>
-            <td>${escapeHtml(details.current)}</td>
-            <td class="score-change-percent">${sign}${escapeHtml(percentFormatter.format(item.change))}%</td>
-          </tr>`;
-      })
-      .join("");
-
+  function liveUpdateNoticeMarkup() {
     return `
-      <p class="modal-lead">${escapeHtml(text("scoringChangesLead"))}</p>
-      <div class="score-change-table-wrap">
-        <table class="stat-table score-change-table">
-          <thead>
-            <tr>
-              <th scope="col">${escapeHtml(text("scoringCategory"))}</th>
-              <th scope="col">${escapeHtml(text("scoringPreviousYear"))}</th>
-              <th scope="col">${escapeHtml(text("scoringCurrentYear"))}</th>
-              <th scope="col">${escapeHtml(text("scoringRelativeChange"))}</th>
-            </tr>
-          </thead>
-          <tbody>${rows}</tbody>
-        </table>
+      <div class="live-update-notice">
+        <p class="modal-lead">${escapeHtml(text("liveUpdateNoticeLead"))}</p>
+        <ol class="live-update-contact-list">
+          <li><a href="https://github.com/TinyKiecoo/Calculator-for-DOTA2-TI-Fantasy/issues" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateGithubIssue"))}</a></li>
+          <li><a href="mailto:tinykiecoo@gmail.com">${escapeHtml(text("liveUpdateEmail"))}</a></li>
+          <li>${escapeHtml(text("liveUpdateSteam"))}</li>
+          <li><a href="https://ngabbs.com/read.php?tid=47289904" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateNga"))}</a></li>
+          <li><a href="https://xiaoheihe.cn/app/bbs/link/187051484" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateHeybox"))}</a></li>
+        </ol>
+        <p class="modal-lead live-update-notice-footnote">${escapeHtml(text("liveUpdateNoticeFootnote"))}</p>
       </div>`;
   }
 
@@ -1569,12 +1482,12 @@
   }
 
   function updateModalContent(type) {
-    activeModalType = ["data", "emblemRankings", "scoringChanges"].includes(type)
+    activeModalType = ["data", "emblemRankings", "liveUpdateNotice"].includes(type)
       ? type
       : "data";
-    if (activeModalType === "scoringChanges") {
-      modalTitle.textContent = text("scoringChangesTitle");
-      modalBody.innerHTML = scoringChangesMarkup();
+    if (activeModalType === "liveUpdateNotice") {
+      modalTitle.textContent = text("liveUpdateNoticeTitle");
+      modalBody.innerHTML = liveUpdateNoticeMarkup();
     } else if (activeModalType === "emblemRankings") {
       modalTitle.textContent = text("emblemRankings");
       modalBody.innerHTML = emblemRankingsMarkup();
@@ -1604,28 +1517,6 @@
     }
     modalTrigger = null;
     activeModalType = null;
-  }
-
-  function showTormentorCorrectionNotice() {
-    if (!shouldShowTormentorCorrection) return;
-    try {
-      localStorage.setItem(TORMENTOR_CORRECTION_NOTICE_STORAGE_KEY, "shown");
-    } catch (error) {
-      // The current visit can still display the correction notice.
-    }
-    //window.alert(text("tormentorCorrectionBody"));
-  }
-
-  function scheduleTormentorCorrectionNotice() {
-    if (!shouldShowTormentorCorrection) return;
-    const showAfterPaint = () => {
-      window.setTimeout(showTormentorCorrectionNotice, 0);
-    };
-    if (typeof window.requestAnimationFrame === "function") {
-      window.requestAnimationFrame(showAfterPaint);
-    } else {
-      showAfterPaint();
-    }
   }
 
   function manualMultiplierTarget(control) {
@@ -1786,8 +1677,8 @@
     });
   });
 
-  scoringChangeNoticeOpen.addEventListener("click", () => {
-    openModal(scoringChangeNoticeOpen, "scoringChanges");
+  liveUpdateNoticeOpen.addEventListener("click", () => {
+    openModal(liveUpdateNoticeOpen, "liveUpdateNotice");
   });
 
   modalClose.addEventListener("click", closeModal);
@@ -1829,7 +1720,6 @@
     updateMultiplierSwitcher();
     updateAdvisorTitleSelectors();
     render();
-    scheduleTormentorCorrectionNotice();
   } catch (error) {
     console.error(error);
     bannerGrid.hidden = true;

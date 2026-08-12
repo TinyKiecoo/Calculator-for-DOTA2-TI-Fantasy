@@ -96,8 +96,16 @@ automatically. A replay that cannot be parsed is
 recorded in `errors.json`; the builder continues with all later matches. After
 each newly parsed replay, `data.js` is atomically rebuilt from every successful
 checkpoint available so far, allowing the site to publish partial live-event
-results while later replays are still processing. A cached-only run refreshes
-the file once after all checkpoints are loaded.
+results while later replays are still processing. For leagues whose OpenDota
+name contains `The International 20xx`, only fully concluded series are
+published: BO3/BO5 series with a missing or unfinished map remain checkpointed
+but are omitted until the complete series is available. TI output is separated
+into `stages/group-stage/{full,summary}.json` and
+`stages/playoffs/{full,summary}.json`; the root `data.js` exposes both stages to
+the page. Before playoff data exists, both page-stage buttons use the completed
+group-stage data. Once playoff data is available, each button uses its matching
+stage snapshot. A cached-only run refreshes the files once after all
+checkpoints are loaded.
 
 ### Parse and preview one match locally
 

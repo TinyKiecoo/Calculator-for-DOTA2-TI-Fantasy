@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from difflib import SequenceMatcher
@@ -227,10 +228,28 @@ REPLAY_GPM_SOURCE = (
     "Calculated from Valve replay m_iTotalEarnedGold / exact game duration"
 )
 SERIES_MAX_GAMES = {0: 1, 1: 3, 2: 5, 3: 2}
+SERIES_WINS_REQUIRED = {0: 1, 1: 2, 2: 3}
+THE_INTERNATIONAL_NAME = re.compile(
+    r"\bThe International 20\d{2}\b", re.IGNORECASE
+)
+# The group stage and arena playoffs are separated by several rest days. Daily
+# overnight gaps stay well below this threshold, so the first qualifying gap
+# can be inferred from replay timestamps without a manually maintained date.
+TI_STAGE_BREAK_MIN_SECONDS = 60 * 60 * 60
+TI_STAGE_DIRECTORIES = {
+    "groupStage": "group-stage",
+    "international": "playoffs",
+}
 
 
 def utc_now() -> str:
     return datetime.now(tz=timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def is_the_international(league_name: str) -> bool:
+    """Return whether an OpenDota league name is a yearly TI main event."""
+
+    return bool(THE_INTERNATIONAL_NAME.search(str(league_name or "")))
 
 
 def parse_args() -> argparse.Namespace:
@@ -736,6 +755,140 @@ def assign_series_ids(checkpoints: list[dict[str, Any]]) -> None:
             active.pop(pair, None)
 
 
+def series_game_number(match: dict[str, Any]) -> int | None:
+    value = (match.get("titleData") or {}).get("seriesGameNumber")
+    return int(value) if value is not None else None
+
+
+def is_complete_series(series_matches: list[dict[str, Any]]) -> bool:
+    """Require every map through a replay-proven series conclusion."""
+
+    if not series_matches:
+        return False
+    ordered = sorted(
+        series_matches,
+        key=lambda match: (int(match["startTime"]), int(match["matchId"])),
+    )
+    series_types = {match.get("seriesType") for match in ordered}
+    if len(series_types) != 1:
+        return False
+    series_type = next(iter(series_types))
+    if series_type not in SERIES_MAX_GAMES:
+        return False
+
+    game_numbers = [series_game_number(match) for match in ordered]
+    if game_numbers != list(range(1, len(ordered) + 1)):
+        return False
+
+    max_games = SERIES_MAX_GAMES[series_type]
+    if len(ordered) > max_games:
+        return False
+    if series_type == 3:
+        # A BO2 always plays both maps, including a 1-1 draw.
+        return len(ordered) == max_games
+
+    wins_required = SERIES_WINS_REQUIRED.get(series_type)
+    if wins_required is None:
+        return False
+    team_pairs = {
+        tuple(
+            sorted(
+                (
+                    int(match["radiantTeamId"]),
+                    int(match["direTeamId"]),
+                )
+            )
+        )
+        for match in ordered
+    }
+    if len(team_pairs) != 1:
+        return False
+
+    wins: dict[int, int] = {}
+    for index, match in enumerate(ordered):
+        winner = int(
+            match["radiantTeamId"]
+            if match["radiantWin"]
+            else match["direTeamId"]
+        )
+        wins[winner] = wins.get(winner, 0) + 1
+        if wins[winner] >= wins_required:
+            # Reaching the winning score before the final available checkpoint
+            # means the grouping contains an impossible extra map.
+            return index == len(ordered) - 1
+    return False
+
+
+def completed_series(
+    checkpoints: list[dict[str, Any]],
+) -> list[list[dict[str, Any]]]:
+    """Return only fully present, concluded series in chronological order."""
+
+    assign_series_ids(checkpoints)
+    grouped: dict[int, list[dict[str, Any]]] = {}
+    for checkpoint in checkpoints:
+        match = checkpoint["match"]
+        series_id = match.get("seriesId")
+        if series_id is None:
+            continue
+        grouped.setdefault(int(series_id), []).append(match)
+    result = [
+        sorted(
+            matches,
+            key=lambda match: (int(match["startTime"]), int(match["matchId"])),
+        )
+        for matches in grouped.values()
+        if is_complete_series(matches)
+    ]
+    result.sort(
+        key=lambda matches: (
+            int(matches[0]["startTime"]),
+            int(matches[0]["matchId"]),
+        )
+    )
+    return result
+
+
+def series_end_time(series_matches: list[dict[str, Any]]) -> int:
+    return max(
+        int(
+            match.get("endTime")
+            or int(match["startTime"]) + int(match["duration"])
+        )
+        for match in series_matches
+    )
+
+
+def split_ti_stages(
+    complete: list[list[dict[str, Any]]],
+) -> dict[str, list[list[dict[str, Any]]]]:
+    """Split completed TI series at the long break before the playoffs."""
+
+    stages = {"groupStage": complete, "international": []}
+    if len(complete) < 2:
+        return stages
+    qualifying_gaps: list[tuple[int, int]] = []
+    for index in range(1, len(complete)):
+        gap = int(complete[index][0]["startTime"]) - series_end_time(
+            complete[index - 1]
+        )
+        if gap >= TI_STAGE_BREAK_MIN_SECONDS:
+            qualifying_gaps.append((gap, index))
+    if not qualifying_gaps:
+        return stages
+    _, split_index = max(qualifying_gaps)
+    return {
+        "groupStage": complete[:split_index],
+        "international": complete[split_index:],
+    }
+
+
+def flatten_series(
+    series_groups: list[list[dict[str, Any]]],
+) -> list[dict[str, Any]]:
+    return [match for matches in series_groups for match in matches]
+
+
 def echo_match(match: dict[str, Any], status: str) -> None:
     print(f"\n比赛 {match['matchId']} [{status}]")
     for player in match["players"]:
@@ -807,27 +960,111 @@ def refresh_browser_data(
     args: argparse.Namespace,
     league_dir: Path,
     league_name: str,
-) -> tuple[dict[str, Any], dict[str, Any]]:
+) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
     """Atomically refresh data.js from every successful checkpoint so far."""
 
     assign_series_ids(checkpoints)
     overrides = LEAGUE_TEAM_OVERRIDES.get(args.league_id, {})
-    dataset = league_data.build_dataset(
-        [checkpoint["match"] for checkpoint in checkpoints],
-        args.league_id,
-        league_name,
-        overrides.get("names"),
-        overrides.get("tags"),
-        PLAYER_ROLE_OVERRIDES,
-        EXCLUDED_TEAM_NAMES,
+
+    def assemble(matches: list[dict[str, Any]]) -> dict[str, Any]:
+        return league_data.build_dataset(
+            matches,
+            args.league_id,
+            league_name,
+            overrides.get("names"),
+            overrides.get("tags"),
+            PLAYER_ROLE_OVERRIDES,
+            EXCLUDED_TEAM_NAMES,
+        )
+
+    if not is_the_international(league_name):
+        dataset = assemble(
+            [checkpoint["match"] for checkpoint in checkpoints]
+        )
+        summary = league_data.build_summary(dataset, "full.json")
+        payload = json.dumps(
+            summary, ensure_ascii=False, separators=(",", ":")
+        )
+        replay_tools.atomic_write_text(
+            league_dir / "data.js",
+            "window.FANTASY_DATA=" + payload + ";\n",
+        )
+        refresh_league_catalog(league_dir.parent, args.league_id, league_name)
+        return dataset, summary
+
+    complete = completed_series(checkpoints)
+    if not complete:
+        print(
+            "No completed TI series is available yet; browser data was not "
+            "refreshed."
+        )
+        return None, None
+
+    series_by_stage = split_ti_stages(complete)
+    stage_outputs: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
+    for stage, series_groups in series_by_stage.items():
+        if not series_groups:
+            continue
+        dataset = assemble(flatten_series(series_groups))
+        dataset["meta"]["eventStage"] = stage
+        dataset["meta"]["coverage"]["completeSeries"] = len(series_groups)
+        summary = league_data.build_summary(dataset, "full.json")
+        stage_outputs[stage] = (dataset, summary)
+
+    available_stages = [
+        stage for stage in ("groupStage", "international")
+        if stage in stage_outputs
+    ]
+    stage_coverage = {
+        stage: output[0]["meta"]["coverage"]
+        for stage, output in stage_outputs.items()
+    }
+    for dataset, summary in stage_outputs.values():
+        dataset["meta"]["availableStages"] = available_stages
+        dataset["meta"]["stageCoverage"] = stage_coverage
+        summary["meta"]["availableStages"] = available_stages
+        summary["meta"]["stageCoverage"] = stage_coverage
+
+    for stage, (dataset, summary) in stage_outputs.items():
+        stage_dir = league_dir / "stages" / TI_STAGE_DIRECTORIES[stage]
+        replay_tools.atomic_write_json(stage_dir / "full.json", dataset)
+        replay_tools.atomic_write_json(
+            stage_dir / "summary.json", summary, compact=True
+        )
+
+    default_stage = (
+        "groupStage" if "groupStage" in stage_outputs else "international"
     )
-    summary = league_data.build_summary(dataset, "full.json")
-    payload = json.dumps(summary, ensure_ascii=False, separators=(",", ":"))
+    default_dataset, default_summary = stage_outputs[default_stage]
+    bundle = {
+        "meta": {
+            "schemaVersion": CHECKPOINT_SCHEMA_VERSION,
+            "leagueId": args.league_id,
+            "leagueName": league_name,
+            "isTheInternational": True,
+            "availableStages": available_stages,
+        },
+        "stages": {
+            stage: output[1] for stage, output in stage_outputs.items()
+        },
+    }
+    payload = json.dumps(bundle, ensure_ascii=False, separators=(",", ":"))
     replay_tools.atomic_write_text(
-        league_dir / "data.js", "window.FANTASY_DATA=" + payload + ";\n"
+        league_dir / "data.js",
+        "window.FANTASY_STAGE_DATA="
+        + payload
+        + ";window.FANTASY_DATA="
+        + "(window.FANTASY_STAGE_DATA.stages.groupStage||"
+        + "window.FANTASY_STAGE_DATA.stages.international);\n",
+    )
+    # Keep the traditional root files as a compatibility view of the default
+    # stage while the authoritative stage artifacts remain separate.
+    replay_tools.atomic_write_json(league_dir / "full.json", default_dataset)
+    replay_tools.atomic_write_json(
+        league_dir / "summary.json", default_summary, compact=True
     )
     refresh_league_catalog(league_dir.parent, args.league_id, league_name)
-    return dataset, summary
+    return default_dataset, default_summary
 
 
 def build(args: argparse.Namespace) -> None:
@@ -932,7 +1169,8 @@ def build(args: argparse.Namespace) -> None:
         dataset, summary = refresh_browser_data(
             checkpoints, args, league_dir, league_name
         )
-        published_checkpoint_count = len(checkpoints)
+        if dataset is not None and summary is not None:
+            published_checkpoint_count = len(checkpoints)
 
     replay_tools.atomic_write_json(errors_path, errors)
 
@@ -945,7 +1183,34 @@ def build(args: argparse.Namespace) -> None:
             checkpoints, args, league_dir, league_name
         )
     if dataset is None or summary is None:
-        raise RuntimeError("Could not assemble browser data")
+        if not is_the_international(league_name):
+            raise RuntimeError("Could not assemble browser data")
+        league_info = {
+            "schemaVersion": CHECKPOINT_SCHEMA_VERSION,
+            "leagueId": args.league_id,
+            "leagueName": league_name,
+            "isTheInternational": True,
+            "generatedAt": utc_now(),
+            "replayCache": str(
+                args.replay_cache.resolve() / str(args.league_id)
+            ),
+            "coverage": {
+                "parsedCheckpoints": len(checkpoints),
+                "publishedMatches": 0,
+                "completeSeries": 0,
+            },
+            "files": {
+                "manifest": "manifest.json",
+                "matches": "matches/<MATCH_ID>.json",
+                "errors": "errors.json",
+            },
+        }
+        replay_tools.atomic_write_json(league_dir / "league.json", league_info)
+        print(
+            f"\n{league_name}: {len(checkpoints)} replay checkpoint(s) are "
+            "available, but no complete series can be published yet."
+        )
+        return
 
     assign_series_ids(checkpoints)
     for checkpoint in checkpoints:
@@ -956,23 +1221,47 @@ def build(args: argparse.Namespace) -> None:
     summary_path = league_dir / "summary.json"
     replay_tools.atomic_write_json(full_path, dataset)
     replay_tools.atomic_write_json(summary_path, summary, compact=True)
+    is_ti = is_the_international(league_name)
+    coverage: dict[str, Any] = dataset["meta"]["coverage"]
+    if is_ti:
+        stage_coverage = dataset["meta"].get("stageCoverage", {})
+        coverage = {
+            "parsedCheckpoints": len(checkpoints),
+            "publishedMatches": sum(
+                int(item.get("matches", 0))
+                for item in stage_coverage.values()
+            ),
+            "stages": stage_coverage,
+        }
+    files: dict[str, Any] = {
+        "manifest": "manifest.json",
+        "matches": "matches/<MATCH_ID>.json",
+        "errors": "errors.json",
+        "full": "full.json",
+        "summary": "summary.json",
+        "browser": "data.js",
+    }
+    if is_ti:
+        files["stages"] = {
+            stage: {
+                "full": f"stages/{TI_STAGE_DIRECTORIES[stage]}/full.json",
+                "summary": (
+                    f"stages/{TI_STAGE_DIRECTORIES[stage]}/summary.json"
+                ),
+            }
+            for stage in dataset["meta"].get("availableStages", [])
+        }
     league_info = {
         "schemaVersion": CHECKPOINT_SCHEMA_VERSION,
         "leagueId": args.league_id,
         "leagueName": league_name,
+        "isTheInternational": is_ti,
         "generatedAt": utc_now(),
         "replayCache": str(
             args.replay_cache.resolve() / str(args.league_id)
         ),
-        "coverage": dataset["meta"]["coverage"],
-        "files": {
-            "manifest": "manifest.json",
-            "matches": "matches/<MATCH_ID>.json",
-            "errors": "errors.json",
-            "full": "full.json",
-            "summary": "summary.json",
-            "browser": "data.js",
-        },
+        "coverage": coverage,
+        "files": files,
     }
     replay_tools.atomic_write_json(league_dir / "league.json", league_info)
     print(
