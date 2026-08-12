@@ -223,7 +223,7 @@ EXCLUDED_TEAM_NAMES = {
     "IC x Insanity",
 }
 
-CHECKPOINT_SCHEMA_VERSION = 8
+CHECKPOINT_SCHEMA_VERSION = 9
 REPLAY_GPM_SOURCE = (
     "Calculated from Valve replay m_iTotalEarnedGold / exact game duration"
 )
@@ -551,6 +551,7 @@ def checkpoint_from_replay(
         if account_id is None or not exact.get("name"):
             raise RuntimeError("Replay player lacks account ID or name")
         team = teams_by_number[int(exact["teamNumber"])]
+        opponent = teams_by_number[3 if int(exact["teamNumber"]) == 2 else 2]
         stats = copy.deepcopy(exact.get("stats"))
         if not isinstance(stats, dict):
             raise RuntimeError(f"Replay player {account_id} lacks stats")
@@ -567,6 +568,11 @@ def checkpoint_from_replay(
                 "accountId": int(account_id),
                 "name": str(exact["name"]),
                 "teamId": int(team["teamId"]),
+                "opponent": {
+                    "teamId": int(opponent["teamId"]),
+                    "name": str(opponent["name"]),
+                    "tag": str(opponent.get("tag") or ""),
+                },
                 "playerSlot": int(exact["playerSlot"]),
                 "heroId": int(exact["heroId"]),
                 "heroName": str(exact["heroName"]),
@@ -682,6 +688,13 @@ def validate_checkpoint(
             raise RuntimeError(f"Checkpoint {match_id} lacks player hero data")
         if "lost" not in player:
             raise RuntimeError(f"Checkpoint {match_id} lacks player result data")
+        opponent = player.get("opponent")
+        if (
+            not isinstance(opponent, dict)
+            or opponent.get("teamId") is None
+            or not opponent.get("name")
+        ):
+            raise RuntimeError(f"Checkpoint {match_id} lacks player opponent data")
         stats = player.get("stats", {})
         missing = [
             key for key in league_data.STAT_KEYS if stats.get(key) is None

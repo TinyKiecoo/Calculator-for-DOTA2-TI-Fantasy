@@ -350,7 +350,7 @@ def build_dataset(
     }
     return {
         "meta": {
-            "schemaVersion": 8,
+            "schemaVersion": 9,
             "leagueId": league_id,
             "leagueName": league_name,
             "generatedAt": generated_at,
@@ -428,6 +428,7 @@ def build_summary(
                     ),
                     "heroId": player.get("heroId"),
                     "heroName": player.get("heroName"),
+                    "opponent": player.get("opponent"),
                     "won": player.get("won"),
                     "lost": player.get("lost"),
                     "titleConditions": title_conditions,

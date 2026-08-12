@@ -298,6 +298,11 @@ class TitleDataTests(unittest.TestCase):
                     "accountId": 100 + index,
                     "name": f"Included {index}",
                     "teamId": 10,
+                    "opponent": {
+                        "teamId": 20,
+                        "name": "Excluded Team",
+                        "tag": "OUT",
+                    },
                     "playerSlot": index,
                     "stats": dict(stats),
                 }
@@ -308,6 +313,11 @@ class TitleDataTests(unittest.TestCase):
                     "accountId": 200 + index,
                     "name": f"Excluded {index}",
                     "teamId": 20,
+                    "opponent": {
+                        "teamId": 10,
+                        "name": "Included Team",
+                        "tag": "IN",
+                    },
                     "playerSlot": 128 + index,
                     "stats": dict(stats),
                 }
@@ -326,6 +336,10 @@ class TitleDataTests(unittest.TestCase):
 
         self.assertEqual([team["name"] for team in summary["teams"]], ["Included Team"])
         self.assertEqual(len(summary["teams"][0]["players"]), 5)
+        self.assertEqual(
+            summary["teams"][0]["players"][0]["maps"][0]["opponent"],
+            {"teamId": 20, "name": "Excluded Team", "tag": "OUT"},
+        )
         self.assertEqual(dataset["meta"]["coverage"]["playerGameRows"], 5)
         self.assertEqual(dataset["meta"]["excludedTeamNames"], ["  excluded TEAM  "])
         self.assertTrue(all(player["role"] for player in match["players"][:5]))
@@ -438,6 +452,14 @@ class TitleDataTests(unittest.TestCase):
         self.assertEqual(match["endTime"], 11_800)
         self.assertEqual(match["players"][0]["stats"]["gpm"], 600)
         self.assertEqual(match["players"][0]["stats"]["tormentors_killed"], 1)
+        self.assertEqual(
+            match["players"][0]["opponent"],
+            {"teamId": 30, "name": "Dire", "tag": "D"},
+        )
+        self.assertEqual(
+            match["players"][5]["opponent"],
+            {"teamId": 20, "name": "Radiant", "tag": "R"},
+        )
         self.assertNotIn("gpm", checkpoint["replay"]["exactFields"])
         self.assertEqual(checkpoint["replay"]["calculatedFields"], ["gpm"])
         self.assertTrue(checkpoint["replay"]["allFantasyStatsFromReplay"])

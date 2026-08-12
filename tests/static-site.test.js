@@ -216,7 +216,7 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   const returningVisitorPageState = JSON.stringify({
       version: 3,
       stage: "groupStage",
-      pages: {},
+      pages: { groupStage: { scoreMode: { mid: "average" } } },
       titles: { prefix: "none", suffix: "none" },
       multiplierMode: "manual",
     });
@@ -326,6 +326,18 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.equal((rendered.match(/class="banner-main"/g) || []).length, 3);
   assert.equal((rendered.match(/class="emblem-card /g) || []).length, 9);
   assert.equal((rendered.match(/class="banner-score"/g) || []).length, 3);
+  assert.doesNotMatch(
+    rendered,
+    /class="selected-roster"[\s\S]*?<small>[^<]+ vs [^<]+<\/small>/,
+    "legacy datasets without opponent metadata must show only the current team",
+  );
+  assert.doesNotMatch(
+    rendered.match(
+      /data-banner-column-role="mid"[\s\S]*?<\/section>/,
+    )?.[0] || "",
+    /<small>[^<]+ vs [^<]+<\/small>/,
+    "average-score subtitles must keep showing only the current team",
+  );
   assert.match(
     css,
     /\.emblem-pennant\s*\{[\s\S]*?height:\s*auto;/,
@@ -404,10 +416,26 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   const nextDataset = JSON.parse(
     fs.readFileSync(path.join(root, "data", "20009", "summary.json"), "utf8"),
   );
+  for (const team of nextDataset.teams) {
+    for (const player of team.players) {
+      for (const map of player.maps) {
+        map.opponent = {
+          teamId: 999,
+          name: "Recorded Opponent",
+          tag: "OPP",
+        };
+      }
+    }
+  }
   leagueChange({
     detail: { dataset: nextDataset, leagueId: 20009 },
   });
   assert.match(element("banner-grid").innerHTML, /BoomBoys/);
+  assert.match(
+    element("banner-grid").innerHTML,
+    /<small>[^<]+ vs Recorded Opponent<\/small>/,
+    "highest-series subtitles must use recorded opponent metadata",
+  );
   assert.equal(element("load-error").hidden, true);
 
   const groupDataset = structuredClone(nextDataset);
@@ -509,8 +537,8 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   const notice = element("modal-body").innerHTML;
   assert.match(notice, /如果计算结果与客户端内显示不一致/);
   assert.match(notice, /github\.com\/TinyKiecoo\/Calculator-for-DOTA2-TI-Fantasy\/issues/);
-  assert.match(notice, /mailto:tinykiecoo@gmail\.com/);
-  assert.match(notice, /Friend code 891593807/);
+  assert.match(notice, /tinykiecoo@gmail\.com/);
+  assert.match(notice, /好友代码 891593807/);
   assert.match(notice, /ngabbs\.com\/read\.php\?tid=47289904/);
   assert.match(notice, /xiaoheihe\.cn\/app\/bbs\/link\/187051484/);
   assert.match(notice, /客户端数据更新可能有一定延迟/);

@@ -497,6 +497,7 @@
       matchId: map?.matchId ?? null,
       seriesId: map?.seriesId ?? null,
       seriesType: map?.seriesType ?? null,
+      opponent: map?.opponent ?? null,
       titleBonus,
     };
   }
@@ -540,6 +541,7 @@
         matchId: null,
         matchIds: [],
         seriesId: null,
+        opponent: null,
       };
     }
 
@@ -558,6 +560,7 @@
         matchId: null,
         matchIds: complete.map((result) => result.matchId),
         seriesId: null,
+        opponent: null,
       };
     }
 
@@ -598,6 +601,7 @@
           : null,
       matchIds: bestSeries.counted.map((result) => result.matchId),
       seriesId: bestSeries.seriesId,
+      opponent: bestSeries.counted.find((result) => result.opponent)?.opponent ?? null,
     };
   }
 
@@ -667,6 +671,7 @@
         matchId: null,
         matchIds: [],
         seriesId: null,
+        opponent: null,
       };
     }
 
@@ -707,6 +712,7 @@
           0.5,
         ),
         missing: [],
+        opponent: secondMap.opponent ?? firstMap.opponent ?? null,
       });
     }
 
@@ -719,6 +725,7 @@
         matchId: null,
         matchIds: [],
         seriesId: null,
+        opponent: null,
       };
     }
 
@@ -767,6 +774,7 @@
             matchId: result.matchId,
             matchIds: result.matchIds,
             seriesId: result.seriesId,
+            opponent: result.opponent,
           };
         })
         .sort(sortRankings);
@@ -808,6 +816,7 @@
             matchId: pairScore.matchId,
             matchIds: pairScore.matchIds,
             seriesId: pairScore.seriesId,
+            opponent: pairScore.opponent,
           });
         }
       }

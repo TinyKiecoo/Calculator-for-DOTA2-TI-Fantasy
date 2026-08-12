@@ -807,6 +807,14 @@
                 seriesGameNumber: map.seriesGameNumber ?? null,
                 heroId: map.heroId ?? null,
                 heroName: map.heroName ?? null,
+                opponent:
+                  map.opponent && map.opponent.name
+                    ? {
+                        teamId: map.opponent.teamId ?? null,
+                        name: String(map.opponent.name),
+                        tag: map.opponent.tag ? String(map.opponent.tag) : "",
+                      }
+                    : null,
                 won: map.won === true,
                 lost: map.lost === true,
                 titleConditions: map.titleConditions || {},
@@ -1152,6 +1160,15 @@
       </section>`;
   }
 
+  function selectedRosterSubtitle(role, selected) {
+    const teamName = selected?.subtitle || "—";
+    if (state.scoreMode[role] !== "highest" || !selected) return teamName;
+
+    return selected.opponent?.name
+      ? `${teamName} vs ${selected.opponent.name}`
+      : teamName;
+  }
+
   function bannerMarkup(role, rankings, selected) {
     const manualValues = state.manualMultipliers[role];
     const multipliers = activeMultipliers(role);
@@ -1178,7 +1195,7 @@
       )
       .join("");
     const selectedLabel = selected ? selected.label : text("waitingForData");
-    const selectedSubtitle = selected ? selected.subtitle : "—";
+    const selectedSubtitle = selectedRosterSubtitle(role, selected);
     const selectedScore =
       selected && selected.score !== null ? formatScore(selected.score) : "—";
 

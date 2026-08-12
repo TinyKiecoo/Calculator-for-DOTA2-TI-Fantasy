@@ -287,30 +287,35 @@ test("takes the best two maps from the highest-scoring series", () => {
         matchId: 1,
         seriesId: 10,
         seriesType: 1,
+        opponent: { teamId: "opponent-10", name: "Opponent 10", tag: "O10" },
         stats: { kills: 2, stun_seconds: 4, gpm: 200 },
       },
       {
         matchId: 2,
         seriesId: 10,
         seriesType: 1,
+        opponent: { teamId: "opponent-10", name: "Opponent 10", tag: "O10" },
         stats: { kills: 4, stun_seconds: 8, gpm: 400 },
       },
       {
         matchId: 3,
         seriesId: 10,
         seriesType: 1,
+        opponent: { teamId: "opponent-10", name: "Opponent 10", tag: "O10" },
         stats: { kills: 3, stun_seconds: 6, gpm: 300 },
       },
       {
         matchId: 4,
         seriesId: 20,
         seriesType: 3,
+        opponent: { teamId: "opponent-20", name: "Opponent 20", tag: "O20" },
         stats: { kills: 5, stun_seconds: 10, gpm: 500 },
       },
       {
         matchId: 5,
         seriesId: 20,
         seriesType: 3,
+        opponent: { teamId: "opponent-20", name: "Opponent 20", tag: "O20" },
         stats: { kills: 1, stun_seconds: 2, gpm: 100 },
       },
     ],
@@ -334,6 +339,11 @@ test("takes the best two maps from the highest-scoring series", () => {
     scorePlayer(player, emblems, "highest").matchIds,
     [2, 3],
   );
+  assert.deepEqual(scorePlayer(player, emblems, "highest").opponent, {
+    teamId: "opponent-10",
+    name: "Opponent 10",
+    tag: "O10",
+  });
   assertEmblemScoresSum(scorePlayer(player, emblems, "highest"));
 });
 
