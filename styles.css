@@ -1388,21 +1388,18 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   white-space: nowrap;
 }
 
-.rule-grid,
 .data-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
 }
 
-.rule-card,
 .data-card {
   padding: 18px;
   border: 1px solid rgba(255, 255, 255, .08);
   background: rgba(255, 255, 255, .035);
 }
 
-.rule-card h3,
 .data-card h3 {
   margin: 0 0 8px;
   color: #ead5a5;
@@ -1410,42 +1407,11 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   font-size: 1rem;
 }
 
-.rule-card p,
 .data-card p,
-.rule-card li,
 .data-card li {
   color: #a99f90;
   font-size: .82rem;
   line-height: 1.55;
-}
-
-.rule-card ul,
-.data-card ul {
-  margin: 8px 0 0;
-  padding-left: 18px;
-}
-
-.stat-table {
-  width: 100%;
-  margin-top: 8px;
-  border-collapse: collapse;
-  font-size: .76rem;
-}
-
-.stat-table th,
-.stat-table td {
-  padding: 6px 5px;
-  border-top: 1px solid rgba(255, 255, 255, .07);
-  text-align: left;
-}
-
-.stat-table th {
-  color: #c8bda9;
-  font-weight: 400;
-}
-
-.stat-table td {
-  color: #8f867a;
 }
 
 .live-update-contact-list {
@@ -2005,7 +1971,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
     padding: 12px 16px 10px;
   }
 
-  .rule-grid,
   .data-grid,
   .emblem-ranking-grid {
     grid-template-columns: minmax(0, 1fr);
@@ -2026,15 +1991,8 @@ input.emblem-multiplier::-webkit-outer-spin-button {
     white-space: normal;
   }
 
-  .rule-card,
   .data-card {
     padding: 14px;
-  }
-
-  .stat-table {
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
   }
 
   .load-error,

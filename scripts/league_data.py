@@ -119,7 +119,7 @@ def infer_roles(
         by_team[key[0]].append((key, accumulator))
 
     result: dict[tuple[int, int], dict[str, Any]] = {}
-    for team_id, roster in by_team.items():
+    for roster in by_team.values():
         ordered = sorted(
             roster,
             key=lambda item: (

@@ -362,10 +362,10 @@
   function text(key, variables = {}) {
     const template = copy()[key] ?? key;
     if (typeof template !== "string") return template;
-    return template.replace(/\{(\w+)\}/g, (_, name) =>
+    return template.replace(/\{(\w+)\}/g, (match, name) =>
       Object.prototype.hasOwnProperty.call(variables, name)
         ? String(variables[name])
-        : `{${name}}`,
+        : match,
     );
   }
 
@@ -400,7 +400,7 @@
   function saveLanguage(language) {
     try {
       localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
-    } catch (error) {
+    } catch {
       // The page still works when storage is blocked.
     }
   }
@@ -410,7 +410,7 @@
     try {
       dismissed =
         localStorage.getItem(LIVE_UPDATE_NOTICE_STORAGE_KEY) === "dismissed";
-    } catch (error) {
+    } catch {
       // Keep the notice visible when storage is unavailable.
     }
     correctionBanner.hidden = !SHOW_TI_LIVE_UPDATE_NOTICE || dismissed;
@@ -483,7 +483,7 @@
   correctionBannerClose.addEventListener("click", () => {
     try {
       localStorage.setItem(LIVE_UPDATE_NOTICE_STORAGE_KEY, "dismissed");
-    } catch (error) {
+    } catch {
       // The current page can still hide the notice when storage is blocked.
     }
     correctionBanner.hidden = true;
@@ -616,7 +616,7 @@
       );
       engine.validateBannerConfig(candidate, stage);
       page.config = candidate;
-    } catch (error) {
+    } catch {
       // Ignore malformed or obsolete saved emblem data.
     }
 
@@ -651,7 +651,7 @@
     let saved = null;
     try {
       saved = JSON.parse(localStorage.getItem(PAGE_STATE_STORAGE_KEY) || "null");
-    } catch (error) {
+    } catch {
       // Use a clean state when localStorage is unavailable or invalid.
     }
 
@@ -715,7 +715,7 @@
           multiplierMode: state.multiplierMode,
         }),
       );
-    } catch (error) {
+    } catch {
       // The calculator still works when storage is blocked or full.
     }
   }

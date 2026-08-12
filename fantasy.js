@@ -200,30 +200,6 @@
     5: 1.5,
   };
 
-  const qualityLabels = {
-    1: "第 1 阶",
-    2: "第 2 阶",
-    3: "第 3 阶",
-    4: "第 4 阶",
-    5: "第 5 阶",
-  };
-
-  const traitLabels = {
-    fractal: "分形",
-    benevolent: "仁爱",
-    vampire: "吸血鬼",
-    unique: "唯一",
-    friendly: "友好",
-  };
-
-  const traitDescriptions = {
-    fractal: "战旗上所有徽标品质各不相同时，自身 +60%",
-    benevolent: "向相邻徽标提供 +20%",
-    vampire: "自身 +50%，相邻徽标 −10%",
-    unique: "全旗只有一枚“唯一”时，自身 +30%",
-    friendly: "全旗至少三枚“友好”时，自身 +50%",
-  };
-
   function calculateEmblemModifiers(emblems) {
     if (![3, 5].includes(emblems.length)) {
       throw new Error("每面战旗必须有三枚或五枚徽标。");
@@ -350,8 +326,9 @@
     const available = entries.filter((entry) => entry.average !== null);
 
     if (!available.length) {
-      return entries.map(({ sourceIndex, ...entry }) => ({
-        ...entry,
+      return entries.map((entry) => ({
+        stat: entry.stat,
+        average: entry.average,
         rankingScore: null,
       }));
     }
@@ -377,7 +354,11 @@
         if (right.average === null) return -1;
         return right.average - left.average || left.sourceIndex - right.sourceIndex;
       })
-      .map(({ sourceIndex, ...entry }) => entry);
+      .map((entry) => ({
+        stat: entry.stat,
+        average: entry.average,
+        rankingScore: entry.rankingScore,
+      }));
   }
 
   function resolveModifiers(emblems, customMultipliers) {
@@ -452,12 +433,16 @@
 
   function combineEmblemScores(results, scale = 1) {
     const count = results[0]?.emblemScores?.length ?? 0;
-    return Array.from({ length: count }, (_, index) => {
+    const scores = [];
+    for (let index = 0; index < count; index += 1) {
       const values = results.map((result) => result.emblemScores?.[index]);
-      return values.every(Number.isFinite)
-        ? values.reduce((sum, value) => sum + value, 0) * scale
-        : null;
-    });
+      scores.push(
+        values.every(Number.isFinite)
+          ? values.reduce((sum, value) => sum + value, 0) * scale
+          : null,
+      );
+    }
+    return scores;
   }
 
   function normalizeTitleSelection(titles = {}) {
@@ -979,13 +964,8 @@
     traits,
     statKeys,
     statDefinitions,
-    roleColors,
     internationalRoleColors,
-    stageRoleColors,
     qualityBonus,
-    qualityLabels,
-    traitLabels,
-    traitDescriptions,
     prefixTitles,
     suffixTitles,
     prefixTitleKeys,
@@ -996,14 +976,9 @@
     scoreStatistics,
     calculateTitleBonus,
     countedGamesForSeries,
-    scoreMap,
-    aggregateMapResults,
     scorePlayer,
     scorePair,
     buildRankings,
-    defaultBannerConfig,
-    internationalBannerConfig,
-    defaultBannerConfigs,
     validateBannerConfig,
     formatScore,
     cloneDefaultConfig,

@@ -56,7 +56,7 @@
       try {
         const saved = localStorage.getItem(storageKey);
         if (saved === "zh" || saved === "en") language = saved;
-      } catch (error) {
+      } catch {
         // localStorage can be unavailable in privacy-restricted contexts.
       }
 
@@ -65,7 +65,7 @@
         language = String(preferred).toLowerCase().startsWith("zh") ? "zh" : "en";
         try {
           localStorage.setItem(storageKey, language);
-        } catch (error) {
+        } catch {
           // Continue with the detected language even if it cannot be saved.
         }
       }
