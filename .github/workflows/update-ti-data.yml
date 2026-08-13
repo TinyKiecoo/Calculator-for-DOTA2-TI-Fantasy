@@ -5,10 +5,7 @@ on:
     branches:
       - main
   schedule:
-    # Use one simple annual schedule so GitHub can register it reliably. The
-    # job below enforces the 2026 date and Shanghai-time update window.
-    # The seven-minute offset avoids GitHub's busiest cron boundaries.
-    - cron: "7,22,37,52 * 13-16 8 *"
+    - cron: "7,19,31,43,55 2-13 13-16,20-23 8 *"
   workflow_dispatch:
 
 concurrency:
@@ -18,7 +15,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 30
     permissions:
       contents: write
     outputs:

@@ -46,7 +46,7 @@ test("keeps website prefix hero lists synchronized with heroids.txt", () => {
 
 test("schedules guarded TI live updates and deploys Pages in the same workflow", () => {
   assert.match(updateWorkflow, /push:\s+branches:\s+- main/);
-  assert.match(updateWorkflow, /cron: "7,22,37,52 \* 13-16 8 \*"/);
+  assert.match(updateWorkflow, /cron: "7,19,31,43,55 2-13 13-16,20-23 8 \*"/);
   assert.match(updateWorkflow, /now\.year == 2026/);
   assert.match(updateWorkflow, /\(10, 30\) <= \(now\.hour, now\.minute\) <= \(22, 10\)/);
   assert.match(updateWorkflow, /--league-id 19719[\s\\]+--update-only/);
