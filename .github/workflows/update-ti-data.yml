@@ -5,11 +5,10 @@ on:
     branches:
       - main
   schedule:
-    # GitHub cron uses UTC. These are 10:30-22:00 in Asia/Shanghai (UTC+8),
-    # every 15 minutes, on August 13-16. The year is checked in the first step.
-    - cron: "30,45 2 13-16 8 *"
-    - cron: "0,15,30,45 3-13 13-16 8 *"
-    - cron: "0 14 13-16 8 *"
+    # Use one simple annual schedule so GitHub can register it reliably. The
+    # job below enforces the 2026 date and Shanghai-time update window.
+    # The seven-minute offset avoids GitHub's busiest cron boundaries.
+    - cron: "7,22,37,52 * 13-16 8 *"
   workflow_dispatch:
 
 concurrency:
@@ -36,7 +35,7 @@ jobs:
           elif [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             active=true
           else
-            active="$(python -c 'from datetime import datetime; from zoneinfo import ZoneInfo; now = datetime.now(ZoneInfo("Asia/Shanghai")); print("true" if now.year == 2026 and now.month == 8 and 13 <= now.day <= 16 else "false")')"
+            active="$(python -c 'from datetime import datetime; from zoneinfo import ZoneInfo; now = datetime.now(ZoneInfo("Asia/Shanghai")); active = now.year == 2026 and now.month == 8 and 13 <= now.day <= 16 and (10, 30) <= (now.hour, now.minute) <= (22, 10); print("true" if active else "false")')"
           fi
           echo "active=$active" >> "$GITHUB_OUTPUT"
 

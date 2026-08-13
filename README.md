@@ -207,10 +207,13 @@ automatically treated as stale and reparsed on the next build.
 ## Automated TI 2026 Live Updates
 
 `.github/workflows/update-ti-data.yml` runs from **August 13 through August 16,
-2026**, every 15 minutes from **10:30 through 22:00 (UTC+8)**. GitHub cron is
-defined in UTC and cannot express a year, so the workflow also checks the local
-Shanghai date before doing any work. It can be run at any time from the
-repository's **Actions** tab with **Run workflow**.
+2026**, every 15 minutes during the **10:30-22:10 (UTC+8)** update window. Its
+scheduled checks occur at minutes 07, 22, 37 and 52, so the first normal check
+is 10:37 and the final one is 22:07. This deliberate offset avoids GitHub
+Actions' busiest cron boundaries. The single annual cron expression is kept
+simple and the workflow itself checks both the 2026 date and the local Shanghai
+time before doing any work. It can be run at any time from the repository's
+**Actions** tab with **Run workflow**.
 
 The job uses `--update-only`, caches the Clarity parser dependencies, and
 serializes runs so two replay parsers cannot overlap. It creates a commit only
