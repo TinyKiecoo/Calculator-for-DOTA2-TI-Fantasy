@@ -316,19 +316,6 @@ a:focus-visible {
   text-shadow: 0 2px 18px rgba(234, 204, 135, .12);
 }
 
-.accuracy-note {
-  color: #a99777;
-  font-size: 12px;
-  line-height: 1.4;
-  white-space: nowrap;
-}
-
-.accuracy-note::before {
-  margin-right: 10px;
-  color: rgba(200, 166, 79, .66);
-  content: "·";
-}
-
 .advisor-titles {
   width: min(100%, 560px);
   margin-top: 9px;
@@ -1754,17 +1741,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
     font-size: .78rem;
     letter-spacing: .1em;
     line-height: 1.45;
-  }
-
-  .accuracy-note {
-    width: 100%;
-    padding: 0 12px;
-    font-size: .66rem;
-    white-space: normal;
-  }
-
-  .accuracy-note::before {
-    display: none;
   }
 
   .topbar-actions {

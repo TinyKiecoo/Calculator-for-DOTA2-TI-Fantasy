@@ -74,7 +74,7 @@
       document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260813-league-options">
+  <link rel="stylesheet" href="styles.css?v=20260813-remove-accuracy-note">
 </head>
 <body>
   <aside class="correction-banner" id="correction-banner" role="status" hidden>
@@ -161,7 +161,6 @@
           >
           <div class="subtitle-row">
             <h1 data-i18n="pageHeading">开源的 Dota 2 梦幻挑战计算器</h1>
-            <span class="accuracy-note" data-i18n="accuracyNote">计算结果可能不准确，数据仅供参考。</span>
           </div>
           <div
             class="advisor-titles"
@@ -372,7 +371,7 @@
     }
   </script>
   <script src="fantasy.js?v=20260813-heroids"></script>
-  <script src="app.js?v=20260812-heroids"></script>
+  <script src="app.js?v=20260813-remove-accuracy-note"></script>
   <script>
     if (window.location.hostname === "www.ti-fantasy.site") {
       const busuanziScript = document.createElement("script");
