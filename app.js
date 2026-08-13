@@ -52,7 +52,7 @@
   const LANGUAGE_STORAGE_KEY = "ti-fantasy-language";
   const PAGE_STATE_STORAGE_KEY = "ti-fantasy-page-state-v1";
   // Change this to true when TI 2026 begins and live data starts updating.
-  const SHOW_TI_LIVE_UPDATE_NOTICE = false;
+  const SHOW_TI_LIVE_UPDATE_NOTICE = true;
   const LIVE_UPDATE_NOTICE_STORAGE_KEY =
     "ti-fantasy-live-update-notice-v1";
   const MULTIPLIER_MODES = ["calculated", "manual"];
