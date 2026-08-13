@@ -108,6 +108,7 @@ PLAYER_ROLE_OVERRIDES: dict[int, str] = {
     292921272: "core",  # Wisper
     177203952: "core",  # Yuma
     1026694469: "mid",  # TaiLung
+    94054712: "mid",  # Topson
     81306398: "support",  # KingJungles
     105045291: "support",  # Thiolicor
     # MOUZ
@@ -206,6 +207,18 @@ PLAYER_ROLE_OVERRIDES: dict[int, str] = {
     173978074: "mid",  # NothingToSay
     101695162: "support",  # fy
     94296097: "support",  # xNova
+    # Team Resilience
+    170896543: "core",  # YSR-04E
+    145957968: "core",  # niu
+    315272623: "mid",  # Echozz
+    150961567: "support",  # planet
+    249835593: "support",  # zzq
+    # HULIGANI
+    320017600: "core",  # ssnovv1
+    92487440: "core",  # Corrupted
+    140251702: "mid",  # Mirage`雨
+    145065875: "support",  # sayuw
+    123787715: "support",  # RESPECT
 }
 
 # Global display-name exclusions. Excluded teams are hidden from selection and
