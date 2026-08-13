@@ -344,7 +344,7 @@ def build_dataset(
             "OpenDota resolves the league name and discovers its Valve replay links"
         ),
         "valveReplays": (
-            "http://replay{cluster}.valve.net/570/"
+            "http://replay{cluster}.{regional_domain}/570/"
             "{match_id}_{replay_salt}.dem.bz2"
         ),
     }

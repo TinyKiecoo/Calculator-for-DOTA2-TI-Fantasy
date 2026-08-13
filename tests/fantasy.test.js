@@ -381,6 +381,34 @@ test("temporarily takes only the best two maps from a best-of-five series", () =
   assertEmblemScoresSum(result);
 });
 
+test("scores an unfinished series from every map currently available", () => {
+  const emblems = [
+    { color: "red", stat: "kills", quality: 1, trait: "unique" },
+    { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
+    { color: "red", stat: "gpm", quality: 1, trait: "benevolent" },
+  ];
+  const player = {
+    id: "p1",
+    role: "mid",
+    maps: [
+      {
+        matchId: 1,
+        seriesId: 10,
+        seriesType: 1,
+        stats: { kills: 3, stun_seconds: 6, gpm: 300 },
+      },
+    ],
+  };
+
+  const result = scorePlayer(player, emblems, "highest");
+
+  assert.ok(result.score > 0);
+  assert.deepEqual(result.matchIds, [1]);
+  assert.equal(result.seriesId, 10);
+  assert.equal(result.coverage, 1);
+  assertEmblemScoresSum(result);
+});
+
 test("keeps the TI best-of-five three-map rule ready to enable", () => {
   assert.equal(countedGamesForSeries(1, true), 2);
   assert.equal(countedGamesForSeries(2, true), 3);

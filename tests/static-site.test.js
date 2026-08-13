@@ -169,17 +169,21 @@ test("selects from every generated league snapshot", () => {
   assert.match(html, /id="league-select"/);
   assert.match(html, /data\/leagues\.js\?v=' \+ Date\.now\(\)/);
   assert.match(html, /option\.textContent = league\.leagueName/);
+  assert.match(html, /DEFAULT_LEAGUE_NAME = "The International 2026"/);
+  assert.match(html, /defaultLeague\?\.leagueId/);
   assert.match(html, /league-option--the-international/);
   assert.match(html, /stageDatasets:\s*nextStageDatasets/);
   assert.match(html, /data\/\$\{leagueId\}\/data\.js\?v=\$\{Date\.now\(\)\}/);
   assert.match(html, /LEAGUE_ID \+ '\/data\.js\?v=' \+ Date\.now\(\)/);
   assert.match(css, /select\.is-the-international/);
+  assert.match(css, /\.league-selector option\s*\{[^}]*background-color:\s*#18120c/s);
   assert.match(css, /option\.league-option--the-international/);
   assert.match(app, /leagueStageDatasets\[stage\]/);
   assert.match(app, /leagueStageDatasets\.groupStage/);
-  assert.match(html, /history\.pushState\(\{ leagueId \}, "", target\)/);
   assert.match(html, /CustomEvent\("fantasy:leaguechange"/);
   assert.doesNotMatch(html, /window\.location\.assign/);
+  assert.doesNotMatch(html, /searchParams\.set\("league"/);
+  assert.doesNotMatch(html, /localStorage\.(?:getItem|setItem)\([^\n]*league/i);
   assert.match(app, /leagueSelector:\s*"Tournament data"/);
 
   const catalogSource = fs.readFileSync(
@@ -190,6 +194,7 @@ test("selects from every generated league snapshot", () => {
   vm.runInNewContext(catalogSource, catalogSandbox);
   const catalog = JSON.parse(JSON.stringify(catalogSandbox.window.FANTASY_LEAGUES));
   assert.deepEqual(catalog, [
+    { leagueId: 19719, leagueName: "The International 2026" },
     { leagueId: 19785, leagueName: "Esports World Cup 2026" },
     { leagueId: 20009, leagueName: "1win Essence II" },
   ]);

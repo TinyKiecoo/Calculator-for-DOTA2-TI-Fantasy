@@ -90,6 +90,50 @@ class TitleDataTests(unittest.TestCase):
             download.assert_not_called()
             self.assertEqual(parse.call_args.args[0], cached)
 
+    def test_china_replay_clusters_use_the_opendota_domain_with_fallback(self) -> None:
+        china_url = (
+            "http://replay413.dota2.com.cn/570/8942993144_658679738.dem.bz2"
+        )
+        valve_url = (
+            "http://replay413.valve.net/570/8942993144_658679738.dem.bz2"
+        )
+        self.assertEqual(
+            replay_tools.replay_url_candidates(
+                8942993144,
+                413,
+                658679738,
+                valve_url,
+            ),
+            [china_url, valve_url],
+        )
+        self.assertEqual(
+            replay_tools.replay_url_candidates(42, 272, 123)[0],
+            "http://replay272.valve.net/570/42_123.dem.bz2",
+        )
+
+    def test_manifest_publishes_the_correct_regional_replay_url(self) -> None:
+        with patch.object(
+            replay_tools,
+            "request_json",
+            return_value={
+                "rows": [
+                    {
+                        "match_id": 8942993144,
+                        "cluster": 413,
+                        "replay_salt": 658679738,
+                    }
+                ]
+            },
+        ):
+            manifest = replay_tools.fetch_manifest(1, league_id=19719)
+
+        self.assertEqual(
+            manifest[0]["replayUrl"],
+            "http://replay413.dota2.com.cn/570/"
+            "8942993144_658679738.dem.bz2",
+        )
+        self.assertEqual(len(manifest[0]["replayUrls"]), 2)
+
     def test_build_records_a_replay_failure_and_continues(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -547,7 +591,7 @@ class TitleDataTests(unittest.TestCase):
         self.assertEqual(contexts[11], {"gameNumber": 1, "maxGames": 2})
         self.assertEqual(contexts[12], {"gameNumber": 2, "maxGames": 2})
 
-    def test_ti_series_must_be_complete_before_publication(self) -> None:
+    def test_ti_series_completion_is_classified_without_hiding_partial_data(self) -> None:
         def match(
             match_id: int,
             game_number: int,
@@ -599,6 +643,17 @@ class TitleDataTests(unittest.TestCase):
             build_league.is_complete_series(best_of_five[:4])
         )
         self.assertTrue(build_league.is_complete_series(best_of_five))
+
+        grouped = build_league.grouped_series(
+            [{"matchId": first["matchId"], "match": first}]
+        )
+        self.assertEqual(grouped, [[first]])
+        self.assertEqual(
+            build_league.completed_series(
+                [{"matchId": first["matchId"], "match": first}]
+            ),
+            [],
+        )
 
     def test_ti_stage_split_uses_the_long_inter_stage_break(self) -> None:
         def series(match_id: int, start_time: int) -> list[dict[str, object]]:
@@ -704,7 +759,7 @@ class TitleDataTests(unittest.TestCase):
                 ),
             ):
                 build_league.refresh_browser_data(
-                    checkpoints,
+                    checkpoints[:1],
                     args,
                     league_dir,
                     "The International 2026",
@@ -720,6 +775,33 @@ class TitleDataTests(unittest.TestCase):
                 self.assertEqual(
                     list(first_bundle["stages"]), ["groupStage"]
                 )
+                first_coverage = first_bundle["stages"]["groupStage"]["meta"][
+                    "coverage"
+                ]
+                self.assertEqual(first_coverage["matches"], 1)
+                self.assertEqual(first_coverage["completeSeries"], 0)
+                self.assertEqual(first_coverage["incompleteSeries"], 1)
+
+                build_league.refresh_browser_data(
+                    checkpoints,
+                    args,
+                    league_dir,
+                    "The International 2026",
+                )
+                completed_source = (league_dir / "data.js").read_text(
+                    encoding="utf-8"
+                )
+                completed_bundle = json.loads(
+                    completed_source.split(
+                        "window.FANTASY_STAGE_DATA=", 1
+                    )[1].split(";window.FANTASY_DATA=", 1)[0]
+                )
+                completed_coverage = completed_bundle["stages"]["groupStage"][
+                    "meta"
+                ]["coverage"]
+                self.assertEqual(completed_coverage["matches"], 2)
+                self.assertEqual(completed_coverage["completeSeries"], 1)
+                self.assertEqual(completed_coverage["incompleteSeries"], 0)
 
                 checkpoints.extend(
                     {"matchId": match["matchId"], "match": match}

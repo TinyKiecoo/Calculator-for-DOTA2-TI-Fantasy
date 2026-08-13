@@ -82,12 +82,19 @@ After every successful browser-data refresh, `data/leagues.js` is regenerated
 from all published league directories. The page uses that catalog to populate
 its tournament dropdown, so adding a league does not require editing
 `index.html`. Changing the dropdown loads only the selected league's `data.js`
-and recalculates the page in place without a full-page reload.
+and recalculates the page in place without a full-page reload. The tournament
+selection is session-only: it is not stored in `localStorage` or the URL, and a
+new page load always defaults to `The International 2026` when that dataset is
+available.
 Every completed match has its own `matches/<MATCH_ID>.json` checkpoint. A
 rerun validates and prints those saved player stats without downloading or
 parsing the replay again. Compressed and decompressed replay files are kept in
 `replays/<LEAGUE_ID>/`. An existing `.dem` is parsed directly; otherwise an
 existing `.dem.bz2` is decompressed, and only a missing replay is downloaded.
+Replay clusters 413, 415, and 417 use Valve's China-domain host
+`replay<CLUSTER>.dota2.com.cn`; other clusters normally use
+`replay<CLUSTER>.valve.net`. The builder follows this OpenDota mapping and keeps
+the other domain as a download fallback.
 Valve replay URLs may retain the `.bz2` suffix while serving either legacy
 bzip2 or newer Zstandard data; the builder detects the actual format from its
 file header. Zstandard replays use the Python `zstandard` package when present,
@@ -97,14 +104,15 @@ recorded in `errors.json`; the builder continues with all later matches. After
 each newly parsed replay, `data.js` is atomically rebuilt from every successful
 checkpoint available so far, allowing the site to publish partial live-event
 results while later replays are still processing. For leagues whose OpenDota
-name contains `The International 20xx`, only fully concluded series are
-published: BO3/BO5 series with a missing or unfinished map remain checkpointed
-but are omitted until the complete series is available. TI output is separated
-into `stages/group-stage/{full,summary}.json` and
+name contains `The International 20xx`, every successfully parsed map is
+published immediately. An unfinished BO2/BO3/BO5 is kept under the same series
+ID, so the page calculates its current score from the maps available so far and
+automatically incorporates later maps as their replays are parsed. TI output is
+separated into `stages/group-stage/{full,summary}.json` and
 `stages/playoffs/{full,summary}.json`; the root `data.js` exposes both stages to
-the page. Before playoff data exists, both page-stage buttons use the completed
-group-stage data. Once playoff data is available, each button uses its matching
-stage snapshot. A cached-only run refreshes the files once after all
+the page. Before playoff data exists, both page-stage buttons use the group-stage
+data available so far. Once playoff data is available, each button uses its
+matching stage snapshot. A cached-only run refreshes the files once after all
 checkpoints are loaded.
 
 ### Parse and preview one match locally

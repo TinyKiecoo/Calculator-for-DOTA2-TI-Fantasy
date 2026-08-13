@@ -253,6 +253,11 @@ a:focus-visible {
   font-size: .61rem;
 }
 
+.league-selector option {
+  color: #f6e8c9;
+  background-color: #18120c;
+}
+
 .league-selector select.is-the-international,
 .league-selector option.league-option--the-international {
   color: #211609;

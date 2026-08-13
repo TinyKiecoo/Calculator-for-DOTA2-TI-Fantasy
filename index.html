@@ -74,7 +74,7 @@
       document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260811-live-update-notice">
+  <link rel="stylesheet" href="styles.css?v=20260813-league-options">
 </head>
 <body>
   <aside class="correction-banner" id="correction-banner" role="status" hidden>
@@ -256,15 +256,14 @@
     const leagueIds = new Set(
       FANTASY_LEAGUES.map((league) => Number(league.leagueId)),
     );
-    const requestedLeagueId = Number(
-      new URLSearchParams(window.location.search).get("league"),
+    const DEFAULT_LEAGUE_NAME = "The International 2026";
+    const defaultLeague = FANTASY_LEAGUES.find(
+      (league) => String(league.leagueName).trim().toLocaleLowerCase() ===
+        DEFAULT_LEAGUE_NAME.toLocaleLowerCase(),
     );
-    const fallbackLeagueId = leagueIds.has(19785)
-      ? 19785
-      : Number(FANTASY_LEAGUES[0]?.leagueId);
-    const LEAGUE_ID = leagueIds.has(requestedLeagueId)
-      ? requestedLeagueId
-      : fallbackLeagueId;
+    const LEAGUE_ID = Number(
+      defaultLeague?.leagueId ?? FANTASY_LEAGUES[0]?.leagueId,
+    );
     window.FANTASY_LEAGUE_CONFIG = {
       leagueId: LEAGUE_ID,
       leagues: FANTASY_LEAGUES,
@@ -307,7 +306,7 @@
       }
     }
 
-    function loadLeagueData(leagueId, updateHistory = true) {
+    function loadLeagueData(leagueId) {
       if (!leagueIds.has(leagueId) || leagueId === activeLeagueId) return;
       const sequence = ++leagueLoadSequence;
       const previousDataset = window.FANTASY_DATA;
@@ -351,11 +350,6 @@
         setLeagueLoading(false);
         dataScript.remove();
 
-        if (updateHistory) {
-          const target = new URL(window.location.href);
-          target.searchParams.set("league", String(leagueId));
-          window.history.pushState({ leagueId }, "", target);
-        }
         window.dispatchEvent(new CustomEvent("fantasy:leaguechange", {
           detail: {
             dataset: nextDataset,
@@ -369,15 +363,6 @@
 
     leagueSelect.addEventListener("change", () => {
       loadLeagueData(Number(leagueSelect.value));
-    });
-    window.addEventListener("popstate", () => {
-      const requestedLeagueId = Number(
-        new URLSearchParams(window.location.search).get("league"),
-      );
-      const leagueId = leagueIds.has(requestedLeagueId)
-        ? requestedLeagueId
-        : fallbackLeagueId;
-      loadLeagueData(leagueId, false);
     });
 
     if (Number.isInteger(LEAGUE_ID)) {

@@ -59,6 +59,7 @@ STEAM_ID64_BASE = 76561197960265728
 CHUNK_SIZE = 1024 * 1024
 BZIP2_MAGIC = b"BZh"
 ZSTD_MAGIC = b"\x28\xb5\x2f\xfd"
+CHINA_REPLAY_CLUSTERS = {413, 415, 417}
 
 FANTASY_STAT_KEYS = (
     "kills",
@@ -859,6 +860,58 @@ def request_json(url: str, timeout: int) -> dict[str, Any]:
     return payload
 
 
+def replay_url_candidates(
+    match_id: int,
+    cluster: int,
+    replay_salt: int,
+    preferred_url: str | None = None,
+) -> list[str]:
+    """Build OpenDota-compatible replay URLs, with a regional fallback."""
+
+    filename = f"{int(match_id)}_{int(replay_salt)}.dem.bz2"
+    primary_domain = (
+        "dota2.com.cn"
+        if int(cluster) in CHINA_REPLAY_CLUSTERS
+        else "valve.net"
+    )
+    fallback_domain = (
+        "valve.net" if primary_domain == "dota2.com.cn" else "dota2.com.cn"
+    )
+    candidates = [
+        f"http://replay{int(cluster)}.{primary_domain}/570/{filename}",
+    ]
+    if isinstance(preferred_url, str) and preferred_url.strip():
+        candidates.append(preferred_url.strip())
+    candidates.append(
+        f"http://replay{int(cluster)}.{fallback_domain}/570/{filename}"
+    )
+    return list(dict.fromkeys(candidates))
+
+
+def replay_urls_from_manifest(item: dict[str, Any]) -> list[str]:
+    """Return regional replay candidates for new and legacy manifests."""
+
+    match_id = item.get("matchId")
+    cluster = item.get("cluster")
+    replay_salt = item.get("replaySalt")
+    if match_id is not None and cluster is not None and replay_salt is not None:
+        urls = replay_url_candidates(
+            int(match_id),
+            int(cluster),
+            int(replay_salt),
+            item.get("replayUrl"),
+        )
+    else:
+        urls = []
+        replay_url = item.get("replayUrl")
+        if isinstance(replay_url, str) and replay_url.strip():
+            urls.append(replay_url.strip())
+    for replay_url in item.get("replayUrls") or []:
+        if isinstance(replay_url, str) and replay_url.strip():
+            urls.append(replay_url.strip())
+    return list(dict.fromkeys(urls))
+
+
 def fetch_manifest(
     timeout: int,
     league_id: int = LEAGUE_ID,
@@ -906,15 +959,17 @@ def fetch_manifest(
             replay_salt = int(replay_salt_value)
 
         filename = f"{match_id}_{replay_salt}.dem.bz2"
-        if replay_url is None:
-            replay_url = f"http://replay{cluster}.valve.net/570/{filename}"
+        replay_urls = replay_url_candidates(
+            match_id, cluster, replay_salt, replay_url
+        )
         manifest.append(
             {
                 "matchId": match_id,
                 "cluster": cluster,
                 "replaySalt": replay_salt,
                 "filename": filename,
-                "replayUrl": replay_url,
+                "replayUrl": replay_urls[0],
+                "replayUrls": replay_urls,
             }
         )
 
@@ -1131,7 +1186,7 @@ def download_replay(
             raise RuntimeError(f"Missing cached replay: {compressed}")
     else:
         download_file(
-            [item["replayUrl"]],
+            replay_urls_from_manifest(item),
             compressed,
             args.timeout,
             args.retries,

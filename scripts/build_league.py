@@ -31,7 +31,7 @@ import replay_tools
 
 # Default event configuration. --league-id overrides this value without
 # requiring a source edit. The league name is always fetched from OpenDota.
-LEAGUE_ID = 20009
+LEAGUE_ID = 19719
 
 APP_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_DATA_ROOT = APP_ROOT / "data"
@@ -832,10 +832,10 @@ def is_complete_series(series_matches: list[dict[str, Any]]) -> bool:
     return False
 
 
-def completed_series(
+def grouped_series(
     checkpoints: list[dict[str, Any]],
 ) -> list[list[dict[str, Any]]]:
-    """Return only fully present, concluded series in chronological order."""
+    """Return every replay-backed series in chronological order."""
 
     assign_series_ids(checkpoints)
     grouped: dict[int, list[dict[str, Any]]] = {}
@@ -851,7 +851,6 @@ def completed_series(
             key=lambda match: (int(match["startTime"]), int(match["matchId"])),
         )
         for matches in grouped.values()
-        if is_complete_series(matches)
     ]
     result.sort(
         key=lambda matches: (
@@ -860,6 +859,18 @@ def completed_series(
         )
     )
     return result
+
+
+def completed_series(
+    checkpoints: list[dict[str, Any]],
+) -> list[list[dict[str, Any]]]:
+    """Return only fully present, concluded series in chronological order."""
+
+    return [
+        matches
+        for matches in grouped_series(checkpoints)
+        if is_complete_series(matches)
+    ]
 
 
 def series_end_time(series_matches: list[dict[str, Any]]) -> int:
@@ -873,17 +884,17 @@ def series_end_time(series_matches: list[dict[str, Any]]) -> int:
 
 
 def split_ti_stages(
-    complete: list[list[dict[str, Any]]],
+    series_groups: list[list[dict[str, Any]]],
 ) -> dict[str, list[list[dict[str, Any]]]]:
-    """Split completed TI series at the long break before the playoffs."""
+    """Split replay-backed TI series at the long break before the playoffs."""
 
-    stages = {"groupStage": complete, "international": []}
-    if len(complete) < 2:
+    stages = {"groupStage": series_groups, "international": []}
+    if len(series_groups) < 2:
         return stages
     qualifying_gaps: list[tuple[int, int]] = []
-    for index in range(1, len(complete)):
-        gap = int(complete[index][0]["startTime"]) - series_end_time(
-            complete[index - 1]
+    for index in range(1, len(series_groups)):
+        gap = int(series_groups[index][0]["startTime"]) - series_end_time(
+            series_groups[index - 1]
         )
         if gap >= TI_STAGE_BREAK_MIN_SECONDS:
             qualifying_gaps.append((gap, index))
@@ -891,8 +902,8 @@ def split_ti_stages(
         return stages
     _, split_index = max(qualifying_gaps)
     return {
-        "groupStage": complete[:split_index],
-        "international": complete[split_index:],
+        "groupStage": series_groups[:split_index],
+        "international": series_groups[split_index:],
     }
 
 
@@ -933,7 +944,8 @@ def echo_match(match: dict[str, Any], status: str) -> None:
 def parse_downloaded_match(
     item: dict[str, Any], args: argparse.Namespace, java_runtime: tuple[str, str]
 ) -> dict[str, Any]:
-    if not item.get("replayUrl"):
+    replay_urls = replay_tools.replay_urls_from_manifest(item)
+    if not replay_urls:
         raise RuntimeError(f"Match {item['matchId']} has no replay URL")
 
     cache_dir = args.replay_cache.resolve() / str(args.league_id)
@@ -950,7 +962,7 @@ def parse_downloaded_match(
             print(f"Using cached download: {compressed}")
         else:
             replay_tools.download_file(
-                [item["replayUrl"]],
+                replay_urls,
                 compressed,
                 args.timeout,
                 args.retries,
@@ -1005,22 +1017,28 @@ def refresh_browser_data(
         refresh_league_catalog(league_dir.parent, args.league_id, league_name)
         return dataset, summary
 
-    complete = completed_series(checkpoints)
-    if not complete:
+    series_groups = grouped_series(checkpoints)
+    if not series_groups:
         print(
-            "No completed TI series is available yet; browser data was not "
+            "No replay-backed TI series is available yet; browser data was not "
             "refreshed."
         )
         return None, None
 
-    series_by_stage = split_ti_stages(complete)
+    series_by_stage = split_ti_stages(series_groups)
     stage_outputs: dict[str, tuple[dict[str, Any], dict[str, Any]]] = {}
-    for stage, series_groups in series_by_stage.items():
-        if not series_groups:
+    for stage, stage_series in series_by_stage.items():
+        if not stage_series:
             continue
-        dataset = assemble(flatten_series(series_groups))
+        dataset = assemble(flatten_series(stage_series))
         dataset["meta"]["eventStage"] = stage
-        dataset["meta"]["coverage"]["completeSeries"] = len(series_groups)
+        complete_series_count = sum(
+            is_complete_series(matches) for matches in stage_series
+        )
+        dataset["meta"]["coverage"]["completeSeries"] = complete_series_count
+        dataset["meta"]["coverage"]["incompleteSeries"] = (
+            len(stage_series) - complete_series_count
+        )
         summary = league_data.build_summary(dataset, "full.json")
         stage_outputs[stage] = (dataset, summary)
 
@@ -1211,6 +1229,7 @@ def build(args: argparse.Namespace) -> None:
                 "parsedCheckpoints": len(checkpoints),
                 "publishedMatches": 0,
                 "completeSeries": 0,
+                "incompleteSeries": 0,
             },
             "files": {
                 "manifest": "manifest.json",
@@ -1221,7 +1240,7 @@ def build(args: argparse.Namespace) -> None:
         replay_tools.atomic_write_json(league_dir / "league.json", league_info)
         print(
             f"\n{league_name}: {len(checkpoints)} replay checkpoint(s) are "
-            "available, but no complete series can be published yet."
+            "available, but no replay-backed series can be published yet."
         )
         return
 

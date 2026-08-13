@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 9,
+  "leagueId": 19719,
+  "leagueName": "The International 2026",
+  "isTheInternational": true,
+  "generatedAt": "2026-08-13T05:48:59.588202Z",
+  "replayCache": "D:\\Program Files\\Document\\fantasy\\my_fantasy\\replays\\19719",
+  "coverage": {
+    "parsedCheckpoints": 7,
+    "publishedMatches": 7,
+    "stages": {
+      "groupStage": {
+        "matches": 7,
+        "parsedMatches": 7,
+        "playerGameRows": 70,
+        "teams": 8,
+        "players": 40,
+        "allMatchesHaveTenPlayers": true,
+        "completeSeries": 2,
+        "incompleteSeries": 2
+      }
+    }
+  },
+  "files": {
+    "manifest": "manifest.json",
+    "matches": "matches/<MATCH_ID>.json",
+    "errors": "errors.json",
+    "full": "full.json",
+    "summary": "summary.json",
+    "browser": "data.js",
+    "stages": {
+      "groupStage": {
+        "full": "stages/group-stage/full.json",
+        "summary": "stages/group-stage/summary.json"
+      }
+    }
+  }
+}
