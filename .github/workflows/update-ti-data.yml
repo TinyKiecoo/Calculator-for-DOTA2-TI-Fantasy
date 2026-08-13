@@ -1,6 +1,9 @@
 name: Update TI 2026 live data
 
 on:
+  push:
+    branches:
+      - main
   schedule:
     # GitHub cron uses UTC. These are 10:30-22:00 in Asia/Shanghai (UTC+8),
     # every 15 minutes, on August 13-16. The year is checked in the first step.
@@ -28,7 +31,9 @@ jobs:
         env:
           EVENT_NAME: ${{ github.event_name }}
         run: |
-          if [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+          if [[ "$EVENT_NAME" == "push" ]]; then
+            active=false
+          elif [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             active=true
           else
             active="$(python -c 'from datetime import datetime; from zoneinfo import ZoneInfo; now = datetime.now(ZoneInfo("Asia/Shanghai")); print("true" if now.year == 2026 and now.month == 8 and 13 <= now.day <= 16 else "false")')"
@@ -36,7 +41,7 @@ jobs:
           echo "active=$active" >> "$GITHUB_OUTPUT"
 
       - name: Check out the repository
-        if: steps.window.outputs.active == 'true'
+        if: steps.window.outputs.active == 'true' || github.event_name == 'push'
         uses: actions/checkout@v6
         with:
           ref: main
@@ -96,14 +101,14 @@ jobs:
           git push
 
       - name: Decide whether to deploy
-        if: steps.window.outputs.active == 'true'
+        if: always()
         id: result
         shell: bash
         env:
           EVENT_NAME: ${{ github.event_name }}
           DATA_CHANGED: ${{ steps.build.outputs.changed }}
         run: |
-          if [[ "$DATA_CHANGED" == "true" || "$EVENT_NAME" == "workflow_dispatch" ]]; then
+          if [[ "$EVENT_NAME" == "push" || "$EVENT_NAME" == "workflow_dispatch" || "$DATA_CHANGED" == "true" ]]; then
             should_deploy=true
           else
             should_deploy=false

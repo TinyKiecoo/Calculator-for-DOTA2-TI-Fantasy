@@ -218,7 +218,10 @@ after at least one match checkpoint was added or repaired; replay-download
 failures and checks with no new match do not create timestamp-only commits.
 After a real update, the same workflow deploys the resulting revision to
 GitHub Pages. A manual run also deploys the current revision, which is useful
-for the first setup.
+for the first setup. Every manual push to `main` also deploys the pushed site
+without running the replay downloader. Automated live-data commits are deployed
+by the schedule run that creates them; GitHub deliberately does not start a
+second workflow from a commit pushed with the workflow's `GITHUB_TOKEN`.
 
 Before the first run, open the repository's **Settings → Pages** and set
 **Source** to **GitHub Actions**. The workflow grants its temporary
