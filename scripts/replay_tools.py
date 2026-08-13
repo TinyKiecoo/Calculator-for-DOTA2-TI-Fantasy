@@ -945,14 +945,20 @@ def fetch_manifest(
             )
             candidate = match_payload.get("replay_url")
             if not isinstance(candidate, str):
-                raise RuntimeError(
-                    f"OpenDota has no replay URL for match {match_id}"
+                print(
+                    f"OpenDota 尚未提供比赛 {match_id} 的录像链接；"
+                    "本轮跳过，稍后重试。",
+                    file=sys.stderr,
                 )
+                continue
             url_match = re.search(r"/(\d+)_(\d+)\.dem\.bz2(?:\?|$)", candidate)
             if not url_match or int(url_match.group(1)) != match_id:
-                raise RuntimeError(
-                    f"Unexpected replay URL for match {match_id}: {candidate}"
+                print(
+                    f"OpenDota 返回的比赛 {match_id} 录像链接暂不可用："
+                    f"{candidate}；本轮跳过，稍后重试。",
+                    file=sys.stderr,
                 )
+                continue
             replay_salt = int(url_match.group(2))
             replay_url = candidate
         else:

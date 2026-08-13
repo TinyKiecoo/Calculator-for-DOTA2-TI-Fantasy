@@ -297,11 +297,21 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Reparse even valid current-schema match checkpoints",
     )
+    parser.add_argument(
+        "--update-only",
+        action="store_true",
+        help=(
+            "Exit without rewriting generated files when every manifest match "
+            "already has a valid checkpoint; otherwise process only pending matches"
+        ),
+    )
     args = parser.parse_args()
     if args.league_id < 1:
         parser.error("--league-id must be positive")
     if args.match_id and any(match_id < 1 for match_id in args.match_id):
         parser.error("--match-id must be positive")
+    if args.update_only and (args.force or args.match_id):
+        parser.error("--update-only cannot be combined with --force or --match-id")
     return args
 
 
@@ -707,6 +717,23 @@ def validate_checkpoint(
     return match
 
 
+def pending_checkpoint_match_ids(
+    manifest: list[dict[str, Any]], matches_dir: Path, league_id: int
+) -> set[int]:
+    """Return manifest matches that are missing or have an invalid checkpoint."""
+
+    pending: set[int] = set()
+    for item in manifest:
+        match_id = int(item["matchId"])
+        checkpoint_path = matches_dir / f"{match_id}.json"
+        try:
+            checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+            validate_checkpoint(checkpoint, league_id, match_id)
+        except (OSError, RuntimeError, TypeError, ValueError, json.JSONDecodeError):
+            pending.add(match_id)
+    return pending
+
+
 def has_damaged_player_name(name: Any) -> bool:
     text = str(name or "")
     return "?" in text or "�" in text
@@ -1109,15 +1136,32 @@ def build(args: argparse.Namespace) -> None:
     manifest = replay_tools.fetch_manifest(
         args.timeout, args.league_id, args.expected_matches
     )
-    replay_tools.atomic_write_json(league_dir / "manifest.json", manifest)
     selected_match_ids = select_manifest_matches(
         manifest, getattr(args, "match_id", None), args.league_id
     )
-    if selected_match_ids is not None:
-        print(
-            f"单场模式：将下载/解析 {len(selected_match_ids)} 场指定比赛；"
-            "已有的有效检查点仍会用于生成网页数据。"
+    update_only = bool(getattr(args, "update_only", False))
+    if update_only:
+        selected_match_ids = pending_checkpoint_match_ids(
+            manifest, matches_dir, args.league_id
         )
+        if not selected_match_ids:
+            print(
+                f"增量更新：{league_name} 当前没有新增或失效的录像检查点；"
+                "不改写任何生成文件。"
+            )
+            return
+        print(
+            f"增量更新：发现 {len(selected_match_ids)} 场待处理比赛；"
+            "其余有效检查点将直接复用。"
+        )
+
+    replay_tools.atomic_write_json(league_dir / "manifest.json", manifest)
+    if selected_match_ids is not None:
+        if not update_only:
+            print(
+                f"单场模式：将下载/解析 {len(selected_match_ids)} 场指定比赛；"
+                "已有的有效检查点仍会用于生成网页数据。"
+            )
 
     checkpoints: list[dict[str, Any]] = []
     errors: list[dict[str, Any]] = []
@@ -1141,7 +1185,9 @@ def build(args: argparse.Namespace) -> None:
             selected_match_ids is None or match_id in selected_match_ids
         )
         checkpoint_path = matches_dir / f"{match_id}.json"
-        if checkpoint_path.exists() and (not args.force or not is_selected):
+        if checkpoint_path.exists() and not (
+            is_selected and (args.force or update_only)
+        ):
             checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
             repaired_name = repair_legacy_player_names(
                 checkpoint, known_player_names
@@ -1222,9 +1268,7 @@ def build(args: argparse.Namespace) -> None:
             "leagueName": league_name,
             "isTheInternational": True,
             "generatedAt": utc_now(),
-            "replayCache": str(
-                args.replay_cache.resolve() / str(args.league_id)
-            ),
+            "replayCache": f"replays/{args.league_id}",
             "coverage": {
                 "parsedCheckpoints": len(checkpoints),
                 "publishedMatches": 0,
@@ -1289,9 +1333,7 @@ def build(args: argparse.Namespace) -> None:
         "leagueName": league_name,
         "isTheInternational": is_ti,
         "generatedAt": utc_now(),
-        "replayCache": str(
-            args.replay_cache.resolve() / str(args.league_id)
-        ),
+        "replayCache": f"replays/{args.league_id}",
         "coverage": coverage,
         "files": files,
     }

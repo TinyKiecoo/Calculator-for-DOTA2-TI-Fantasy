@@ -13,6 +13,22 @@ const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
 const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
 const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
 const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
+const updateWorkflow = fs.readFileSync(
+  path.join(root, ".github", "workflows", "update-ti-data.yml"),
+  "utf8",
+);
+
+test("schedules guarded TI live updates and deploys Pages in the same workflow", () => {
+  assert.match(updateWorkflow, /cron: "30,45 2 13-16 8 \*"/);
+  assert.match(updateWorkflow, /cron: "0,15,30,45 3-13 13-16 8 \*"/);
+  assert.match(updateWorkflow, /cron: "0 14 13-16 8 \*"/);
+  assert.match(updateWorkflow, /now\.year == 2026/);
+  assert.match(updateWorkflow, /--league-id 19719[\s\\]+--update-only/);
+  assert.match(updateWorkflow, /git status --porcelain -- data\/19719\/matches/);
+  assert.match(updateWorkflow, /actions\/upload-pages-artifact@v5/);
+  assert.match(updateWorkflow, /actions\/deploy-pages@v5/);
+  assert.match(updateWorkflow, /cancel-in-progress: false/);
+});
 
 test("publishes crawl and discovery metadata for the canonical site", () => {
   assert.match(robots, /^User-agent: \*\r?\nAllow: \/$/m);
@@ -490,7 +506,11 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     target: new FakeStageButton("groupStage"),
   });
   assert.equal(element("modal-backdrop").hidden, true);
-  assert.equal(element("correction-banner").hidden, true);
+  assert.equal(
+    element("correction-banner").hidden,
+    false,
+    "the currently enabled live-update notice should remain visible",
+  );
   const saved = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
   assert.equal(saved.version, 3);
   assert.equal(saved.multiplierMode, "manual");
@@ -530,9 +550,9 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.equal(
     storage.has("ti-fantasy-live-update-notice-v1"),
     false,
-    "the disabled notice must not write a dismissal record",
+    "showing the notice must not write a dismissal record",
   );
-  assert.match(app, /const SHOW_TI_LIVE_UPDATE_NOTICE = false;/);
+  assert.match(app, /const SHOW_TI_LIVE_UPDATE_NOTICE = true;/);
   listeners.get("live-update-notice-open:click")();
   assert.equal(element("modal-backdrop").hidden, false);
   assert.equal(
@@ -546,7 +566,7 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   assert.match(notice, /好友代码 891593807/);
   assert.match(notice, /ngabbs\.com\/read\.php\?tid=47289904/);
   assert.match(notice, /xiaoheihe\.cn\/app\/bbs\/link\/187051484/);
-  assert.match(notice, /客户端数据更新可能有一定延迟/);
+  assert.match(notice, /本站数据更新可能有一定延迟/);
   assert.doesNotMatch(app, /SCORING_CHANGES|scoringChangesMarkup|tormentorCorrectionBody/);
   assert.doesNotMatch(css, /score-change-table|score-change-row/);
 

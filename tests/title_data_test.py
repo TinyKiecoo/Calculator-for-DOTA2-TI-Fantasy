@@ -134,6 +134,91 @@ class TitleDataTests(unittest.TestCase):
         )
         self.assertEqual(len(manifest[0]["replayUrls"]), 2)
 
+    def test_manifest_skips_replays_that_opendota_has_not_published_yet(self) -> None:
+        responses = [
+            {
+                "rows": [
+                    {"match_id": 1, "cluster": 413, "replay_salt": None},
+                    {"match_id": 2, "cluster": 272, "replay_salt": 123},
+                ]
+            },
+            {"match_id": 1, "replay_url": None},
+        ]
+        with (
+            patch.object(replay_tools, "request_json", side_effect=responses),
+            patch.object(replay_tools.sys, "stderr", io.StringIO()) as stderr,
+        ):
+            manifest = replay_tools.fetch_manifest(1, league_id=19719)
+
+        self.assertEqual([item["matchId"] for item in manifest], [2])
+        self.assertIn("稍后重试", stderr.getvalue())
+
+    def test_update_only_exits_without_rewriting_current_data(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            league_dir = root / "data" / "19719"
+            matches_dir = league_dir / "matches"
+            matches_dir.mkdir(parents=True)
+            manifest_path = league_dir / "manifest.json"
+            manifest_path.write_text("keep this file unchanged\n", encoding="utf-8")
+            args = SimpleNamespace(
+                data_root=root / "data",
+                league_id=19719,
+                match_id=None,
+                expected_matches=None,
+                timeout=1,
+                replay_cache=root / "replays",
+                force=False,
+                update_only=True,
+                tool_cache=root / "tools",
+                retries=1,
+                allow_missing_replay_fields=False,
+                parse_timeout=1,
+            )
+            manifest = [{"matchId": 1}]
+            with (
+                patch.object(
+                    build_league,
+                    "fetch_league_name",
+                    return_value="The International 2026",
+                ),
+                patch.object(replay_tools, "fetch_manifest", return_value=manifest),
+                patch.object(
+                    build_league,
+                    "pending_checkpoint_match_ids",
+                    return_value=set(),
+                ),
+                patch.object(replay_tools, "atomic_write_json") as write_json,
+                patch.object(build_league.sys, "stdout", io.StringIO()),
+            ):
+                build_league.build(args)
+
+            write_json.assert_not_called()
+            self.assertEqual(
+                manifest_path.read_text(encoding="utf-8"),
+                "keep this file unchanged\n",
+            )
+
+    def test_update_only_detects_missing_and_invalid_checkpoints(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            matches_dir = Path(temporary)
+            (matches_dir / "1.json").write_text("{}", encoding="utf-8")
+            (matches_dir / "2.json").write_text("not json", encoding="utf-8")
+            manifest = [{"matchId": 1}, {"matchId": 2}, {"matchId": 3}]
+
+            with patch.object(
+                build_league,
+                "validate_checkpoint",
+                side_effect=lambda _checkpoint, _league_id, match_id: (
+                    {} if match_id == 1 else (_ for _ in ()).throw(RuntimeError())
+                ),
+            ):
+                pending = build_league.pending_checkpoint_match_ids(
+                    manifest, matches_dir, 19719
+                )
+
+            self.assertEqual(pending, {2, 3})
+
     def test_build_records_a_replay_failure_and_continues(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

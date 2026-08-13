@@ -77,6 +77,8 @@ discovery, parsing, or scoring, so that configuration has been removed.
 OpenDota is otherwise used only to discover the league's Valve replay links.
 Player statistics, identities, teams, internal match ID, timestamps, match
 result and duration all come from the downloaded replay.
+If a newly listed match does not have a replay URL yet, that match is skipped
+for the current run and retried by the next incremental update.
 The output is stored under `data/<LEAGUE_ID>/`.
 After every successful browser-data refresh, `data/leagues.js` is regenerated
 from all published league directories. The page uses that catalog to populate
@@ -128,6 +130,17 @@ The requested match must belong to that league's OpenDota manifest. The
 builder downloads/parses only the requested match, but also includes any valid
 checkpoints already present under `data/<LEAGUE_ID>/matches/` when rebuilding
 the browser data. Add `--force` to reparse an existing selected checkpoint.
+
+For unattended incremental updates, add `--update-only`. The builder first
+compares the current OpenDota manifest with the saved, validated checkpoints.
+If nothing is pending, it exits without rewriting `manifest.json`, timestamps,
+summaries, or browser data. Otherwise it downloads/parses only missing or
+invalid checkpoints and rebuilds the published dataset from those plus all
+existing valid checkpoints:
+
+```powershell
+python scripts/build_league.py --league-id 19719 --update-only
+```
 
 Serve the repository directory locally:
 
@@ -190,6 +203,29 @@ players still use replay-only inference. `EXCLUDED_TEAM_NAMES` globally removes
 teams from selection and rankings without removing their opponents' scores.
 Checkpoints made with schema 7 or older are
 automatically treated as stale and reparsed on the next build.
+
+## Automated TI 2026 Live Updates
+
+`.github/workflows/update-ti-data.yml` runs from **August 13 through August 16,
+2026**, every 15 minutes from **10:30 through 22:00 (UTC+8)**. GitHub cron is
+defined in UTC and cannot express a year, so the workflow also checks the local
+Shanghai date before doing any work. It can be run at any time from the
+repository's **Actions** tab with **Run workflow**.
+
+The job uses `--update-only`, caches the Clarity parser dependencies, and
+serializes runs so two replay parsers cannot overlap. It creates a commit only
+after at least one match checkpoint was added or repaired; replay-download
+failures and checks with no new match do not create timestamp-only commits.
+After a real update, the same workflow deploys the resulting revision to
+GitHub Pages. A manual run also deploys the current revision, which is useful
+for the first setup.
+
+Before the first run, open the repository's **Settings → Pages** and set
+**Source** to **GitHub Actions**. The workflow grants its temporary
+`GITHUB_TOKEN` only the repository and Pages permissions needed by each job.
+No personal access token or stored OpenDota secret is required. If `main` has a
+branch rule that forbids Actions from pushing, that rule must separately allow
+the workflow's live-data commits.
 
 Every generated league appears automatically in the tournament dropdown. Its
 name is resolved from OpenDota and stored both in the league dataset and the
