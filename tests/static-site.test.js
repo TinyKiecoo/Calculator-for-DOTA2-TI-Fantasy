@@ -11,12 +11,38 @@ const root = path.resolve(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const css = fs.readFileSync(path.join(root, "styles.css"), "utf8");
 const app = fs.readFileSync(path.join(root, "app.js"), "utf8");
+const heroIdsText = fs.readFileSync(path.join(root, "heroids.txt"), "utf8");
 const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
 const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
 const updateWorkflow = fs.readFileSync(
   path.join(root, ".github", "workflows", "update-ti-data.yml"),
   "utf8",
 );
+
+test("keeps website prefix hero lists synchronized with heroids.txt", () => {
+  const parsedLists = Object.fromEntries(
+    heroIdsText.trim().split(/\r?\n/).map((line) => {
+      const [name, values] = line.split(":", 2);
+      return [name, values.split(",").map((value) => Number(value.trim()))];
+    }),
+  );
+  const prefixNames = {
+    Crimson: "crimson",
+    Cerulean: "azure",
+    Emerald: "emerald",
+    Royal: "purple",
+    Golden: "golden",
+    Elemental: "elemental",
+    Otherworldly: "otherworldly",
+    Heroic: "heroic",
+  };
+
+  for (const [sourceName, prefixName] of Object.entries(prefixNames)) {
+    assert.deepEqual(engine.prefixTitles[prefixName].heroIds, parsedLists[sourceName]);
+  }
+  assert.equal(engine.prefixTitles.otherworldly.heroIds.includes(109), true);
+  assert.equal(engine.prefixTitles.otherworldly.heroIds.includes(96), false);
+});
 
 test("schedules guarded TI live updates and deploys Pages in the same workflow", () => {
   assert.match(updateWorkflow, /cron: "30,45 2 13-16 8 \*"/);
