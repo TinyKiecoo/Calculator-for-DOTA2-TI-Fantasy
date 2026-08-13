@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: "7,19,31,43,55 2-13 13-16,20-23 8 *"
+    - cron: "7,17,27,37,47,57 2-13 13-16,20-23 8 *"
   workflow_dispatch:
 
 concurrency:
@@ -15,7 +15,7 @@ concurrency:
 jobs:
   update:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     permissions:
       contents: write
     outputs:
