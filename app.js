@@ -147,7 +147,7 @@
       scoringMethodBodyBestSeries: "“最高系列赛”采用的规则与客户端完全一致。每个定位的最终积分来自一个系列赛中积分最高的两场比赛。如果一个定位在一个结算期内参与了多个系列赛，那么会采用得分最高的系列赛。",
       scoringMethodBodyAllMatchAverage: "“全部比赛平均 ×2”对全结算期所有有效比赛的得分取平均并 ×2。",
       dataSources: "数据来源",
-      dataSourcesBody: "当前所选赛事的全部比赛信息与梦幻统计均直接读取 Valve 比赛录像。",
+      dataSourcesBody: "全部比赛信息与梦幻统计均直接读取 Valve 比赛录像。",
       disclaimerTitle: "免责声明",
       disclaimerProject: "这是一个免费、开源、非商业的玩家项目，与 Valve、Steam 或 Dota 2 官方无关联。计算结果可能不准确，数据仅供参考。",
       disclaimerAssets: "本项目使用了 Dota 2 / Valve 相关图片、字体、名称和界面素材。这些素材仍归 Valve 及相应权利方所有；本项目的开源许可证不授予这些素材的使用权。",
@@ -291,7 +291,7 @@
       scoringMethodBodyBestSeries: "Best Series use the same rule as the client. The top two scoring games within a series are used to get the role's final score for the match. If a role participates in more than one series in a period, the best scoring series will be used.",
       scoringMethodBodyAllMatchAverage: "All-Match Average ×2 averages every valid match in the full scoring period and doubles it.",
       dataSources: "Data Sources",
-      dataSourcesBody: "All match information and Fantasy statistics for the selected tournament are read directly from Valve replays.",
+      dataSourcesBody: "All match information and Fantasy statistics are read directly from Valve replays.",
       disclaimerTitle: "Disclaimer",
       disclaimerProject: "This is a free, open-source, non-commercial fan project and is not affiliated with Valve, Steam, or Dota 2. Results may be inaccurate and are for reference only.",
       disclaimerAssets: "It uses Dota 2 / Valve-derived images, fonts, names, and UI materials. Those materials remain the property of Valve and their respective rights holders; this project's open-source license does not grant rights to them.",
@@ -862,11 +862,17 @@
     if (!value) return text("localSnapshot");
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) return value;
-    return new Intl.DateTimeFormat(copy().locale, {
+    const formatted = new Intl.DateTimeFormat(copy().locale, {
       year: "numeric",
       month: "2-digit",
       day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23",
+      timeZone: "Asia/Shanghai",
     }).format(date);
+    return `${formatted} UTC+8`;
   }
 
   function signedPercent(value) {
