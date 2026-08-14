@@ -1,9 +1,9 @@
 {
-  "schemaVersion": 9,
+  "schemaVersion": 10,
   "leagueId": 19719,
   "leagueName": "The International 2026",
   "isTheInternational": true,
-  "generatedAt": "2026-08-13T14:48:31.204141Z",
+  "generatedAt": "2026-08-14T02:17:27.201558Z",
   "replayCache": "replays/19719",
   "coverage": {
     "parsedCheckpoints": 29,
@@ -25,6 +25,7 @@
     "manifest": "manifest.json",
     "matches": "matches/<MATCH_ID>.json",
     "errors": "errors.json",
+    "gpmChanges": "gpm_changes.json",
     "full": "full.json",
     "summary": "summary.json",
     "browser": "data.js",

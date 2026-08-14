@@ -1,9 +1,9 @@
 {
   "meta": {
-    "schemaVersion": 9,
+    "schemaVersion": 10,
     "leagueId": 19719,
     "leagueName": "The International 2026",
-    "generatedAt": "2026-08-13T14:48:31.091367Z",
+    "generatedAt": "2026-08-14T02:17:26.995417Z",
     "eventStartUtc": "2026-08-13T03:24:05Z",
     "eventEndUtc": "2026-08-13T14:46:48Z",
     "sources": {
@@ -168,7 +168,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 569.5,
-            "averageGpm": 710.1892345543199,
+            "averageGpm": 709.5832367431069,
             "farmRankAscending": 3,
             "manualOverride": "core"
           },
@@ -177,7 +177,7 @@
             "kills": 17,
             "deaths": 11,
             "creep_score": 1139,
-            "gpm": 1420.3784691086398,
+            "gpm": 1419.1664734862138,
             "madstones_collected": 131,
             "towers_destroyed": 4,
             "observer_wards_placed": 1,
@@ -197,7 +197,7 @@
             "kills": 8.5,
             "deaths": 5.5,
             "creep_score": 569.5,
-            "gpm": 710.1892345543199,
+            "gpm": 709.5832367431069,
             "madstones_collected": 65.5,
             "towers_destroyed": 2,
             "observer_wards_placed": 0.5,
@@ -447,7 +447,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 368.6,
-            "averageGpm": 560.7009254981225,
+            "averageGpm": 560.419256569075,
             "farmRankAscending": 3,
             "manualOverride": "core"
           },
@@ -456,7 +456,7 @@
             "kills": 31,
             "deaths": 22,
             "creep_score": 1843,
-            "gpm": 2803.5046274906126,
+            "gpm": 2802.096282845375,
             "madstones_collected": 225,
             "towers_destroyed": 3,
             "observer_wards_placed": 0,
@@ -476,7 +476,7 @@
             "kills": 6.2,
             "deaths": 4.4,
             "creep_score": 368.6,
-            "gpm": 560.7009254981225,
+            "gpm": 560.419256569075,
             "madstones_collected": 45,
             "towers_destroyed": 0.6,
             "observer_wards_placed": 0,
@@ -553,7 +553,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 54.6,
-            "averageGpm": 320.5516195014596,
+            "averageGpm": 320.0328052779335,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -562,7 +562,7 @@
             "kills": 9,
             "deaths": 31,
             "creep_score": 273,
-            "gpm": 1602.7580975072979,
+            "gpm": 1600.1640263896675,
             "madstones_collected": 18,
             "towers_destroyed": 0,
             "observer_wards_placed": 83,
@@ -582,7 +582,7 @@
             "kills": 1.8,
             "deaths": 6.2,
             "creep_score": 54.6,
-            "gpm": 320.5516195014596,
+            "gpm": 320.0328052779335,
             "madstones_collected": 3.6,
             "towers_destroyed": 0,
             "observer_wards_placed": 16.6,
@@ -606,7 +606,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 91.8,
-            "averageGpm": 338.617444120728,
+            "averageGpm": 338.1376013028701,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
@@ -615,7 +615,7 @@
             "kills": 14,
             "deaths": 28,
             "creep_score": 459,
-            "gpm": 1693.08722060364,
+            "gpm": 1690.6880065143505,
             "madstones_collected": 36,
             "towers_destroyed": 4,
             "observer_wards_placed": 25,
@@ -635,7 +635,7 @@
             "kills": 2.8,
             "deaths": 5.6,
             "creep_score": 91.8,
-            "gpm": 338.617444120728,
+            "gpm": 338.1376013028701,
             "madstones_collected": 7.2,
             "towers_destroyed": 0.8,
             "observer_wards_placed": 5,
@@ -952,7 +952,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 345.5,
-            "averageGpm": 491.1558439972706,
+            "averageGpm": 489.8704711561087,
             "farmRankAscending": 4,
             "manualOverride": "core"
           },
@@ -961,7 +961,7 @@
             "kills": 3,
             "deaths": 10,
             "creep_score": 691,
-            "gpm": 982.3116879945412,
+            "gpm": 979.7409423122174,
             "madstones_collected": 78,
             "towers_destroyed": 3,
             "observer_wards_placed": 2,
@@ -981,7 +981,7 @@
             "kills": 1.5,
             "deaths": 5,
             "creep_score": 345.5,
-            "gpm": 491.1558439972706,
+            "gpm": 489.8704711561087,
             "madstones_collected": 39,
             "towers_destroyed": 1.5,
             "observer_wards_placed": 1,
@@ -1058,7 +1058,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 283,
-            "averageGpm": 473.5730412122924,
+            "averageGpm": 472.82058260741405,
             "farmRankAscending": 3,
             "manualOverride": "mid"
           },
@@ -1067,7 +1067,7 @@
             "kills": 8,
             "deaths": 9,
             "creep_score": 566,
-            "gpm": 947.1460824245848,
+            "gpm": 945.6411652148281,
             "madstones_collected": 49,
             "towers_destroyed": 0,
             "observer_wards_placed": 3,
@@ -1087,7 +1087,7 @@
             "kills": 4,
             "deaths": 4.5,
             "creep_score": 283,
-            "gpm": 473.5730412122924,
+            "gpm": 472.82058260741405,
             "madstones_collected": 24.5,
             "towers_destroyed": 0,
             "observer_wards_placed": 1.5,
@@ -1111,7 +1111,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 87,
-            "averageGpm": 257.07133059195047,
+            "averageGpm": 256.31887198707204,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
@@ -1120,7 +1120,7 @@
             "kills": 2,
             "deaths": 13,
             "creep_score": 174,
-            "gpm": 514.1426611839009,
+            "gpm": 512.6377439741441,
             "madstones_collected": 6,
             "towers_destroyed": 0,
             "observer_wards_placed": 21,
@@ -1140,7 +1140,7 @@
             "kills": 1,
             "deaths": 6.5,
             "creep_score": 87,
-            "gpm": 257.07133059195047,
+            "gpm": 256.31887198707204,
             "madstones_collected": 3,
             "towers_destroyed": 0,
             "observer_wards_placed": 10.5,
@@ -1164,7 +1164,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 45.5,
-            "averageGpm": 237.94211733282083,
+            "averageGpm": 237.18965872794246,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -1173,7 +1173,7 @@
             "kills": 4,
             "deaths": 18,
             "creep_score": 91,
-            "gpm": 475.88423466564166,
+            "gpm": 474.3793174558849,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 7,
@@ -1193,7 +1193,7 @@
             "kills": 2,
             "deaths": 9,
             "creep_score": 45.5,
-            "gpm": 237.94211733282083,
+            "gpm": 237.18965872794246,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 3.5,
@@ -1231,7 +1231,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 487.8,
-            "averageGpm": 693.7282423943478,
+            "averageGpm": 691.8220693504957,
             "farmRankAscending": 4,
             "manualOverride": "core"
           },
@@ -1240,7 +1240,7 @@
             "kills": 37,
             "deaths": 18,
             "creep_score": 2439,
-            "gpm": 3468.6412119717393,
+            "gpm": 3459.1103467524786,
             "madstones_collected": 364,
             "towers_destroyed": 9,
             "observer_wards_placed": 1,
@@ -1260,7 +1260,7 @@
             "kills": 7.4,
             "deaths": 3.6,
             "creep_score": 487.8,
-            "gpm": 693.7282423943478,
+            "gpm": 691.8220693504957,
             "madstones_collected": 72.8,
             "towers_destroyed": 1.8,
             "observer_wards_placed": 0.2,
@@ -1337,7 +1337,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 460,
-            "averageGpm": 658.8565959338772,
+            "averageGpm": 658.5801150209899,
             "farmRankAscending": 3,
             "manualOverride": "mid"
           },
@@ -1346,7 +1346,7 @@
             "kills": 37,
             "deaths": 16,
             "creep_score": 2300,
-            "gpm": 3294.282979669386,
+            "gpm": 3292.9005751049494,
             "madstones_collected": 102,
             "towers_destroyed": 3,
             "observer_wards_placed": 7,
@@ -1366,7 +1366,7 @@
             "kills": 7.4,
             "deaths": 3.2,
             "creep_score": 460,
-            "gpm": 658.8565959338772,
+            "gpm": 658.5801150209899,
             "madstones_collected": 20.4,
             "towers_destroyed": 0.6,
             "observer_wards_placed": 1.4,
@@ -1443,7 +1443,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 40.2,
-            "averageGpm": 338.4958693989525,
+            "averageGpm": 337.79025358364896,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -1452,7 +1452,7 @@
             "kills": 21,
             "deaths": 31,
             "creep_score": 201,
-            "gpm": 1692.4793469947624,
+            "gpm": 1688.9512679182449,
             "madstones_collected": 14,
             "towers_destroyed": 0,
             "observer_wards_placed": 81,
@@ -1472,7 +1472,7 @@
             "kills": 4.2,
             "deaths": 6.2,
             "creep_score": 40.2,
-            "gpm": 338.4958693989525,
+            "gpm": 337.79025358364896,
             "madstones_collected": 2.8,
             "towers_destroyed": 0,
             "observer_wards_placed": 16.2,
@@ -1948,7 +1948,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 161.25,
-            "averageGpm": 353.5720016260169,
+            "averageGpm": 353.2264004849079,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
@@ -1957,7 +1957,7 @@
             "kills": 6,
             "deaths": 26,
             "creep_score": 645,
-            "gpm": 1414.2880065040677,
+            "gpm": 1412.9056019396317,
             "madstones_collected": 36,
             "towers_destroyed": 2,
             "observer_wards_placed": 36,
@@ -1977,7 +1977,7 @@
             "kills": 1.5,
             "deaths": 6.5,
             "creep_score": 161.25,
-            "gpm": 353.5720016260169,
+            "gpm": 353.2264004849079,
             "madstones_collected": 9,
             "towers_destroyed": 0.5,
             "observer_wards_placed": 9,
@@ -2001,7 +2001,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 85.25,
-            "averageGpm": 330.3379548032686,
+            "averageGpm": 329.99235366215953,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -2010,7 +2010,7 @@
             "kills": 9,
             "deaths": 48,
             "creep_score": 341,
-            "gpm": 1321.3518192130744,
+            "gpm": 1319.9694146486381,
             "madstones_collected": 3,
             "towers_destroyed": 1,
             "observer_wards_placed": 55,
@@ -2030,7 +2030,7 @@
             "kills": 2.25,
             "deaths": 12,
             "creep_score": 85.25,
-            "gpm": 330.3379548032686,
+            "gpm": 329.99235366215953,
             "madstones_collected": 0.75,
             "towers_destroyed": 0.25,
             "observer_wards_placed": 13.75,
@@ -2227,7 +2227,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 154.5,
-            "averageGpm": 337.9395460348952,
+            "averageGpm": 337.5874598735858,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
@@ -2236,7 +2236,7 @@
             "kills": 8,
             "deaths": 32,
             "creep_score": 618,
-            "gpm": 1351.7581841395809,
+            "gpm": 1350.349839494343,
             "madstones_collected": 26,
             "towers_destroyed": 0,
             "observer_wards_placed": 42,
@@ -2256,7 +2256,7 @@
             "kills": 2,
             "deaths": 8,
             "creep_score": 154.5,
-            "gpm": 337.9395460348952,
+            "gpm": 337.5874598735858,
             "madstones_collected": 6.5,
             "towers_destroyed": 0,
             "observer_wards_placed": 10.5,
@@ -2280,7 +2280,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 119.5,
-            "averageGpm": 318.7900961252447,
+            "averageGpm": 317.89836700578,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -2289,7 +2289,7 @@
             "kills": 8,
             "deaths": 25,
             "creep_score": 478,
-            "gpm": 1275.1603845009788,
+            "gpm": 1271.59346802312,
             "madstones_collected": 27,
             "towers_destroyed": 0,
             "observer_wards_placed": 43,
@@ -2309,7 +2309,7 @@
             "kills": 2,
             "deaths": 6.25,
             "creep_score": 119.5,
-            "gpm": 318.7900961252447,
+            "gpm": 317.89836700578,
             "madstones_collected": 6.75,
             "towers_destroyed": 0,
             "observer_wards_placed": 10.75,
@@ -2506,7 +2506,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 93.83333333333333,
-            "averageGpm": 343.9589957985929,
+            "averageGpm": 343.72858788039775,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -2515,7 +2515,7 @@
             "kills": 16,
             "deaths": 49,
             "creep_score": 563,
-            "gpm": 2063.7539747915575,
+            "gpm": 2062.3715272823865,
             "madstones_collected": 53,
             "towers_destroyed": 2,
             "observer_wards_placed": 60,
@@ -2535,7 +2535,7 @@
             "kills": 2.6666666666666665,
             "deaths": 8.166666666666666,
             "creep_score": 93.83333333333333,
-            "gpm": 343.9589957985929,
+            "gpm": 343.72858788039775,
             "madstones_collected": 8.833333333333334,
             "towers_destroyed": 0.3333333333333333,
             "observer_wards_placed": 10,
@@ -2785,7 +2785,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 60.5,
-            "averageGpm": 360.1156523153801,
+            "averageGpm": 359.67523351839884,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -2794,7 +2794,7 @@
             "kills": 6,
             "deaths": 8,
             "creep_score": 121,
-            "gpm": 720.2313046307602,
+            "gpm": 719.3504670367977,
             "madstones_collected": 0,
             "towers_destroyed": 2,
             "observer_wards_placed": 20,
@@ -2814,7 +2814,7 @@
             "kills": 3,
             "deaths": 4,
             "creep_score": 60.5,
-            "gpm": 360.1156523153801,
+            "gpm": 359.67523351839884,
             "madstones_collected": 0,
             "towers_destroyed": 1,
             "observer_wards_placed": 10,
@@ -2838,7 +2838,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 68.5,
-            "averageGpm": 333.4149311524713,
+            "averageGpm": 332.7326259399068,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
@@ -2847,7 +2847,7 @@
             "kills": 5,
             "deaths": 7,
             "creep_score": 137,
-            "gpm": 666.8298623049426,
+            "gpm": 665.4652518798136,
             "madstones_collected": 15,
             "towers_destroyed": 0,
             "observer_wards_placed": 22,
@@ -2867,7 +2867,7 @@
             "kills": 2.5,
             "deaths": 3.5,
             "creep_score": 68.5,
-            "gpm": 333.4149311524713,
+            "gpm": 332.7326259399068,
             "madstones_collected": 7.5,
             "towers_destroyed": 0,
             "observer_wards_placed": 11,
@@ -2905,7 +2905,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 433.5,
-            "averageGpm": 555.6638780599832,
+            "averageGpm": 555.391627118778,
             "farmRankAscending": 3,
             "manualOverride": "core"
           },
@@ -2914,7 +2914,7 @@
             "kills": 41,
             "deaths": 46,
             "creep_score": 2601,
-            "gpm": 3333.983268359899,
+            "gpm": 3332.349762712668,
             "madstones_collected": 236,
             "towers_destroyed": 3,
             "observer_wards_placed": 0,
@@ -2934,7 +2934,7 @@
             "kills": 6.833333333333333,
             "deaths": 7.666666666666667,
             "creep_score": 433.5,
-            "gpm": 555.6638780599832,
+            "gpm": 555.391627118778,
             "madstones_collected": 39.333333333333336,
             "towers_destroyed": 0.5,
             "observer_wards_placed": 0,
@@ -3064,7 +3064,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 226,
-            "averageGpm": 409.1955840473766,
+            "averageGpm": 408.71284302817367,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
@@ -3073,7 +3073,7 @@
             "kills": 23,
             "deaths": 43,
             "creep_score": 1356,
-            "gpm": 2455.1735042842597,
+            "gpm": 2452.277058169042,
             "madstones_collected": 110,
             "towers_destroyed": 1,
             "observer_wards_placed": 47,
@@ -3093,7 +3093,7 @@
             "kills": 3.8333333333333335,
             "deaths": 7.166666666666667,
             "creep_score": 226,
-            "gpm": 409.1955840473766,
+            "gpm": 408.71284302817367,
             "madstones_collected": 18.333333333333332,
             "towers_destroyed": 0.16666666666666666,
             "observer_wards_placed": 7.833333333333333,
@@ -3117,7 +3117,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 120.5,
-            "averageGpm": 350.44539875070046,
+            "averageGpm": 349.792391804654,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -3126,7 +3126,7 @@
             "kills": 23,
             "deaths": 80,
             "creep_score": 723,
-            "gpm": 2102.672392504203,
+            "gpm": 2098.754350827924,
             "madstones_collected": 66,
             "towers_destroyed": 0,
             "observer_wards_placed": 97,
@@ -3146,7 +3146,7 @@
             "kills": 3.8333333333333335,
             "deaths": 13.333333333333334,
             "creep_score": 120.5,
-            "gpm": 350.44539875070046,
+            "gpm": 349.792391804654,
             "madstones_collected": 11,
             "towers_destroyed": 0,
             "observer_wards_placed": 16.166666666666668,
@@ -3396,7 +3396,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 43.5,
-            "averageGpm": 343.24670123058934,
+            "averageGpm": 342.7001028990653,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -3405,7 +3405,7 @@
             "kills": 9,
             "deaths": 21,
             "creep_score": 87,
-            "gpm": 686.4934024611787,
+            "gpm": 685.4002057981306,
             "madstones_collected": 5,
             "towers_destroyed": 0,
             "observer_wards_placed": 19,
@@ -3425,7 +3425,7 @@
             "kills": 4.5,
             "deaths": 10.5,
             "creep_score": 43.5,
-            "gpm": 343.24670123058934,
+            "gpm": 342.7001028990653,
             "madstones_collected": 2.5,
             "towers_destroyed": 0,
             "observer_wards_placed": 9.5,
@@ -3569,7 +3569,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 459.6666666666667,
-            "averageGpm": 620.048145943752,
+            "averageGpm": 619.7758950025469,
             "farmRankAscending": 3,
             "manualOverride": "mid"
           },
@@ -3578,7 +3578,7 @@
             "kills": 52,
             "deaths": 32,
             "creep_score": 2758,
-            "gpm": 3720.288875662512,
+            "gpm": 3718.6553700152817,
             "madstones_collected": 282,
             "towers_destroyed": 5,
             "observer_wards_placed": 7,
@@ -3598,7 +3598,7 @@
             "kills": 8.666666666666666,
             "deaths": 5.333333333333333,
             "creep_score": 459.6666666666667,
-            "gpm": 620.048145943752,
+            "gpm": 619.7758950025469,
             "madstones_collected": 47,
             "towers_destroyed": 0.8333333333333334,
             "observer_wards_placed": 1.1666666666666667,
@@ -3622,7 +3622,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 133,
-            "averageGpm": 397.58922383285335,
+            "averageGpm": 397.3221097018597,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
@@ -3631,7 +3631,7 @@
             "kills": 38,
             "deaths": 47,
             "creep_score": 798,
-            "gpm": 2385.53534299712,
+            "gpm": 2383.932658211158,
             "madstones_collected": 70,
             "towers_destroyed": 3,
             "observer_wards_placed": 34,
@@ -3651,7 +3651,7 @@
             "kills": 6.333333333333333,
             "deaths": 7.833333333333333,
             "creep_score": 133,
-            "gpm": 397.58922383285335,
+            "gpm": 397.3221097018597,
             "madstones_collected": 11.666666666666666,
             "towers_destroyed": 0.5,
             "observer_wards_placed": 5.666666666666667,
@@ -3675,7 +3675,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 88.33333333333333,
-            "averageGpm": 377.25610701671695,
+            "averageGpm": 376.7919961584001,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -3684,7 +3684,7 @@
             "kills": 22,
             "deaths": 46,
             "creep_score": 530,
-            "gpm": 2263.536642100302,
+            "gpm": 2260.7519769504006,
             "madstones_collected": 54,
             "towers_destroyed": 1,
             "observer_wards_placed": 101,
@@ -3704,7 +3704,7 @@
             "kills": 3.6666666666666665,
             "deaths": 7.666666666666667,
             "creep_score": 88.33333333333333,
-            "gpm": 377.25610701671695,
+            "gpm": 376.7919961584001,
             "madstones_collected": 9,
             "towers_destroyed": 0.16666666666666666,
             "observer_wards_placed": 16.833333333333332,
@@ -3742,7 +3742,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 316.5,
-            "averageGpm": 624.1055444316169,
+            "averageGpm": 623.3530858267386,
             "farmRankAscending": 4,
             "manualOverride": "core"
           },
@@ -3751,7 +3751,7 @@
             "kills": 8,
             "deaths": 5,
             "creep_score": 633,
-            "gpm": 1248.2110888632337,
+            "gpm": 1246.7061716534772,
             "madstones_collected": 47,
             "towers_destroyed": 1,
             "observer_wards_placed": 0,
@@ -3771,7 +3771,7 @@
             "kills": 4,
             "deaths": 2.5,
             "creep_score": 316.5,
-            "gpm": 624.1055444316169,
+            "gpm": 623.3530858267386,
             "madstones_collected": 23.5,
             "towers_destroyed": 0.5,
             "observer_wards_placed": 0,
@@ -3954,7 +3954,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 73,
-            "averageGpm": 406.20194707179496,
+            "averageGpm": 405.4494884669166,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -3963,7 +3963,7 @@
             "kills": 5,
             "deaths": 9,
             "creep_score": 146,
-            "gpm": 812.4038941435899,
+            "gpm": 810.8989769338332,
             "madstones_collected": 12,
             "towers_destroyed": 0,
             "observer_wards_placed": 19,
@@ -3983,7 +3983,7 @@
             "kills": 2.5,
             "deaths": 4.5,
             "creep_score": 73,
-            "gpm": 406.20194707179496,
+            "gpm": 405.4494884669166,
             "madstones_collected": 6,
             "towers_destroyed": 0,
             "observer_wards_placed": 9.5,
@@ -4180,7 +4180,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 163,
-            "averageGpm": 299.5930453942648,
+            "averageGpm": 298.9107401817003,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
@@ -4189,7 +4189,7 @@
             "kills": 2,
             "deaths": 13,
             "creep_score": 326,
-            "gpm": 599.1860907885296,
+            "gpm": 597.8214803634006,
             "madstones_collected": 63,
             "towers_destroyed": 0,
             "observer_wards_placed": 7,
@@ -4209,7 +4209,7 @@
             "kills": 1,
             "deaths": 6.5,
             "creep_score": 163,
-            "gpm": 299.5930453942648,
+            "gpm": 298.9107401817003,
             "madstones_collected": 31.5,
             "towers_destroyed": 0,
             "observer_wards_placed": 3.5,
@@ -4233,7 +4233,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 42,
-            "averageGpm": 275.70172044082597,
+            "averageGpm": 275.0194152282615,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -4242,7 +4242,7 @@
             "kills": 4,
             "deaths": 22,
             "creep_score": 84,
-            "gpm": 551.4034408816519,
+            "gpm": 550.038830456523,
             "madstones_collected": 3,
             "towers_destroyed": 0,
             "observer_wards_placed": 33,
@@ -4262,7 +4262,7 @@
             "kills": 2,
             "deaths": 11,
             "creep_score": 42,
-            "gpm": 275.70172044082597,
+            "gpm": 275.0194152282615,
             "madstones_collected": 1.5,
             "towers_destroyed": 0,
             "observer_wards_placed": 16.5,
@@ -4512,7 +4512,7 @@
           "roleConfidence": "manual",
           "roleEvidence": {
             "averageCreepScore": 65.5,
-            "averageGpm": 287.9890175281623,
+            "averageGpm": 287.478273373555,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
@@ -4521,7 +4521,7 @@
             "kills": 5,
             "deaths": 18,
             "creep_score": 131,
-            "gpm": 575.9780350563246,
+            "gpm": 574.95654674711,
             "madstones_collected": 3,
             "towers_destroyed": 0,
             "observer_wards_placed": 30,
@@ -4541,7 +4541,7 @@
             "kills": 2.5,
             "deaths": 9,
             "creep_score": 65.5,
-            "gpm": 287.9890175281623,
+            "gpm": 287.478273373555,
             "madstones_collected": 1.5,
             "towers_destroyed": 0,
             "observer_wards_placed": 15,
@@ -4618,6 +4618,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15623,
+            "replayEndTotalEarnedGold": 15623,
             "lastHits": 118,
             "denies": 2,
             "assists": 17
@@ -4665,6 +4666,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 28980,
+            "replayEndTotalEarnedGold": 28980,
             "lastHits": 411,
             "denies": 2,
             "assists": 5
@@ -4712,6 +4714,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23624,
+            "replayEndTotalEarnedGold": 23624,
             "lastHits": 367,
             "denies": 15,
             "assists": 5
@@ -4759,6 +4762,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 19130,
+            "replayEndTotalEarnedGold": 19130,
             "lastHits": 271,
             "denies": 13,
             "assists": 10
@@ -4806,6 +4810,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 11922,
+            "replayEndTotalEarnedGold": 11922,
             "lastHits": 51,
             "denies": 2,
             "assists": 14
@@ -4853,6 +4858,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 35009,
+            "replayEndTotalEarnedGold": 35009,
             "lastHits": 491,
             "denies": 7,
             "assists": 8
@@ -4900,6 +4906,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 25254,
+            "replayEndTotalEarnedGold": 25254,
             "lastHits": 317,
             "denies": 6,
             "assists": 13
@@ -4947,6 +4954,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 31146,
+            "replayEndTotalEarnedGold": 31146,
             "lastHits": 483,
             "denies": 17,
             "assists": 15
@@ -4994,6 +5002,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15965,
+            "replayEndTotalEarnedGold": 15965,
             "lastHits": 47,
             "denies": 3,
             "assists": 17
@@ -5041,6 +5050,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 14447,
+            "replayEndTotalEarnedGold": 14447,
             "lastHits": 49,
             "denies": 6,
             "assists": 16
@@ -5129,6 +5139,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 14162,
+            "replayEndTotalEarnedGold": 14162,
             "lastHits": 275,
             "denies": 35,
             "assists": 1
@@ -5158,7 +5169,7 @@
             "kills": 0,
             "deaths": 7,
             "creep_score": 49,
-            "gpm": 241.3751127640442,
+            "gpm": 239.99270819960807,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 8,
@@ -5175,7 +5186,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 6635,
+            "totalEarnedGold": 6597,
+            "replayEndTotalEarnedGold": 6635,
             "lastHits": 45,
             "denies": 4,
             "assists": 5
@@ -5223,6 +5235,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 9662,
+            "replayEndTotalEarnedGold": 9662,
             "lastHits": 169,
             "denies": 8,
             "assists": 1
@@ -5252,7 +5265,7 @@
             "kills": 0,
             "deaths": 6,
             "creep_score": 51,
-            "gpm": 246.1407706046003,
+            "gpm": 244.7583660401642,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 4,
@@ -5269,7 +5282,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 6766,
+            "totalEarnedGold": 6728,
+            "replayEndTotalEarnedGold": 6766,
             "lastHits": 50,
             "denies": 1,
             "assists": 3
@@ -5317,6 +5331,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 12141,
+            "replayEndTotalEarnedGold": 12141,
             "lastHits": 230,
             "denies": 17,
             "assists": 0
@@ -5346,7 +5361,7 @@
             "kills": 4,
             "deaths": 0,
             "creep_score": 262,
-            "gpm": 623.8646283030284,
+            "gpm": 622.4822237385923,
             "madstones_collected": 30,
             "towers_destroyed": 0,
             "observer_wards_placed": 0,
@@ -5363,7 +5378,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 17149,
+            "totalEarnedGold": 17111,
+            "replayEndTotalEarnedGold": 17149,
             "lastHits": 256,
             "denies": 6,
             "assists": 12
@@ -5411,6 +5427,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 9868,
+            "replayEndTotalEarnedGold": 9868,
             "lastHits": 44,
             "denies": 2,
             "assists": 15
@@ -5440,7 +5457,7 @@
             "kills": 7,
             "deaths": 4,
             "creep_score": 71,
-            "gpm": 418.541171416779,
+            "gpm": 417.15876685234286,
             "madstones_collected": 8,
             "towers_destroyed": 0,
             "observer_wards_placed": 10,
@@ -5457,7 +5474,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 11505,
+            "totalEarnedGold": 11467,
+            "replayEndTotalEarnedGold": 11505,
             "lastHits": 67,
             "denies": 4,
             "assists": 15
@@ -5487,7 +5505,7 @@
             "kills": 4,
             "deaths": 1,
             "creep_score": 185,
-            "gpm": 558.7824765720752,
+            "gpm": 557.4000720076391,
             "madstones_collected": 17,
             "towers_destroyed": 0,
             "observer_wards_placed": 2,
@@ -5504,7 +5522,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 15360,
+            "totalEarnedGold": 15322,
+            "replayEndTotalEarnedGold": 15360,
             "lastHits": 180,
             "denies": 5,
             "assists": 20
@@ -5552,6 +5571,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 21411,
+            "replayEndTotalEarnedGold": 21411,
             "lastHits": 326,
             "denies": 19,
             "assists": 11
@@ -5670,6 +5690,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23547,
+            "replayEndTotalEarnedGold": 23547,
             "lastHits": 391,
             "denies": 12,
             "assists": 7
@@ -5717,6 +5738,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 18872,
+            "replayEndTotalEarnedGold": 18872,
             "lastHits": 248,
             "denies": 7,
             "assists": 12
@@ -5764,6 +5786,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17840,
+            "replayEndTotalEarnedGold": 17840,
             "lastHits": 248,
             "denies": 3,
             "assists": 5
@@ -5793,7 +5816,7 @@
             "kills": 1,
             "deaths": 7,
             "creep_score": 86,
-            "gpm": 316.068723912871,
+            "gpm": 314.8057834448838,
             "madstones_collected": 6,
             "towers_destroyed": 0,
             "observer_wards_placed": 8,
@@ -5810,7 +5833,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 13264,
+            "totalEarnedGold": 13211,
+            "replayEndTotalEarnedGold": 13264,
             "lastHits": 84,
             "denies": 2,
             "assists": 14
@@ -5840,7 +5864,7 @@
             "kills": 1,
             "deaths": 9,
             "creep_score": 27,
-            "gpm": 244.29557882650434,
+            "gpm": 243.05646742395086,
             "madstones_collected": 3,
             "towers_destroyed": 0,
             "observer_wards_placed": 9,
@@ -5857,7 +5881,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 10252,
+            "totalEarnedGold": 10200,
+            "replayEndTotalEarnedGold": 10252,
             "lastHits": 24,
             "denies": 3,
             "assists": 12
@@ -5905,6 +5930,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 35815,
+            "replayEndTotalEarnedGold": 35815,
             "lastHits": 590,
             "denies": 6,
             "assists": 11
@@ -5952,6 +5978,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27937,
+            "replayEndTotalEarnedGold": 27937,
             "lastHits": 426,
             "denies": 14,
             "assists": 21
@@ -5999,6 +6026,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27524,
+            "replayEndTotalEarnedGold": 27524,
             "lastHits": 451,
             "denies": 15,
             "assists": 19
@@ -6046,6 +6074,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16254,
+            "replayEndTotalEarnedGold": 16254,
             "lastHits": 76,
             "denies": 5,
             "assists": 17
@@ -6093,6 +6122,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17916,
+            "replayEndTotalEarnedGold": 17916,
             "lastHits": 95,
             "denies": 1,
             "assists": 18
@@ -6181,6 +6211,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 38870,
+            "replayEndTotalEarnedGold": 38870,
             "lastHits": 657,
             "denies": 23,
             "assists": 8
@@ -6228,6 +6259,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 33401,
+            "replayEndTotalEarnedGold": 33401,
             "lastHits": 546,
             "denies": 16,
             "assists": 8
@@ -6275,6 +6307,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 24330,
+            "replayEndTotalEarnedGold": 24330,
             "lastHits": 335,
             "denies": 10,
             "assists": 8
@@ -6322,6 +6355,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15904,
+            "replayEndTotalEarnedGold": 15904,
             "lastHits": 91,
             "denies": 1,
             "assists": 13
@@ -6369,6 +6403,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 14276,
+            "replayEndTotalEarnedGold": 14276,
             "lastHits": 59,
             "denies": 0,
             "assists": 9
@@ -6416,6 +6451,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 25812,
+            "replayEndTotalEarnedGold": 25812,
             "lastHits": 458,
             "denies": 15,
             "assists": 3
@@ -6445,7 +6481,7 @@
             "kills": 0,
             "deaths": 6,
             "creep_score": 90,
-            "gpm": 276.3262059285626,
+            "gpm": 275.1799900137345,
             "madstones_collected": 6,
             "towers_destroyed": 0,
             "observer_wards_placed": 7,
@@ -6462,7 +6498,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 12536,
+            "totalEarnedGold": 12484,
+            "replayEndTotalEarnedGold": 12536,
             "lastHits": 89,
             "denies": 1,
             "assists": 9
@@ -6510,6 +6547,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 21574,
+            "replayEndTotalEarnedGold": 21574,
             "lastHits": 321,
             "denies": 6,
             "assists": 8
@@ -6557,6 +6595,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15403,
+            "replayEndTotalEarnedGold": 15403,
             "lastHits": 134,
             "denies": 5,
             "assists": 7
@@ -6604,6 +6643,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 24469,
+            "replayEndTotalEarnedGold": 24469,
             "lastHits": 444,
             "denies": 6,
             "assists": 3
@@ -6692,6 +6732,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16919,
+            "replayEndTotalEarnedGold": 16919,
             "lastHits": 137,
             "denies": 5,
             "assists": 15
@@ -6739,6 +6780,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 26536,
+            "replayEndTotalEarnedGold": 26536,
             "lastHits": 358,
             "denies": 16,
             "assists": 12
@@ -6786,6 +6828,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 26761,
+            "replayEndTotalEarnedGold": 26761,
             "lastHits": 337,
             "denies": 17,
             "assists": 9
@@ -6833,6 +6876,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 28329,
+            "replayEndTotalEarnedGold": 28329,
             "lastHits": 466,
             "denies": 19,
             "assists": 7
@@ -6862,7 +6906,7 @@
             "kills": 1,
             "deaths": 2,
             "creep_score": 62,
-            "gpm": 375.3876697980153,
+            "gpm": 374.0052222888441,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 6,
@@ -6879,7 +6923,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 14120,
+            "totalEarnedGold": 14068,
+            "replayEndTotalEarnedGold": 14120,
             "lastHits": 62,
             "denies": 0,
             "assists": 16
@@ -6927,6 +6972,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 21740,
+            "replayEndTotalEarnedGold": 21740,
             "lastHits": 448,
             "denies": 6,
             "assists": 4
@@ -6974,6 +7020,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17632,
+            "replayEndTotalEarnedGold": 17632,
             "lastHits": 313,
             "denies": 3,
             "assists": 4
@@ -7021,6 +7068,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 25664,
+            "replayEndTotalEarnedGold": 25664,
             "lastHits": 439,
             "denies": 1,
             "assists": 2
@@ -7068,6 +7116,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 10492,
+            "replayEndTotalEarnedGold": 10492,
             "lastHits": 57,
             "denies": 0,
             "assists": 5
@@ -7115,6 +7164,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 9584,
+            "replayEndTotalEarnedGold": 9584,
             "lastHits": 33,
             "denies": 2,
             "assists": 6
@@ -7203,6 +7253,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 46147,
+            "replayEndTotalEarnedGold": 46147,
             "lastHits": 791,
             "denies": 18,
             "assists": 9
@@ -7250,6 +7301,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15803,
+            "replayEndTotalEarnedGold": 15803,
             "lastHits": 83,
             "denies": 5,
             "assists": 9
@@ -7297,6 +7349,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 28929,
+            "replayEndTotalEarnedGold": 28929,
             "lastHits": 398,
             "denies": 5,
             "assists": 8
@@ -7344,6 +7397,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 13465,
+            "replayEndTotalEarnedGold": 13465,
             "lastHits": 15,
             "denies": 2,
             "assists": 15
@@ -7391,6 +7445,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 34801,
+            "replayEndTotalEarnedGold": 34801,
             "lastHits": 564,
             "denies": 2,
             "assists": 8
@@ -7438,6 +7493,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 42830,
+            "replayEndTotalEarnedGold": 42830,
             "lastHits": 559,
             "denies": 4,
             "assists": 29
@@ -7485,6 +7541,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23524,
+            "replayEndTotalEarnedGold": 23524,
             "lastHits": 164,
             "denies": 2,
             "assists": 33
@@ -7532,6 +7589,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 18132,
+            "replayEndTotalEarnedGold": 18132,
             "lastHits": 19,
             "denies": 4,
             "assists": 39
@@ -7579,6 +7637,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 35983,
+            "replayEndTotalEarnedGold": 35983,
             "lastHits": 365,
             "denies": 13,
             "assists": 30
@@ -7626,6 +7685,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 44586,
+            "replayEndTotalEarnedGold": 44586,
             "lastHits": 646,
             "denies": 17,
             "assists": 24
@@ -7714,6 +7774,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 36708,
+            "replayEndTotalEarnedGold": 36708,
             "lastHits": 569,
             "denies": 10,
             "assists": 7
@@ -7761,6 +7822,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30285,
+            "replayEndTotalEarnedGold": 30285,
             "lastHits": 479,
             "denies": 8,
             "assists": 20
@@ -7808,6 +7870,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 24970,
+            "replayEndTotalEarnedGold": 24970,
             "lastHits": 340,
             "denies": 10,
             "assists": 17
@@ -7855,6 +7918,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17613,
+            "replayEndTotalEarnedGold": 17613,
             "lastHits": 157,
             "denies": 0,
             "assists": 19
@@ -7902,6 +7966,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15501,
+            "replayEndTotalEarnedGold": 15501,
             "lastHits": 48,
             "denies": 3,
             "assists": 22
@@ -7949,6 +8014,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 44176,
+            "replayEndTotalEarnedGold": 44176,
             "lastHits": 675,
             "denies": 15,
             "assists": 10
@@ -7996,6 +8062,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 28955,
+            "replayEndTotalEarnedGold": 28955,
             "lastHits": 315,
             "denies": 9,
             "assists": 17
@@ -8043,6 +8110,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30401,
+            "replayEndTotalEarnedGold": 30401,
             "lastHits": 305,
             "denies": 4,
             "assists": 17
@@ -8090,6 +8158,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16337,
+            "replayEndTotalEarnedGold": 16337,
             "lastHits": 47,
             "denies": 1,
             "assists": 25
@@ -8119,7 +8188,7 @@
             "kills": 4,
             "deaths": 13,
             "creep_score": 170,
-            "gpm": 457.2801501275679,
+            "gpm": 456.203904639805,
             "madstones_collected": 23,
             "towers_destroyed": 0,
             "observer_wards_placed": 11,
@@ -8136,7 +8205,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 22094,
+            "totalEarnedGold": 22042,
+            "replayEndTotalEarnedGold": 22094,
             "lastHits": 168,
             "denies": 2,
             "assists": 15
@@ -8269,6 +8339,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17183,
+            "replayEndTotalEarnedGold": 17183,
             "lastHits": 280,
             "denies": 8,
             "assists": 4
@@ -8298,7 +8369,7 @@
             "kills": 2,
             "deaths": 6,
             "creep_score": 60,
-            "gpm": 276.6313885857534,
+            "gpm": 275.1959603896456,
             "madstones_collected": 6,
             "towers_destroyed": 0,
             "observer_wards_placed": 8,
@@ -8315,7 +8386,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 10214,
+            "totalEarnedGold": 10161,
+            "replayEndTotalEarnedGold": 10214,
             "lastHits": 58,
             "denies": 2,
             "assists": 2
@@ -8363,6 +8435,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16574,
+            "replayEndTotalEarnedGold": 16574,
             "lastHits": 295,
             "denies": 1,
             "assists": 4
@@ -8392,7 +8465,7 @@
             "kills": 0,
             "deaths": 10,
             "creep_score": 32,
-            "gpm": 251.01034946277292,
+            "gpm": 249.6020048175351,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 5,
@@ -8409,7 +8482,8 @@
             "couriers_killed": 6
           },
           "rawReplayStats": {
-            "totalEarnedGold": 9268,
+            "totalEarnedGold": 9216,
+            "replayEndTotalEarnedGold": 9268,
             "lastHits": 32,
             "denies": 0,
             "assists": 3
@@ -8457,6 +8531,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27540,
+            "replayEndTotalEarnedGold": 27540,
             "lastHits": 548,
             "denies": 12,
             "assists": 2
@@ -8504,6 +8579,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 31677,
+            "replayEndTotalEarnedGold": 31677,
             "lastHits": 571,
             "denies": 13,
             "assists": 11
@@ -8551,6 +8627,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 25250,
+            "replayEndTotalEarnedGold": 25250,
             "lastHits": 360,
             "denies": 30,
             "assists": 6
@@ -8580,7 +8657,7 @@
             "kills": 2,
             "deaths": 4,
             "creep_score": 42,
-            "gpm": 356.3924458977804,
+            "gpm": 354.9841012525426,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 12,
@@ -8597,7 +8674,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 13159,
+            "totalEarnedGold": 13107,
+            "replayEndTotalEarnedGold": 13159,
             "lastHits": 40,
             "denies": 2,
             "assists": 16
@@ -8627,7 +8705,7 @@
             "kills": 5,
             "deaths": 0,
             "creep_score": 404,
-            "gpm": 714.3557377460185,
+            "gpm": 712.9473931007806,
             "madstones_collected": 36,
             "towers_destroyed": 2,
             "observer_wards_placed": 0,
@@ -8644,7 +8722,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 26376,
+            "totalEarnedGold": 26324,
+            "replayEndTotalEarnedGold": 26376,
             "lastHits": 395,
             "denies": 9,
             "assists": 13
@@ -8674,7 +8753,7 @@
             "kills": 4,
             "deaths": 1,
             "creep_score": 48,
-            "gpm": 349.54030752768097,
+            "gpm": 348.1048793315732,
             "madstones_collected": 6,
             "towers_destroyed": 0,
             "observer_wards_placed": 4,
@@ -8691,7 +8770,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 12906,
+            "totalEarnedGold": 12853,
+            "replayEndTotalEarnedGold": 12906,
             "lastHits": 45,
             "denies": 3,
             "assists": 15
@@ -8780,6 +8860,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17153,
+            "replayEndTotalEarnedGold": 17153,
             "lastHits": 82,
             "denies": 4,
             "assists": 15
@@ -8827,6 +8908,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29817,
+            "replayEndTotalEarnedGold": 29817,
             "lastHits": 480,
             "denies": 11,
             "assists": 8
@@ -8874,6 +8956,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 31977,
+            "replayEndTotalEarnedGold": 31977,
             "lastHits": 434,
             "denies": 14,
             "assists": 8
@@ -8921,6 +9004,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 32732,
+            "replayEndTotalEarnedGold": 32732,
             "lastHits": 465,
             "denies": 6,
             "assists": 9
@@ -8968,6 +9052,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15615,
+            "replayEndTotalEarnedGold": 15615,
             "lastHits": 51,
             "denies": 0,
             "assists": 21
@@ -9015,6 +9100,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 26056,
+            "replayEndTotalEarnedGold": 26056,
             "lastHits": 400,
             "denies": 11,
             "assists": 7
@@ -9062,6 +9148,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23943,
+            "replayEndTotalEarnedGold": 23943,
             "lastHits": 421,
             "denies": 11,
             "assists": 13
@@ -9109,6 +9196,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23591,
+            "replayEndTotalEarnedGold": 23591,
             "lastHits": 373,
             "denies": 11,
             "assists": 11
@@ -9156,6 +9244,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 11331,
+            "replayEndTotalEarnedGold": 11331,
             "lastHits": 53,
             "denies": 3,
             "assists": 9
@@ -9203,6 +9292,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 14540,
+            "replayEndTotalEarnedGold": 14540,
             "lastHits": 77,
             "denies": 4,
             "assists": 13
@@ -9291,6 +9381,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 19566,
+            "replayEndTotalEarnedGold": 19566,
             "lastHits": 90,
             "denies": 5,
             "assists": 19
@@ -9338,6 +9429,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 41993,
+            "replayEndTotalEarnedGold": 41993,
             "lastHits": 676,
             "denies": 10,
             "assists": 25
@@ -9385,6 +9477,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 47861,
+            "replayEndTotalEarnedGold": 47861,
             "lastHits": 745,
             "denies": 13,
             "assists": 17
@@ -9414,7 +9507,7 @@
             "kills": 1,
             "deaths": 7,
             "creep_score": 54,
-            "gpm": 354.2795281226209,
+            "gpm": 353.3986905286584,
             "madstones_collected": 0,
             "towers_destroyed": 1,
             "observer_wards_placed": 14,
@@ -9431,7 +9524,8 @@
             "couriers_killed": 3
           },
           "rawReplayStats": {
-            "totalEarnedGold": 21317,
+            "totalEarnedGold": 21264,
+            "replayEndTotalEarnedGold": 21317,
             "lastHits": 46,
             "denies": 8,
             "assists": 30
@@ -9479,6 +9573,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 49638,
+            "replayEndTotalEarnedGold": 49638,
             "lastHits": 662,
             "denies": 16,
             "assists": 13
@@ -9526,6 +9621,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 46778,
+            "replayEndTotalEarnedGold": 46778,
             "lastHits": 746,
             "denies": 21,
             "assists": 6
@@ -9573,6 +9669,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30004,
+            "replayEndTotalEarnedGold": 30004,
             "lastHits": 424,
             "denies": 10,
             "assists": 15
@@ -9620,6 +9717,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 32041,
+            "replayEndTotalEarnedGold": 32041,
             "lastHits": 429,
             "denies": 13,
             "assists": 6
@@ -9667,6 +9765,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 22453,
+            "replayEndTotalEarnedGold": 22453,
             "lastHits": 278,
             "denies": 3,
             "assists": 17
@@ -9714,6 +9813,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17721,
+            "replayEndTotalEarnedGold": 17721,
             "lastHits": 56,
             "denies": 0,
             "assists": 10
@@ -9802,6 +9902,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30788,
+            "replayEndTotalEarnedGold": 30788,
             "lastHits": 529,
             "denies": 14,
             "assists": 13
@@ -9849,6 +9950,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23115,
+            "replayEndTotalEarnedGold": 23115,
             "lastHits": 345,
             "denies": 10,
             "assists": 16
@@ -9878,7 +9980,7 @@
             "kills": 7,
             "deaths": 4,
             "creep_score": 278,
-            "gpm": 603.2567176083734,
+            "gpm": 601.6232119611428,
             "madstones_collected": 34,
             "towers_destroyed": 1,
             "observer_wards_placed": 1,
@@ -9895,7 +9997,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 19573,
+            "totalEarnedGold": 19520,
+            "replayEndTotalEarnedGold": 19573,
             "lastHits": 267,
             "denies": 11,
             "assists": 10
@@ -9925,7 +10028,7 @@
             "kills": 9,
             "deaths": 11,
             "creep_score": 48,
-            "gpm": 372.06943723334615,
+            "gpm": 370.46675244738407,
             "madstones_collected": 5,
             "towers_destroyed": 0,
             "observer_wards_placed": 5,
@@ -9942,7 +10045,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 12072,
+            "totalEarnedGold": 12020,
+            "replayEndTotalEarnedGold": 12072,
             "lastHits": 43,
             "denies": 5,
             "assists": 16
@@ -9972,7 +10076,7 @@
             "kills": 3,
             "deaths": 2,
             "creep_score": 50,
-            "gpm": 370.1893646959675,
+            "gpm": 368.5866799100055,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 9,
@@ -9989,7 +10093,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 12011,
+            "totalEarnedGold": 11959,
+            "replayEndTotalEarnedGold": 12011,
             "lastHits": 50,
             "denies": 0,
             "assists": 22
@@ -10037,6 +10142,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16365,
+            "replayEndTotalEarnedGold": 16365,
             "lastHits": 280,
             "denies": 8,
             "assists": 5
@@ -10084,6 +10190,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17623,
+            "replayEndTotalEarnedGold": 17623,
             "lastHits": 238,
             "denies": 2,
             "assists": 6
@@ -10113,7 +10220,7 @@
             "kills": 3,
             "deaths": 8,
             "creep_score": 289,
-            "gpm": 544.2964100017307,
+            "gpm": 542.6629043545001,
             "madstones_collected": 29,
             "towers_destroyed": 0,
             "observer_wards_placed": 0,
@@ -10130,7 +10237,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 17660,
+            "totalEarnedGold": 17607,
+            "replayEndTotalEarnedGold": 17660,
             "lastHits": 284,
             "denies": 5,
             "assists": 6
@@ -10160,7 +10268,7 @@
             "kills": 2,
             "deaths": 6,
             "creep_score": 122,
-            "gpm": 374.6892104411687,
+            "gpm": 373.05570479393816,
             "madstones_collected": 9,
             "towers_destroyed": 0,
             "observer_wards_placed": 7,
@@ -10177,7 +10285,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 12157,
+            "totalEarnedGold": 12104,
+            "replayEndTotalEarnedGold": 12157,
             "lastHits": 121,
             "denies": 1,
             "assists": 8
@@ -10207,7 +10316,7 @@
             "kills": 1,
             "deaths": 11,
             "creep_score": 32,
-            "gpm": 250.5736021129145,
+            "gpm": 248.97091732695245,
             "madstones_collected": 3,
             "towers_destroyed": 0,
             "observer_wards_placed": 8,
@@ -10224,7 +10333,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 8130,
+            "totalEarnedGold": 8078,
+            "replayEndTotalEarnedGold": 8130,
             "lastHits": 28,
             "denies": 4,
             "assists": 4
@@ -10328,6 +10438,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 47371,
+            "replayEndTotalEarnedGold": 47371,
             "lastHits": 765,
             "denies": 31,
             "assists": 14
@@ -10375,6 +10486,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 45190,
+            "replayEndTotalEarnedGold": 45190,
             "lastHits": 596,
             "denies": 8,
             "assists": 18
@@ -10422,6 +10534,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 31397,
+            "replayEndTotalEarnedGold": 31397,
             "lastHits": 325,
             "denies": 6,
             "assists": 21
@@ -10469,6 +10582,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23662,
+            "replayEndTotalEarnedGold": 23662,
             "lastHits": 60,
             "denies": 1,
             "assists": 15
@@ -10516,6 +10630,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 47310,
+            "replayEndTotalEarnedGold": 47310,
             "lastHits": 680,
             "denies": 9,
             "assists": 16
@@ -10563,6 +10678,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 52435,
+            "replayEndTotalEarnedGold": 52435,
             "lastHits": 748,
             "denies": 14,
             "assists": 15
@@ -10610,6 +10726,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 56590,
+            "replayEndTotalEarnedGold": 56590,
             "lastHits": 833,
             "denies": 11,
             "assists": 15
@@ -10657,6 +10774,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 55750,
+            "replayEndTotalEarnedGold": 55750,
             "lastHits": 777,
             "denies": 0,
             "assists": 14
@@ -10704,6 +10822,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 26698,
+            "replayEndTotalEarnedGold": 26698,
             "lastHits": 132,
             "denies": 3,
             "assists": 19
@@ -10751,6 +10870,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 26676,
+            "replayEndTotalEarnedGold": 26676,
             "lastHits": 105,
             "denies": 3,
             "assists": 15
@@ -10869,6 +10989,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 20831,
+            "replayEndTotalEarnedGold": 20831,
             "lastHits": 376,
             "denies": 21,
             "assists": 3
@@ -10916,6 +11037,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 12528,
+            "replayEndTotalEarnedGold": 12528,
             "lastHits": 128,
             "denies": 29,
             "assists": 6
@@ -10945,7 +11067,7 @@
             "kills": 4,
             "deaths": 1,
             "creep_score": 215,
-            "gpm": 589.0166752819007,
+            "gpm": 587.511758072144,
             "madstones_collected": 14,
             "towers_destroyed": 1,
             "observer_wards_placed": 0,
@@ -10962,7 +11084,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 14873,
+            "totalEarnedGold": 14835,
+            "replayEndTotalEarnedGold": 14873,
             "lastHits": 198,
             "denies": 17,
             "assists": 8
@@ -11010,6 +11133,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 8206,
+            "replayEndTotalEarnedGold": 8206,
             "lastHits": 50,
             "denies": 3,
             "assists": 10
@@ -11039,7 +11163,7 @@
             "kills": 2,
             "deaths": 0,
             "creep_score": 124,
-            "gpm": 438.56455739069236,
+            "gpm": 437.0596401809356,
             "madstones_collected": 12,
             "towers_destroyed": 0,
             "observer_wards_placed": 5,
@@ -11056,7 +11180,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 11074,
+            "totalEarnedGold": 11036,
+            "replayEndTotalEarnedGold": 11074,
             "lastHits": 121,
             "denies": 3,
             "assists": 11
@@ -11086,7 +11211,7 @@
             "kills": 0,
             "deaths": 5,
             "creep_score": 115,
-            "gpm": 303.20121468151893,
+            "gpm": 301.6962974717622,
             "madstones_collected": 15,
             "towers_destroyed": 0,
             "observer_wards_placed": 2,
@@ -11103,7 +11228,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 7656,
+            "totalEarnedGold": 7618,
+            "replayEndTotalEarnedGold": 7656,
             "lastHits": 113,
             "denies": 2,
             "assists": 1
@@ -11133,7 +11259,7 @@
             "kills": 3,
             "deaths": 6,
             "creep_score": 55,
-            "gpm": 242.52928927764134,
+            "gpm": 241.02437206788457,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 1,
@@ -11150,7 +11276,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 6124,
+            "totalEarnedGold": 6086,
+            "replayEndTotalEarnedGold": 6124,
             "lastHits": 54,
             "denies": 1,
             "assists": 0
@@ -11180,7 +11307,7 @@
             "kills": 0,
             "deaths": 5,
             "creep_score": 20,
-            "gpm": 177.97626159597,
+            "gpm": 176.47134438621322,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 6,
@@ -11197,7 +11324,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 4494,
+            "totalEarnedGold": 4456,
+            "replayEndTotalEarnedGold": 4494,
             "lastHits": 19,
             "denies": 1,
             "assists": 3
@@ -11245,6 +11373,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 14392,
+            "replayEndTotalEarnedGold": 14392,
             "lastHits": 245,
             "denies": 7,
             "assists": 2
@@ -11274,7 +11403,7 @@
             "kills": 0,
             "deaths": 4,
             "creep_score": 230,
-            "gpm": 407.31772374600604,
+            "gpm": 405.8128065362493,
             "madstones_collected": 30,
             "towers_destroyed": 0,
             "observer_wards_placed": 1,
@@ -11291,7 +11420,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 10285,
+            "totalEarnedGold": 10247,
+            "replayEndTotalEarnedGold": 10285,
             "lastHits": 230,
             "denies": 0,
             "assists": 0
@@ -11380,6 +11510,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 19226,
+            "replayEndTotalEarnedGold": 19226,
             "lastHits": 65,
             "denies": 2,
             "assists": 29
@@ -11427,6 +11558,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 42935,
+            "replayEndTotalEarnedGold": 42935,
             "lastHits": 706,
             "denies": 13,
             "assists": 16
@@ -11474,6 +11606,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 35914,
+            "replayEndTotalEarnedGold": 35914,
             "lastHits": 460,
             "denies": 9,
             "assists": 17
@@ -11521,6 +11654,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 19672,
+            "replayEndTotalEarnedGold": 19672,
             "lastHits": 68,
             "denies": 3,
             "assists": 27
@@ -11568,6 +11702,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 26530,
+            "replayEndTotalEarnedGold": 26530,
             "lastHits": 321,
             "denies": 12,
             "assists": 28
@@ -11615,6 +11750,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 31534,
+            "replayEndTotalEarnedGold": 31534,
             "lastHits": 464,
             "denies": 13,
             "assists": 11
@@ -11662,6 +11798,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 33281,
+            "replayEndTotalEarnedGold": 33281,
             "lastHits": 523,
             "denies": 11,
             "assists": 11
@@ -11709,6 +11846,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27686,
+            "replayEndTotalEarnedGold": 27686,
             "lastHits": 394,
             "denies": 3,
             "assists": 13
@@ -11756,6 +11894,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15396,
+            "replayEndTotalEarnedGold": 15396,
             "lastHits": 83,
             "denies": 0,
             "assists": 19
@@ -11785,7 +11924,7 @@
             "kills": 3,
             "deaths": 12,
             "creep_score": 52,
-            "gpm": 288.982971478024,
+            "gpm": 287.9614831688093,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 14,
@@ -11802,7 +11941,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 14711,
+            "totalEarnedGold": 14659,
+            "replayEndTotalEarnedGold": 14711,
             "lastHits": 50,
             "denies": 2,
             "assists": 9
@@ -11891,6 +12031,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 21397,
+            "replayEndTotalEarnedGold": 21397,
             "lastHits": 464,
             "denies": 11,
             "assists": 1
@@ -11938,6 +12079,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 19583,
+            "replayEndTotalEarnedGold": 19583,
             "lastHits": 368,
             "denies": 15,
             "assists": 4
@@ -11985,6 +12127,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16883,
+            "replayEndTotalEarnedGold": 16883,
             "lastHits": 233,
             "denies": 24,
             "assists": 4
@@ -12014,7 +12157,7 @@
             "kills": 1,
             "deaths": 7,
             "creep_score": 45,
-            "gpm": 226.02672291607058,
+            "gpm": 224.66211249094164,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 4,
@@ -12031,7 +12174,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 8613,
+            "totalEarnedGold": 8561,
+            "replayEndTotalEarnedGold": 8613,
             "lastHits": 38,
             "denies": 7,
             "assists": 1
@@ -12061,7 +12205,7 @@
             "kills": 2,
             "deaths": 8,
             "creep_score": 28,
-            "gpm": 256.88791253052534,
+            "gpm": 255.5233021053964,
             "madstones_collected": 3,
             "towers_destroyed": 0,
             "observer_wards_placed": 10,
@@ -12078,7 +12222,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 9789,
+            "totalEarnedGold": 9737,
+            "replayEndTotalEarnedGold": 9789,
             "lastHits": 25,
             "denies": 3,
             "assists": 2
@@ -12108,7 +12253,7 @@
             "kills": 3,
             "deaths": 3,
             "creep_score": 42,
-            "gpm": 341.6512139375738,
+            "gpm": 340.2866035124448,
             "madstones_collected": 3,
             "towers_destroyed": 0,
             "observer_wards_placed": 9,
@@ -12125,7 +12270,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 13019,
+            "totalEarnedGold": 12967,
+            "replayEndTotalEarnedGold": 13019,
             "lastHits": 37,
             "denies": 5,
             "assists": 12
@@ -12173,6 +12319,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23201,
+            "replayEndTotalEarnedGold": 23201,
             "lastHits": 292,
             "denies": 15,
             "assists": 7
@@ -12220,6 +12367,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 20656,
+            "replayEndTotalEarnedGold": 20656,
             "lastHits": 256,
             "denies": 13,
             "assists": 10
@@ -12267,6 +12415,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 13945,
+            "replayEndTotalEarnedGold": 13945,
             "lastHits": 64,
             "denies": 3,
             "assists": 13
@@ -12314,6 +12463,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30824,
+            "replayEndTotalEarnedGold": 30824,
             "lastHits": 567,
             "denies": 16,
             "assists": 4
@@ -12402,6 +12552,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16932,
+            "replayEndTotalEarnedGold": 16932,
             "lastHits": 117,
             "denies": 0,
             "assists": 19
@@ -12449,6 +12600,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29658,
+            "replayEndTotalEarnedGold": 29658,
             "lastHits": 396,
             "denies": 14,
             "assists": 11
@@ -12478,7 +12630,7 @@
             "kills": 5,
             "deaths": 4,
             "creep_score": 362,
-            "gpm": 654.8505578400402,
+            "gpm": 653.6385622176142,
             "madstones_collected": 70,
             "towers_destroyed": 3,
             "observer_wards_placed": 0,
@@ -12495,7 +12647,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 28096,
+            "totalEarnedGold": 28044,
+            "replayEndTotalEarnedGold": 28096,
             "lastHits": 357,
             "denies": 5,
             "assists": 9
@@ -12543,6 +12696,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16137,
+            "replayEndTotalEarnedGold": 16137,
             "lastHits": 83,
             "denies": 2,
             "assists": 18
@@ -12590,6 +12744,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30600,
+            "replayEndTotalEarnedGold": 30600,
             "lastHits": 449,
             "denies": 17,
             "assists": 12
@@ -12637,6 +12792,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29821,
+            "replayEndTotalEarnedGold": 29821,
             "lastHits": 563,
             "denies": 11,
             "assists": 1
@@ -12684,6 +12840,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 12219,
+            "replayEndTotalEarnedGold": 12219,
             "lastHits": 19,
             "denies": 0,
             "assists": 7
@@ -12731,6 +12888,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 24294,
+            "replayEndTotalEarnedGold": 24294,
             "lastHits": 337,
             "denies": 15,
             "assists": 8
@@ -12778,6 +12936,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 20479,
+            "replayEndTotalEarnedGold": 20479,
             "lastHits": 304,
             "denies": 2,
             "assists": 7
@@ -12825,6 +12984,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15269,
+            "replayEndTotalEarnedGold": 15269,
             "lastHits": 121,
             "denies": 2,
             "assists": 8
@@ -12943,6 +13103,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 43301,
+            "replayEndTotalEarnedGold": 43301,
             "lastHits": 655,
             "denies": 29,
             "assists": 8
@@ -12990,6 +13151,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29293,
+            "replayEndTotalEarnedGold": 29293,
             "lastHits": 315,
             "denies": 5,
             "assists": 13
@@ -13037,6 +13199,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 32161,
+            "replayEndTotalEarnedGold": 32161,
             "lastHits": 415,
             "denies": 3,
             "assists": 24
@@ -13084,6 +13247,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 19462,
+            "replayEndTotalEarnedGold": 19462,
             "lastHits": 127,
             "denies": 8,
             "assists": 17
@@ -13131,6 +13295,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 18239,
+            "replayEndTotalEarnedGold": 18239,
             "lastHits": 22,
             "denies": 0,
             "assists": 21
@@ -13178,6 +13343,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 31417,
+            "replayEndTotalEarnedGold": 31417,
             "lastHits": 441,
             "denies": 10,
             "assists": 14
@@ -13225,6 +13391,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 11385,
+            "replayEndTotalEarnedGold": 11385,
             "lastHits": 36,
             "denies": 0,
             "assists": 11
@@ -13272,6 +13439,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16401,
+            "replayEndTotalEarnedGold": 16401,
             "lastHits": 153,
             "denies": 1,
             "assists": 15
@@ -13319,6 +13487,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 38159,
+            "replayEndTotalEarnedGold": 38159,
             "lastHits": 724,
             "denies": 13,
             "assists": 6
@@ -13348,7 +13517,7 @@
             "kills": 3,
             "deaths": 6,
             "creep_score": 461,
-            "gpm": 574.9939642485352,
+            "gpm": 573.9281357759681,
             "madstones_collected": 48,
             "towers_destroyed": 3,
             "observer_wards_placed": 1,
@@ -13365,7 +13534,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 28053,
+            "totalEarnedGold": 28001,
+            "replayEndTotalEarnedGold": 28053,
             "lastHits": 458,
             "denies": 3,
             "assists": 11
@@ -13454,6 +13624,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 36840,
+            "replayEndTotalEarnedGold": 36840,
             "lastHits": 720,
             "denies": 11,
             "assists": 7
@@ -13501,6 +13672,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27976,
+            "replayEndTotalEarnedGold": 27976,
             "lastHits": 385,
             "denies": 18,
             "assists": 8
@@ -13548,6 +13720,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29614,
+            "replayEndTotalEarnedGold": 29614,
             "lastHits": 515,
             "denies": 4,
             "assists": 9
@@ -13595,6 +13768,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 12015,
+            "replayEndTotalEarnedGold": 12015,
             "lastHits": 52,
             "denies": 2,
             "assists": 11
@@ -13642,6 +13816,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 13914,
+            "replayEndTotalEarnedGold": 13914,
             "lastHits": 78,
             "denies": 1,
             "assists": 8
@@ -13671,7 +13846,7 @@
             "kills": 3,
             "deaths": 12,
             "creep_score": 20,
-            "gpm": 308.8177441349948,
+            "gpm": 307.72454747194683,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 11,
@@ -13688,7 +13863,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 14972,
+            "totalEarnedGold": 14919,
+            "replayEndTotalEarnedGold": 14972,
             "lastHits": 19,
             "denies": 1,
             "assists": 14
@@ -13736,6 +13912,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 41222,
+            "replayEndTotalEarnedGold": 41222,
             "lastHits": 675,
             "denies": 13,
             "assists": 13
@@ -13783,6 +13960,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29294,
+            "replayEndTotalEarnedGold": 29294,
             "lastHits": 427,
             "denies": 2,
             "assists": 13
@@ -13830,6 +14008,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 19057,
+            "replayEndTotalEarnedGold": 19057,
             "lastHits": 105,
             "denies": 2,
             "assists": 10
@@ -13877,6 +14056,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 34266,
+            "replayEndTotalEarnedGold": 34266,
             "lastHits": 493,
             "denies": 23,
             "assists": 14
@@ -13965,6 +14145,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 50298,
+            "replayEndTotalEarnedGold": 50298,
             "lastHits": 759,
             "denies": 20,
             "assists": 12
@@ -14012,6 +14193,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 41437,
+            "replayEndTotalEarnedGold": 41437,
             "lastHits": 588,
             "denies": 14,
             "assists": 13
@@ -14059,6 +14241,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30019,
+            "replayEndTotalEarnedGold": 30019,
             "lastHits": 372,
             "denies": 14,
             "assists": 16
@@ -14088,7 +14271,7 @@
             "kills": 2,
             "deaths": 5,
             "creep_score": 110,
-            "gpm": 378.99026814956,
+            "gpm": 378.0264822563784,
             "madstones_collected": 9,
             "towers_destroyed": 1,
             "observer_wards_placed": 7,
@@ -14105,7 +14288,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 20448,
+            "totalEarnedGold": 20396,
+            "replayEndTotalEarnedGold": 20448,
             "lastHits": 106,
             "denies": 4,
             "assists": 23
@@ -14153,6 +14337,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17881,
+            "replayEndTotalEarnedGold": 17881,
             "lastHits": 42,
             "denies": 3,
             "assists": 18
@@ -14182,7 +14367,7 @@
             "kills": 2,
             "deaths": 8,
             "creep_score": 494,
-            "gpm": 557.5316048614493,
+            "gpm": 556.549284624168,
             "madstones_collected": 73,
             "towers_destroyed": 1,
             "observer_wards_placed": 0,
@@ -14199,7 +14384,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 30081,
+            "totalEarnedGold": 30028,
+            "replayEndTotalEarnedGold": 30081,
             "lastHits": 484,
             "denies": 10,
             "assists": 8
@@ -14247,6 +14433,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16332,
+            "replayEndTotalEarnedGold": 16332,
             "lastHits": 167,
             "denies": 1,
             "assists": 11
@@ -14276,7 +14463,7 @@
             "kills": 4,
             "deaths": 8,
             "creep_score": 36,
-            "gpm": 282.03711416431213,
+            "gpm": 281.0547939270309,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 15,
@@ -14293,7 +14480,8 @@
             "couriers_killed": 1
           },
           "rawReplayStats": {
-            "totalEarnedGold": 15217,
+            "totalEarnedGold": 15164,
+            "replayEndTotalEarnedGold": 15217,
             "lastHits": 34,
             "denies": 2,
             "assists": 13
@@ -14341,6 +14529,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 35827,
+            "replayEndTotalEarnedGold": 35827,
             "lastHits": 566,
             "denies": 5,
             "assists": 13
@@ -14388,6 +14577,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 38821,
+            "replayEndTotalEarnedGold": 38821,
             "lastHits": 746,
             "denies": 6,
             "assists": 9
@@ -14476,6 +14666,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 55151,
+            "replayEndTotalEarnedGold": 55151,
             "lastHits": 681,
             "denies": 23,
             "assists": 28
@@ -14523,6 +14714,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 45358,
+            "replayEndTotalEarnedGold": 45358,
             "lastHits": 566,
             "denies": 16,
             "assists": 25
@@ -14570,6 +14762,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 37137,
+            "replayEndTotalEarnedGold": 37137,
             "lastHits": 389,
             "denies": 9,
             "assists": 30
@@ -14617,6 +14810,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30387,
+            "replayEndTotalEarnedGold": 30387,
             "lastHits": 293,
             "denies": 1,
             "assists": 31
@@ -14664,6 +14858,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30362,
+            "replayEndTotalEarnedGold": 30362,
             "lastHits": 175,
             "denies": 2,
             "assists": 33
@@ -14711,6 +14906,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 45432,
+            "replayEndTotalEarnedGold": 45432,
             "lastHits": 818,
             "denies": 10,
             "assists": 17
@@ -14758,6 +14954,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 42098,
+            "replayEndTotalEarnedGold": 42098,
             "lastHits": 589,
             "denies": 7,
             "assists": 15
@@ -14805,6 +15002,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 58537,
+            "replayEndTotalEarnedGold": 58537,
             "lastHits": 1021,
             "denies": 1,
             "assists": 10
@@ -14852,6 +15050,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23343,
+            "replayEndTotalEarnedGold": 23343,
             "lastHits": 141,
             "denies": 0,
             "assists": 23
@@ -14899,6 +15098,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16689,
+            "replayEndTotalEarnedGold": 16689,
             "lastHits": 45,
             "denies": 7,
             "assists": 16
@@ -14987,6 +15187,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 47360,
+            "replayEndTotalEarnedGold": 47360,
             "lastHits": 770,
             "denies": 19,
             "assists": 8
@@ -15034,6 +15235,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 20861,
+            "replayEndTotalEarnedGold": 20861,
             "lastHits": 98,
             "denies": 6,
             "assists": 16
@@ -15081,6 +15283,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 39954,
+            "replayEndTotalEarnedGold": 39954,
             "lastHits": 561,
             "denies": 7,
             "assists": 9
@@ -15128,6 +15331,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17239,
+            "replayEndTotalEarnedGold": 17239,
             "lastHits": 79,
             "denies": 3,
             "assists": 13
@@ -15175,6 +15379,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30280,
+            "replayEndTotalEarnedGold": 30280,
             "lastHits": 355,
             "denies": 3,
             "assists": 17
@@ -15222,6 +15427,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 25806,
+            "replayEndTotalEarnedGold": 25806,
             "lastHits": 384,
             "denies": 15,
             "assists": 13
@@ -15251,7 +15457,7 @@
             "kills": 2,
             "deaths": 9,
             "creep_score": 48,
-            "gpm": 296.3067218185445,
+            "gpm": 295.3214494516217,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 13,
@@ -15268,7 +15474,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 15939,
+            "totalEarnedGold": 15886,
+            "replayEndTotalEarnedGold": 15939,
             "lastHits": 48,
             "denies": 0,
             "assists": 10
@@ -15316,6 +15523,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 18998,
+            "replayEndTotalEarnedGold": 18998,
             "lastHits": 163,
             "denies": 5,
             "assists": 9
@@ -15363,6 +15571,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30078,
+            "replayEndTotalEarnedGold": 30078,
             "lastHits": 461,
             "denies": 5,
             "assists": 10
@@ -15410,6 +15619,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 41822,
+            "replayEndTotalEarnedGold": 41822,
             "lastHits": 795,
             "denies": 15,
             "assists": 9
@@ -15498,6 +15708,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29622,
+            "replayEndTotalEarnedGold": 29622,
             "lastHits": 611,
             "denies": 12,
             "assists": 5
@@ -15545,6 +15756,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 24916,
+            "replayEndTotalEarnedGold": 24916,
             "lastHits": 484,
             "denies": 9,
             "assists": 0
@@ -15592,6 +15804,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17333,
+            "replayEndTotalEarnedGold": 17333,
             "lastHits": 254,
             "denies": 7,
             "assists": 6
@@ -15639,6 +15852,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 9051,
+            "replayEndTotalEarnedGold": 9051,
             "lastHits": 32,
             "denies": 2,
             "assists": 6
@@ -15668,7 +15882,7 @@
             "kills": 1,
             "deaths": 7,
             "creep_score": 31,
-            "gpm": 225.91445128717058,
+            "gpm": 224.72872481477802,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 15,
@@ -15685,7 +15899,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 10098,
+            "totalEarnedGold": 10045,
+            "replayEndTotalEarnedGold": 10098,
             "lastHits": 31,
             "denies": 0,
             "assists": 7
@@ -15715,7 +15930,7 @@
             "kills": 13,
             "deaths": 1,
             "creep_score": 510,
-            "gpm": 813.1398936901863,
+            "gpm": 810.0077860272627,
             "madstones_collected": 75,
             "towers_destroyed": 1,
             "observer_wards_placed": 0,
@@ -15732,7 +15947,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 36346,
+            "totalEarnedGold": 36206,
+            "replayEndTotalEarnedGold": 36346,
             "lastHits": 500,
             "denies": 10,
             "assists": 14
@@ -15780,6 +15996,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17495,
+            "replayEndTotalEarnedGold": 17495,
             "lastHits": 180,
             "denies": 0,
             "assists": 19
@@ -15809,7 +16026,7 @@
             "kills": 1,
             "deaths": 4,
             "creep_score": 20,
-            "gpm": 327.46185615867654,
+            "gpm": 326.2985018838763,
             "madstones_collected": 0,
             "towers_destroyed": 0,
             "observer_wards_placed": 17,
@@ -15826,7 +16043,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 14637,
+            "totalEarnedGold": 14585,
+            "replayEndTotalEarnedGold": 14637,
             "lastHits": 18,
             "denies": 2,
             "assists": 17
@@ -15874,6 +16092,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 32151,
+            "replayEndTotalEarnedGold": 32151,
             "lastHits": 423,
             "denies": 9,
             "assists": 23
@@ -15921,6 +16140,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 38240,
+            "replayEndTotalEarnedGold": 38240,
             "lastHits": 613,
             "denies": 11,
             "assists": 8
@@ -16009,6 +16229,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 16312,
+            "replayEndTotalEarnedGold": 16312,
             "lastHits": 103,
             "denies": 7,
             "assists": 19
@@ -16056,6 +16277,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 35752,
+            "replayEndTotalEarnedGold": 35752,
             "lastHits": 493,
             "denies": 16,
             "assists": 18
@@ -16103,6 +16325,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27777,
+            "replayEndTotalEarnedGold": 27777,
             "lastHits": 367,
             "denies": 5,
             "assists": 6
@@ -16150,6 +16373,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 33650,
+            "replayEndTotalEarnedGold": 33650,
             "lastHits": 491,
             "denies": 7,
             "assists": 17
@@ -16197,6 +16421,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 17607,
+            "replayEndTotalEarnedGold": 17607,
             "lastHits": 86,
             "denies": 1,
             "assists": 19
@@ -16244,6 +16469,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 42893,
+            "replayEndTotalEarnedGold": 42893,
             "lastHits": 803,
             "denies": 16,
             "assists": 6
@@ -16291,6 +16517,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 28538,
+            "replayEndTotalEarnedGold": 28538,
             "lastHits": 454,
             "denies": 6,
             "assists": 16
@@ -16338,6 +16565,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 23309,
+            "replayEndTotalEarnedGold": 23309,
             "lastHits": 332,
             "denies": 24,
             "assists": 12
@@ -16385,6 +16613,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 15791,
+            "replayEndTotalEarnedGold": 15791,
             "lastHits": 26,
             "denies": 1,
             "assists": 12
@@ -16414,7 +16643,7 @@
             "kills": 3,
             "deaths": 12,
             "creep_score": 70,
-            "gpm": 348.1712724872602,
+            "gpm": 346.9892921233206,
             "madstones_collected": 3,
             "towers_destroyed": 0,
             "observer_wards_placed": 13,
@@ -16431,7 +16660,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 15612,
+            "totalEarnedGold": 15559,
+            "replayEndTotalEarnedGold": 15612,
             "lastHits": 69,
             "denies": 1,
             "assists": 16
@@ -16520,6 +16750,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 51246,
+            "replayEndTotalEarnedGold": 51246,
             "lastHits": 767,
             "denies": 11,
             "assists": 8
@@ -16567,6 +16798,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 31672,
+            "replayEndTotalEarnedGold": 31672,
             "lastHits": 277,
             "denies": 3,
             "assists": 24
@@ -16614,6 +16846,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 62583,
+            "replayEndTotalEarnedGold": 62583,
             "lastHits": 1098,
             "denies": 24,
             "assists": 10
@@ -16661,6 +16894,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 37436,
+            "replayEndTotalEarnedGold": 37436,
             "lastHits": 427,
             "denies": 2,
             "assists": 21
@@ -16708,6 +16942,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 30345,
+            "replayEndTotalEarnedGold": 30345,
             "lastHits": 276,
             "denies": 3,
             "assists": 24
@@ -16755,6 +16990,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 52230,
+            "replayEndTotalEarnedGold": 52230,
             "lastHits": 910,
             "denies": 13,
             "assists": 8
@@ -16802,6 +17038,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29872,
+            "replayEndTotalEarnedGold": 29872,
             "lastHits": 99,
             "denies": 1,
             "assists": 22
@@ -16849,6 +17086,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 56199,
+            "replayEndTotalEarnedGold": 56199,
             "lastHits": 790,
             "denies": 3,
             "assists": 23
@@ -16896,6 +17134,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 44632,
+            "replayEndTotalEarnedGold": 44632,
             "lastHits": 495,
             "denies": 0,
             "assists": 27
@@ -16943,6 +17182,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 65650,
+            "replayEndTotalEarnedGold": 65650,
             "lastHits": 961,
             "denies": 13,
             "assists": 8
@@ -17031,6 +17271,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 70593,
+            "replayEndTotalEarnedGold": 70593,
             "lastHits": 1007,
             "denies": 5,
             "assists": 12
@@ -17078,6 +17319,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 55117,
+            "replayEndTotalEarnedGold": 55117,
             "lastHits": 762,
             "denies": 6,
             "assists": 31
@@ -17125,6 +17367,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 56916,
+            "replayEndTotalEarnedGold": 56916,
             "lastHits": 791,
             "denies": 6,
             "assists": 24
@@ -17172,6 +17415,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 32630,
+            "replayEndTotalEarnedGold": 32630,
             "lastHits": 190,
             "denies": 2,
             "assists": 33
@@ -17219,6 +17463,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 29948,
+            "replayEndTotalEarnedGold": 29948,
             "lastHits": 127,
             "denies": 2,
             "assists": 26
@@ -17266,6 +17511,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 69053,
+            "replayEndTotalEarnedGold": 69053,
             "lastHits": 1406,
             "denies": 8,
             "assists": 11
@@ -17313,6 +17559,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 55318,
+            "replayEndTotalEarnedGold": 55318,
             "lastHits": 1056,
             "denies": 6,
             "assists": 15
@@ -17360,6 +17607,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 40047,
+            "replayEndTotalEarnedGold": 40047,
             "lastHits": 646,
             "denies": 9,
             "assists": 14
@@ -17407,6 +17655,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 36994,
+            "replayEndTotalEarnedGold": 36994,
             "lastHits": 433,
             "denies": 4,
             "assists": 17
@@ -17454,6 +17703,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27851,
+            "replayEndTotalEarnedGold": 27851,
             "lastHits": 195,
             "denies": 2,
             "assists": 17
@@ -17542,6 +17792,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 62327,
+            "replayEndTotalEarnedGold": 62327,
             "lastHits": 918,
             "denies": 13,
             "assists": 16
@@ -17589,6 +17840,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 46514,
+            "replayEndTotalEarnedGold": 46514,
             "lastHits": 681,
             "denies": 20,
             "assists": 13
@@ -17636,6 +17888,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 42249,
+            "replayEndTotalEarnedGold": 42249,
             "lastHits": 437,
             "denies": 10,
             "assists": 18
@@ -17683,6 +17936,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 28562,
+            "replayEndTotalEarnedGold": 28562,
             "lastHits": 172,
             "denies": 3,
             "assists": 20
@@ -17730,6 +17984,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 25984,
+            "replayEndTotalEarnedGold": 25984,
             "lastHits": 94,
             "denies": 2,
             "assists": 20
@@ -17759,7 +18014,7 @@
             "kills": 6,
             "deaths": 6,
             "creep_score": 610,
-            "gpm": 686.8372982536254,
+            "gpm": 682.8032654990051,
             "madstones_collected": 82,
             "towers_destroyed": 0,
             "observer_wards_placed": 0,
@@ -17776,7 +18031,8 @@
             "couriers_killed": 0
           },
           "rawReplayStats": {
-            "totalEarnedGold": 47673,
+            "totalEarnedGold": 47393,
+            "replayEndTotalEarnedGold": 47673,
             "lastHits": 598,
             "denies": 12,
             "assists": 15
@@ -17824,6 +18080,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 22910,
+            "replayEndTotalEarnedGold": 22910,
             "lastHits": 189,
             "denies": 0,
             "assists": 15
@@ -17871,6 +18128,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 22985,
+            "replayEndTotalEarnedGold": 22985,
             "lastHits": 50,
             "denies": 1,
             "assists": 18
@@ -17918,6 +18176,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 47946,
+            "replayEndTotalEarnedGold": 47946,
             "lastHits": 724,
             "denies": 10,
             "assists": 13
@@ -17965,6 +18224,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 68173,
+            "replayEndTotalEarnedGold": 68173,
             "lastHits": 871,
             "denies": 7,
             "assists": 16
@@ -18053,6 +18313,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 13864,
+            "replayEndTotalEarnedGold": 13864,
             "lastHits": 91,
             "denies": 2,
             "assists": 12
@@ -18100,6 +18361,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 28383,
+            "replayEndTotalEarnedGold": 28383,
             "lastHits": 442,
             "denies": 15,
             "assists": 7
@@ -18147,6 +18409,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 25427,
+            "replayEndTotalEarnedGold": 25427,
             "lastHits": 394,
             "denies": 24,
             "assists": 8
@@ -18194,6 +18457,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 26356,
+            "replayEndTotalEarnedGold": 26356,
             "lastHits": 416,
             "denies": 3,
             "assists": 10
@@ -18241,6 +18505,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 18513,
+            "replayEndTotalEarnedGold": 18513,
             "lastHits": 235,
             "denies": 2,
             "assists": 9
@@ -18288,6 +18553,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 52428,
+            "replayEndTotalEarnedGold": 52428,
             "lastHits": 868,
             "denies": 19,
             "assists": 17
@@ -18335,6 +18601,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 26459,
+            "replayEndTotalEarnedGold": 26459,
             "lastHits": 328,
             "denies": 6,
             "assists": 25
@@ -18382,6 +18649,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 33383,
+            "replayEndTotalEarnedGold": 33383,
             "lastHits": 449,
             "denies": 6,
             "assists": 16
@@ -18429,6 +18697,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 22994,
+            "replayEndTotalEarnedGold": 22994,
             "lastHits": 164,
             "denies": 2,
             "assists": 23
@@ -18476,6 +18745,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 20469,
+            "replayEndTotalEarnedGold": 20469,
             "lastHits": 108,
             "denies": 4,
             "assists": 29
@@ -18594,6 +18864,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 70597,
+            "replayEndTotalEarnedGold": 70597,
             "lastHits": 985,
             "denies": 5,
             "assists": 17
@@ -18641,6 +18912,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 47338,
+            "replayEndTotalEarnedGold": 47338,
             "lastHits": 536,
             "denies": 7,
             "assists": 34
@@ -18688,6 +18960,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 61032,
+            "replayEndTotalEarnedGold": 61032,
             "lastHits": 918,
             "denies": 8,
             "assists": 27
@@ -18735,6 +19008,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 32971,
+            "replayEndTotalEarnedGold": 32971,
             "lastHits": 219,
             "denies": 5,
             "assists": 37
@@ -18782,6 +19056,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27453,
+            "replayEndTotalEarnedGold": 27453,
             "lastHits": 132,
             "denies": 3,
             "assists": 32
@@ -18829,6 +19104,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 48734,
+            "replayEndTotalEarnedGold": 48734,
             "lastHits": 882,
             "denies": 8,
             "assists": 6
@@ -18876,6 +19152,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 36551,
+            "replayEndTotalEarnedGold": 36551,
             "lastHits": 500,
             "denies": 0,
             "assists": 14
@@ -18923,6 +19200,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 45765,
+            "replayEndTotalEarnedGold": 45765,
             "lastHits": 688,
             "denies": 11,
             "assists": 8
@@ -18970,6 +19248,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 33936,
+            "replayEndTotalEarnedGold": 33936,
             "lastHits": 367,
             "denies": 2,
             "assists": 16
@@ -19017,6 +19296,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 22856,
+            "replayEndTotalEarnedGold": 22856,
             "lastHits": 118,
             "denies": 2,
             "assists": 11
@@ -19105,6 +19385,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 96083,
+            "replayEndTotalEarnedGold": 96083,
             "lastHits": 1361,
             "denies": 8,
             "assists": 7
@@ -19152,6 +19433,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 60307,
+            "replayEndTotalEarnedGold": 60307,
             "lastHits": 738,
             "denies": 5,
             "assists": 35
@@ -19199,6 +19481,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 73189,
+            "replayEndTotalEarnedGold": 73189,
             "lastHits": 849,
             "denies": 4,
             "assists": 29
@@ -19246,6 +19529,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 43621,
+            "replayEndTotalEarnedGold": 43621,
             "lastHits": 318,
             "denies": 1,
             "assists": 34
@@ -19293,6 +19577,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 37681,
+            "replayEndTotalEarnedGold": 37681,
             "lastHits": 149,
             "denies": 2,
             "assists": 30
@@ -19340,6 +19625,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 41768,
+            "replayEndTotalEarnedGold": 41768,
             "lastHits": 373,
             "denies": 3,
             "assists": 19
@@ -19387,6 +19673,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 70483,
+            "replayEndTotalEarnedGold": 70483,
             "lastHits": 995,
             "denies": 48,
             "assists": 16
@@ -19434,6 +19721,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 79779,
+            "replayEndTotalEarnedGold": 79779,
             "lastHits": 1060,
             "denies": 19,
             "assists": 14
@@ -19481,6 +19769,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 81328,
+            "replayEndTotalEarnedGold": 81328,
             "lastHits": 1362,
             "denies": 13,
             "assists": 12
@@ -19528,6 +19817,7 @@
           },
           "rawReplayStats": {
             "totalEarnedGold": 27198,
+            "replayEndTotalEarnedGold": 27198,
             "lastHits": 72,
             "denies": 1,
             "assists": 14

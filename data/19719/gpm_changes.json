@@ -1,0 +1,597 @@
+{
+  "schemaVersion": 1,
+  "leagueId": 19719,
+  "leagueName": "The International 2026",
+  "generatedAt": "2026-08-14T02:17:27.090508Z",
+  "gpmSource": "Calculated from Valve replay m_iTotalEarnedGold captured on the first game-end tick / exact game duration",
+  "comparison": "New replay parsing compared with the match checkpoint that existed before this run",
+  "summary": {
+    "reparsedMatchesThisRun": 27,
+    "comparedMatchesThisRun": 27,
+    "changedMatchesThisRun": 17,
+    "changedPlayersThisRun": 37,
+    "totalChangedMatches": 19,
+    "totalChangedPlayers": 44
+  },
+  "matches": [
+    {
+      "matchId": 8943000927,
+      "players": [
+        {
+          "accountId": 152168157,
+          "name": "OmaR",
+          "oldGpm": 241.3751127640442,
+          "newGpm": 239.99270819960807,
+          "delta": -1.382404564436115,
+          "oldTotalEarnedGold": 6635,
+          "gameEndTotalEarnedGold": 6597,
+          "replayEndTotalEarnedGold": 6635,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 101356886,
+          "name": "GH",
+          "oldGpm": 246.1407706046003,
+          "newGpm": 244.7583660401642,
+          "delta": -1.382404564436115,
+          "oldTotalEarnedGold": 6766,
+          "gameEndTotalEarnedGold": 6728,
+          "replayEndTotalEarnedGold": 6766,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 86698277,
+          "name": "33",
+          "oldGpm": 623.8646283030284,
+          "newGpm": 622.4822237385923,
+          "delta": -1.382404564436115,
+          "oldTotalEarnedGold": 17149,
+          "gameEndTotalEarnedGold": 17111,
+          "replayEndTotalEarnedGold": 17149,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 136829091,
+          "name": "Whitemon",
+          "oldGpm": 418.541171416779,
+          "newGpm": 417.15876685234286,
+          "delta": -1.382404564436115,
+          "oldTotalEarnedGold": 11505,
+          "gameEndTotalEarnedGold": 11467,
+          "replayEndTotalEarnedGold": 11505,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 93618577,
+          "name": "bzm",
+          "oldGpm": 558.7824765720752,
+          "newGpm": 557.4000720076391,
+          "delta": -1.382404564436115,
+          "oldTotalEarnedGold": 15360,
+          "gameEndTotalEarnedGold": 15322,
+          "replayEndTotalEarnedGold": 15360,
+          "postGameGoldDelta": 38.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943010675,
+      "players": [
+        {
+          "accountId": 150961567,
+          "name": "planet",
+          "oldGpm": 316.068723912871,
+          "newGpm": 314.8057834448838,
+          "delta": -1.262940467987221,
+          "oldTotalEarnedGold": 13264,
+          "gameEndTotalEarnedGold": 13211,
+          "replayEndTotalEarnedGold": 13264,
+          "postGameGoldDelta": 53.0
+        },
+        {
+          "accountId": 249835593,
+          "name": "zzq",
+          "oldGpm": 244.29557882650434,
+          "newGpm": 243.05646742395086,
+          "delta": -1.2391114025534762,
+          "oldTotalEarnedGold": 10252,
+          "gameEndTotalEarnedGold": 10200,
+          "replayEndTotalEarnedGold": 10252,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943013334,
+      "players": [
+        {
+          "accountId": 155494381,
+          "name": "TIMS",
+          "oldGpm": 276.3262059285626,
+          "newGpm": 275.1799900137345,
+          "delta": -1.146215914828133,
+          "oldTotalEarnedGold": 12536,
+          "gameEndTotalEarnedGold": 12484,
+          "replayEndTotalEarnedGold": 12536,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943034557,
+      "players": [
+        {
+          "accountId": 25907144,
+          "name": "Cr1t-",
+          "oldGpm": 375.3876697980153,
+          "newGpm": 374.0052222888441,
+          "delta": -1.382447509171186,
+          "oldTotalEarnedGold": 14120,
+          "gameEndTotalEarnedGold": 14068,
+          "replayEndTotalEarnedGold": 14120,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943053016,
+      "players": [
+        {
+          "accountId": 249835593,
+          "name": "zzq",
+          "oldGpm": 457.2801501275679,
+          "newGpm": 456.203904639805,
+          "delta": -1.0762454877628898,
+          "oldTotalEarnedGold": 22094,
+          "gameEndTotalEarnedGold": 22042,
+          "replayEndTotalEarnedGold": 22094,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943055466,
+      "players": [
+        {
+          "accountId": 155494381,
+          "name": "TIMS",
+          "oldGpm": 276.6313885857534,
+          "newGpm": 275.1959603896456,
+          "delta": -1.4354281961078073,
+          "oldTotalEarnedGold": 10214,
+          "gameEndTotalEarnedGold": 10161,
+          "replayEndTotalEarnedGold": 10214,
+          "postGameGoldDelta": 53.0
+        },
+        {
+          "accountId": 100594231,
+          "name": "skem",
+          "oldGpm": 251.01034946277292,
+          "newGpm": 249.6020048175351,
+          "delta": -1.4083446452378325,
+          "oldTotalEarnedGold": 9268,
+          "gameEndTotalEarnedGold": 9216,
+          "replayEndTotalEarnedGold": 9268,
+          "postGameGoldDelta": 52.0
+        },
+        {
+          "accountId": 196878136,
+          "name": "Kataomi`",
+          "oldGpm": 356.3924458977804,
+          "newGpm": 354.9841012525426,
+          "delta": -1.4083446452378325,
+          "oldTotalEarnedGold": 13159,
+          "gameEndTotalEarnedGold": 13107,
+          "replayEndTotalEarnedGold": 13159,
+          "postGameGoldDelta": 52.0
+        },
+        {
+          "accountId": 165564598,
+          "name": "MieRo",
+          "oldGpm": 714.3557377460185,
+          "newGpm": 712.9473931007806,
+          "delta": -1.4083446452378894,
+          "oldTotalEarnedGold": 26376,
+          "gameEndTotalEarnedGold": 26324,
+          "replayEndTotalEarnedGold": 26376,
+          "postGameGoldDelta": 52.0
+        },
+        {
+          "accountId": 317880638,
+          "name": "Save-",
+          "oldGpm": 349.54030752768097,
+          "newGpm": 348.1048793315732,
+          "delta": -1.4354281961077504,
+          "oldTotalEarnedGold": 12906,
+          "gameEndTotalEarnedGold": 12853,
+          "replayEndTotalEarnedGold": 12906,
+          "postGameGoldDelta": 53.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943091110,
+      "players": [
+        {
+          "accountId": 77490514,
+          "name": "Boxi",
+          "oldGpm": 354.2795281226209,
+          "newGpm": 353.3986905286584,
+          "delta": -0.8808375939624966,
+          "oldTotalEarnedGold": 21317,
+          "gameEndTotalEarnedGold": 21264,
+          "replayEndTotalEarnedGold": 21317,
+          "postGameGoldDelta": 53.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943098449,
+      "players": [
+        {
+          "accountId": 106573901,
+          "name": "No[o]ne-",
+          "oldGpm": 603.2567176083734,
+          "newGpm": 601.6232119611428,
+          "delta": -1.6335056472305496,
+          "oldTotalEarnedGold": 19573,
+          "gameEndTotalEarnedGold": 19520,
+          "replayEndTotalEarnedGold": 19573,
+          "postGameGoldDelta": 53.0
+        },
+        {
+          "accountId": 164199202,
+          "name": "9Class",
+          "oldGpm": 372.06943723334615,
+          "newGpm": 370.46675244738407,
+          "delta": -1.602684785962083,
+          "oldTotalEarnedGold": 12072,
+          "gameEndTotalEarnedGold": 12020,
+          "replayEndTotalEarnedGold": 12072,
+          "postGameGoldDelta": 52.0
+        },
+        {
+          "accountId": 73401082,
+          "name": "Dukalis",
+          "oldGpm": 370.1893646959675,
+          "newGpm": 368.5866799100055,
+          "delta": -1.6026847859620261,
+          "oldTotalEarnedGold": 12011,
+          "gameEndTotalEarnedGold": 11959,
+          "replayEndTotalEarnedGold": 12011,
+          "postGameGoldDelta": 52.0
+        },
+        {
+          "accountId": 145957968,
+          "name": "niu",
+          "oldGpm": 544.2964100017307,
+          "newGpm": 542.6629043545001,
+          "delta": -1.6335056472305496,
+          "oldTotalEarnedGold": 17660,
+          "gameEndTotalEarnedGold": 17607,
+          "replayEndTotalEarnedGold": 17660,
+          "postGameGoldDelta": 53.0
+        },
+        {
+          "accountId": 150961567,
+          "name": "planet",
+          "oldGpm": 374.6892104411687,
+          "newGpm": 373.05570479393816,
+          "delta": -1.6335056472305496,
+          "oldTotalEarnedGold": 12157,
+          "gameEndTotalEarnedGold": 12104,
+          "replayEndTotalEarnedGold": 12157,
+          "postGameGoldDelta": 53.0
+        },
+        {
+          "accountId": 249835593,
+          "name": "zzq",
+          "oldGpm": 250.5736021129145,
+          "newGpm": 248.97091732695245,
+          "delta": -1.6026847859620545,
+          "oldTotalEarnedGold": 8130,
+          "gameEndTotalEarnedGold": 8078,
+          "replayEndTotalEarnedGold": 8130,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943142948,
+      "players": [
+        {
+          "accountId": 56351509,
+          "name": "DM",
+          "oldGpm": 589.0166752819007,
+          "newGpm": 587.511758072144,
+          "delta": -1.5049172097567407,
+          "oldTotalEarnedGold": 14873,
+          "gameEndTotalEarnedGold": 14835,
+          "replayEndTotalEarnedGold": 14873,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 103735745,
+          "name": "Saksa",
+          "oldGpm": 438.56455739069236,
+          "newGpm": 437.0596401809356,
+          "delta": -1.5049172097567407,
+          "oldTotalEarnedGold": 11074,
+          "gameEndTotalEarnedGold": 11036,
+          "replayEndTotalEarnedGold": 11074,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 140251702,
+          "name": "Mirage`雨",
+          "oldGpm": 303.20121468151893,
+          "newGpm": 301.6962974717622,
+          "delta": -1.5049172097567407,
+          "oldTotalEarnedGold": 7656,
+          "gameEndTotalEarnedGold": 7618,
+          "replayEndTotalEarnedGold": 7656,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 145065875,
+          "name": "sayuw",
+          "oldGpm": 242.52928927764134,
+          "newGpm": 241.02437206788457,
+          "delta": -1.5049172097567691,
+          "oldTotalEarnedGold": 6124,
+          "gameEndTotalEarnedGold": 6086,
+          "replayEndTotalEarnedGold": 6124,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 123787715,
+          "name": "RESPECT",
+          "oldGpm": 177.97626159597,
+          "newGpm": 176.47134438621322,
+          "delta": -1.5049172097567691,
+          "oldTotalEarnedGold": 4494,
+          "gameEndTotalEarnedGold": 4456,
+          "replayEndTotalEarnedGold": 4494,
+          "postGameGoldDelta": 38.0
+        },
+        {
+          "accountId": 92487440,
+          "name": "Corrupted",
+          "oldGpm": 407.31772374600604,
+          "newGpm": 405.8128065362493,
+          "delta": -1.5049172097567407,
+          "oldTotalEarnedGold": 10285,
+          "gameEndTotalEarnedGold": 10247,
+          "replayEndTotalEarnedGold": 10285,
+          "postGameGoldDelta": 38.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943143428,
+      "players": [
+        {
+          "accountId": 94296097,
+          "name": "xNova",
+          "oldGpm": 288.982971478024,
+          "newGpm": 287.9614831688093,
+          "delta": -1.0214883092147033,
+          "oldTotalEarnedGold": 14711,
+          "gameEndTotalEarnedGold": 14659,
+          "replayEndTotalEarnedGold": 14711,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943148045,
+      "players": [
+        {
+          "accountId": 157475523,
+          "name": "XinQ",
+          "oldGpm": 226.02672291607058,
+          "newGpm": 224.66211249094164,
+          "delta": -1.3646104251289444,
+          "oldTotalEarnedGold": 8613,
+          "gameEndTotalEarnedGold": 8561,
+          "replayEndTotalEarnedGold": 8613,
+          "postGameGoldDelta": 52.0
+        },
+        {
+          "accountId": 111114687,
+          "name": "y`",
+          "oldGpm": 256.88791253052534,
+          "newGpm": 255.5233021053964,
+          "delta": -1.3646104251289444,
+          "oldTotalEarnedGold": 9789,
+          "gameEndTotalEarnedGold": 9737,
+          "replayEndTotalEarnedGold": 9789,
+          "postGameGoldDelta": 52.0
+        },
+        {
+          "accountId": 16497807,
+          "name": "tOfu",
+          "oldGpm": 341.6512139375738,
+          "newGpm": 340.2866035124448,
+          "delta": -1.3646104251290012,
+          "oldTotalEarnedGold": 13019,
+          "gameEndTotalEarnedGold": 12967,
+          "replayEndTotalEarnedGold": 13019,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943171995,
+      "players": [
+        {
+          "accountId": 126842529,
+          "name": "Ws`",
+          "oldGpm": 654.8505578400402,
+          "newGpm": 653.6385622176142,
+          "delta": -1.2119956224260022,
+          "oldTotalEarnedGold": 28096,
+          "gameEndTotalEarnedGold": 28044,
+          "replayEndTotalEarnedGold": 28096,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943182700,
+      "players": [
+        {
+          "accountId": 92487440,
+          "name": "Corrupted",
+          "oldGpm": 574.9939642485352,
+          "newGpm": 573.9281357759681,
+          "delta": -1.065828472567091,
+          "oldTotalEarnedGold": 28053,
+          "gameEndTotalEarnedGold": 28001,
+          "replayEndTotalEarnedGold": 28053,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943200897,
+      "players": [
+        {
+          "accountId": 847565596,
+          "name": "rue",
+          "oldGpm": 308.8177441349948,
+          "newGpm": 307.72454747194683,
+          "delta": -1.0931966630479906,
+          "oldTotalEarnedGold": 14972,
+          "gameEndTotalEarnedGold": 14919,
+          "replayEndTotalEarnedGold": 14972,
+          "postGameGoldDelta": 53.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943202720,
+      "players": [
+        {
+          "accountId": 317880638,
+          "name": "Save-",
+          "oldGpm": 378.99026814956,
+          "newGpm": 378.0264822563784,
+          "delta": -0.9637858931815799,
+          "oldTotalEarnedGold": 20448,
+          "gameEndTotalEarnedGold": 20396,
+          "replayEndTotalEarnedGold": 20448,
+          "postGameGoldDelta": 52.0
+        },
+        {
+          "accountId": 86698277,
+          "name": "33",
+          "oldGpm": 557.5316048614493,
+          "newGpm": 556.549284624168,
+          "delta": -0.9823202372813284,
+          "oldTotalEarnedGold": 30081,
+          "gameEndTotalEarnedGold": 30028,
+          "replayEndTotalEarnedGold": 30081,
+          "postGameGoldDelta": 53.0
+        },
+        {
+          "accountId": 136829091,
+          "name": "Whitemon",
+          "oldGpm": 282.03711416431213,
+          "newGpm": 281.0547939270309,
+          "delta": -0.9823202372812148,
+          "oldTotalEarnedGold": 15217,
+          "gameEndTotalEarnedGold": 15164,
+          "replayEndTotalEarnedGold": 15217,
+          "postGameGoldDelta": 53.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943244303,
+      "players": [
+        {
+          "accountId": 155494381,
+          "name": "TIMS",
+          "oldGpm": 296.3067218185445,
+          "newGpm": 295.3214494516217,
+          "delta": -0.9852723669227998,
+          "oldTotalEarnedGold": 15939,
+          "gameEndTotalEarnedGold": 15886,
+          "replayEndTotalEarnedGold": 15939,
+          "postGameGoldDelta": 53.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943267925,
+      "players": [
+        {
+          "accountId": 73401082,
+          "name": "Dukalis",
+          "oldGpm": 348.1712724872602,
+          "newGpm": 346.9892921233206,
+          "delta": -1.1819803639396014,
+          "oldTotalEarnedGold": 15612,
+          "gameEndTotalEarnedGold": 15559,
+          "replayEndTotalEarnedGold": 15612,
+          "postGameGoldDelta": 53.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943278347,
+      "players": [
+        {
+          "accountId": 196878136,
+          "name": "Kataomi`",
+          "oldGpm": 225.91445128717058,
+          "newGpm": 224.72872481477802,
+          "delta": -1.1857264723925596,
+          "oldTotalEarnedGold": 10098,
+          "gameEndTotalEarnedGold": 10045,
+          "replayEndTotalEarnedGold": 10098,
+          "postGameGoldDelta": 53.0
+        },
+        {
+          "accountId": 86698277,
+          "name": "33",
+          "oldGpm": 813.1398936901863,
+          "newGpm": 810.0077860272627,
+          "delta": -3.1321076629236586,
+          "oldTotalEarnedGold": 36346,
+          "gameEndTotalEarnedGold": 36206,
+          "replayEndTotalEarnedGold": 36346,
+          "postGameGoldDelta": 140.0
+        },
+        {
+          "accountId": 136829091,
+          "name": "Whitemon",
+          "oldGpm": 327.46185615867654,
+          "newGpm": 326.2985018838763,
+          "delta": -1.1633542748002128,
+          "oldTotalEarnedGold": 14637,
+          "gameEndTotalEarnedGold": 14585,
+          "replayEndTotalEarnedGold": 14637,
+          "postGameGoldDelta": 52.0
+        }
+      ]
+    },
+    {
+      "matchId": 8943357930,
+      "players": [
+        {
+          "accountId": 86698277,
+          "name": "33",
+          "oldGpm": 686.8372982536254,
+          "newGpm": 682.8032654990051,
+          "delta": -4.034032754620284,
+          "oldTotalEarnedGold": 47673,
+          "gameEndTotalEarnedGold": 47393,
+          "replayEndTotalEarnedGold": 47673,
+          "postGameGoldDelta": 280.0
+        }
+      ]
+    }
+  ]
+}

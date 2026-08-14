@@ -9,6 +9,8 @@ Each successful replay becomes an atomic checkpoint in
 ``data/<LEAGUE_ID>/matches``.  A valid checkpoint is echoed and skipped on the
 next run; downloaded ``.dem.bz2`` and decompressed ``.dem`` files live in a
 persistent ``replays/<LEAGUE_ID>`` cache and are never deleted automatically.
+When matches are reparsed, ``gpm_changes.json`` records every GPM value that
+changed from the checkpoint present at the beginning of the run.
 """
 
 from __future__ import annotations
@@ -16,6 +18,7 @@ from __future__ import annotations
 import argparse
 import copy
 import json
+import math
 import re
 import sys
 from datetime import datetime, timezone
@@ -236,10 +239,12 @@ EXCLUDED_TEAM_NAMES = {
     "IC x Insanity",
 }
 
-CHECKPOINT_SCHEMA_VERSION = 9
+CHECKPOINT_SCHEMA_VERSION = 10
 REPLAY_GPM_SOURCE = (
-    "Calculated from Valve replay m_iTotalEarnedGold / exact game duration"
+    "Calculated from Valve replay m_iTotalEarnedGold captured on the first "
+    "game-end tick / exact game duration"
 )
+GPM_CHANGE_LOG_FILENAME = "gpm_changes.json"
 SERIES_MAX_GAMES = {0: 1, 1: 3, 2: 5, 3: 2}
 SERIES_WINS_REQUIRED = {0: 1, 1: 2, 2: 3}
 THE_INTERNATIONAL_NAME = re.compile(
@@ -674,9 +679,15 @@ def checkpoint_from_replay(
 
 
 def validate_checkpoint(
-    checkpoint: dict[str, Any], league_id: int, match_id: int
+    checkpoint: dict[str, Any],
+    league_id: int,
+    match_id: int,
+    require_current_schema: bool = True,
 ) -> dict[str, Any]:
-    if int(checkpoint.get("schemaVersion", -1)) != CHECKPOINT_SCHEMA_VERSION:
+    if (
+        require_current_schema
+        and int(checkpoint.get("schemaVersion", -1)) != CHECKPOINT_SCHEMA_VERSION
+    ):
         raise RuntimeError(
             f"Checkpoint {match_id} uses an older schema and must be reparsed"
         )
@@ -728,6 +739,128 @@ def validate_checkpoint(
                 f"lacks replay stats: {missing}"
             )
     return match
+
+
+def compare_checkpoint_gpm(
+    previous: dict[str, Any], current: dict[str, Any]
+) -> dict[str, Any] | None:
+    """Compare a newly parsed match with its pre-run GPM checkpoint."""
+
+    previous_match = previous.get("match")
+    current_match = current.get("match")
+    if not isinstance(previous_match, dict) or not isinstance(current_match, dict):
+        return None
+    previous_players = {
+        int(player["accountId"]): player
+        for player in previous_match.get("players", [])
+        if player.get("accountId") is not None
+    }
+    compared_players = 0
+    changes: list[dict[str, Any]] = []
+    for player in current_match.get("players", []):
+        account_id = int(player["accountId"])
+        old_player = previous_players.get(account_id)
+        if old_player is None:
+            continue
+        old_gpm = (old_player.get("stats") or {}).get("gpm")
+        new_gpm = (player.get("stats") or {}).get("gpm")
+        if old_gpm is None or new_gpm is None:
+            continue
+        old_gpm = float(old_gpm)
+        new_gpm = float(new_gpm)
+        if not math.isfinite(old_gpm) or not math.isfinite(new_gpm):
+            continue
+        compared_players += 1
+        if math.isclose(old_gpm, new_gpm, rel_tol=0.0, abs_tol=1e-9):
+            continue
+
+        old_raw = old_player.get("rawReplayStats") or {}
+        new_raw = player.get("rawReplayStats") or {}
+        game_end_gold = new_raw.get("totalEarnedGold")
+        replay_end_gold = new_raw.get("replayEndTotalEarnedGold")
+        post_game_gold_delta = None
+        if game_end_gold is not None and replay_end_gold is not None:
+            post_game_gold_delta = float(replay_end_gold) - float(game_end_gold)
+        changes.append(
+            {
+                "accountId": account_id,
+                "name": str(player.get("name") or old_player.get("name") or ""),
+                "oldGpm": old_gpm,
+                "newGpm": new_gpm,
+                "delta": new_gpm - old_gpm,
+                "oldTotalEarnedGold": old_raw.get("totalEarnedGold"),
+                "gameEndTotalEarnedGold": game_end_gold,
+                "replayEndTotalEarnedGold": replay_end_gold,
+                "postGameGoldDelta": post_game_gold_delta,
+            }
+        )
+    if not compared_players:
+        return None
+    return {
+        "matchId": int(current["matchId"]),
+        "comparedPlayers": compared_players,
+        "changes": changes,
+    }
+
+
+def write_gpm_change_log(
+    path: Path,
+    league_id: int,
+    league_name: str,
+    reparsed_matches: int,
+    comparisons: list[dict[str, Any]],
+) -> dict[str, Any]:
+    """Merge the per-run audit into the league's cumulative GPM change log."""
+
+    changed_matches = [item for item in comparisons if item["changes"]]
+    changed_players = sum(len(item["changes"]) for item in changed_matches)
+    cumulative_matches: dict[int, dict[str, Any]] = {}
+    if path.exists():
+        try:
+            previous_log = json.loads(path.read_text(encoding="utf-8"))
+            if (
+                isinstance(previous_log, dict)
+                and int(previous_log.get("leagueId", -1)) == league_id
+                and previous_log.get("gpmSource") == REPLAY_GPM_SOURCE
+            ):
+                cumulative_matches = {
+                    int(item["matchId"]): item
+                    for item in previous_log.get("matches", [])
+                    if isinstance(item, dict) and item.get("matchId") is not None
+                }
+        except (OSError, TypeError, ValueError, json.JSONDecodeError):
+            cumulative_matches = {}
+    for item in changed_matches:
+        cumulative_matches[int(item["matchId"])] = {
+            "matchId": item["matchId"],
+            "players": item["changes"],
+        }
+    all_changes = [cumulative_matches[key] for key in sorted(cumulative_matches)]
+    total_changed_players = sum(
+        len(item.get("players", [])) for item in all_changes
+    )
+    payload = {
+        "schemaVersion": 1,
+        "leagueId": league_id,
+        "leagueName": league_name,
+        "generatedAt": utc_now(),
+        "gpmSource": REPLAY_GPM_SOURCE,
+        "comparison": (
+            "New replay parsing compared with the match checkpoint that "
+            "existed before this run"
+        ),
+        "summary": {
+            "reparsedMatchesThisRun": reparsed_matches,
+            "comparedMatchesThisRun": len(comparisons),
+            "changedMatchesThisRun": len(changed_matches),
+            "changedPlayersThisRun": changed_players,
+            "totalChangedMatches": len(all_changes),
+            "totalChangedPlayers": total_changed_players,
+        },
+        "matches": all_changes,
+    }
+    replay_tools.atomic_write_json(path, payload)
+    return payload
 
 
 def pending_checkpoint_match_ids(
@@ -1144,6 +1277,7 @@ def build(args: argparse.Namespace) -> None:
     league_dir = args.data_root.resolve() / str(args.league_id)
     matches_dir = league_dir / "matches"
     errors_path = league_dir / "errors.json"
+    gpm_change_log_path = league_dir / GPM_CHANGE_LOG_FILENAME
     matches_dir.mkdir(parents=True, exist_ok=True)
 
     manifest = replay_tools.fetch_manifest(
@@ -1192,23 +1326,56 @@ def build(args: argparse.Namespace) -> None:
     dataset: dict[str, Any] | None = None
     summary: dict[str, Any] | None = None
     published_checkpoint_count = 0
+    reparsed_match_count = 0
+    gpm_comparisons: list[dict[str, Any]] = []
     for index, item in enumerate(manifest, start=1):
         match_id = int(item["matchId"])
         is_selected = (
             selected_match_ids is None or match_id in selected_match_ids
         )
         checkpoint_path = matches_dir / f"{match_id}.json"
-        if checkpoint_path.exists() and not (
+        previous_checkpoint: dict[str, Any] | None = None
+        if checkpoint_path.exists():
+            try:
+                loaded_checkpoint = json.loads(
+                    checkpoint_path.read_text(encoding="utf-8")
+                )
+                if isinstance(loaded_checkpoint, dict):
+                    previous_checkpoint = loaded_checkpoint
+            except (OSError, ValueError, json.JSONDecodeError) as exc:
+                print(
+                    f"比赛 {match_id} 的旧检查点无法读取，将重新解析：{exc}"
+                )
+        if previous_checkpoint is not None and not (
             is_selected and (args.force or update_only)
         ):
-            checkpoint = json.loads(checkpoint_path.read_text(encoding="utf-8"))
+            checkpoint = previous_checkpoint
             repaired_name = repair_legacy_player_names(
                 checkpoint, known_player_names
             )
             try:
                 match = validate_checkpoint(checkpoint, args.league_id, match_id)
             except RuntimeError as exc:
-                print(f"比赛 {match_id} 的旧检查点将重新解析：{exc}")
+                if not is_selected:
+                    try:
+                        match = validate_checkpoint(
+                            checkpoint,
+                            args.league_id,
+                            match_id,
+                            require_current_schema=False,
+                        )
+                    except RuntimeError:
+                        print(f"比赛 {match_id} 的旧检查点将重新解析：{exc}")
+                    else:
+                        remember_player_names(match, known_player_names)
+                        echo_match(
+                            match,
+                            f"旧版检查点暂时保留 {index}/{len(manifest)}",
+                        )
+                        checkpoints.append(checkpoint)
+                        continue
+                else:
+                    print(f"比赛 {match_id} 的旧检查点将重新解析：{exc}")
             else:
                 if repaired_name:
                     replay_tools.atomic_write_json(
@@ -1235,6 +1402,13 @@ def build(args: argparse.Namespace) -> None:
             replay = parse_downloaded_match(item, args, java_runtime)
             checkpoint = checkpoint_from_replay(item, replay, args.league_id)
             match = validate_checkpoint(checkpoint, args.league_id, match_id)
+            reparsed_match_count += 1
+            if previous_checkpoint is not None:
+                comparison = compare_checkpoint_gpm(
+                    previous_checkpoint, checkpoint
+                )
+                if comparison is not None:
+                    gpm_comparisons.append(comparison)
             replay_tools.atomic_write_json(
                 checkpoint_path, checkpoint, compact=True
             )
@@ -1263,6 +1437,24 @@ def build(args: argparse.Namespace) -> None:
             published_checkpoint_count = len(checkpoints)
 
     replay_tools.atomic_write_json(errors_path, errors)
+    if reparsed_match_count:
+        gpm_log = write_gpm_change_log(
+            gpm_change_log_path,
+            args.league_id,
+            league_name,
+            reparsed_match_count,
+            gpm_comparisons,
+        )
+        gpm_summary = gpm_log["summary"]
+        print(
+            "GPM 变化日志："
+            f"本次比较 {gpm_summary['comparedMatchesThisRun']} 场，"
+            f"{gpm_summary['changedMatchesThisRun']} 场/"
+            f"{gpm_summary['changedPlayersThisRun']} 名选手发生变化；"
+            f"累计记录 {gpm_summary['totalChangedMatches']} 场/"
+            f"{gpm_summary['totalChangedPlayers']} 名选手 -> "
+            f"{gpm_change_log_path}"
+        )
 
     if not checkpoints:
         raise RuntimeError(
@@ -1292,6 +1484,7 @@ def build(args: argparse.Namespace) -> None:
                 "manifest": "manifest.json",
                 "matches": "matches/<MATCH_ID>.json",
                 "errors": "errors.json",
+                "gpmChanges": GPM_CHANGE_LOG_FILENAME,
             },
         }
         replay_tools.atomic_write_json(league_dir / "league.json", league_info)
@@ -1326,6 +1519,7 @@ def build(args: argparse.Namespace) -> None:
         "manifest": "manifest.json",
         "matches": "matches/<MATCH_ID>.json",
         "errors": "errors.json",
+        "gpmChanges": GPM_CHANGE_LOG_FILENAME,
         "full": "full.json",
         "summary": "summary.json",
         "browser": "data.js",

@@ -350,7 +350,7 @@ def build_dataset(
     }
     return {
         "meta": {
-            "schemaVersion": 9,
+            "schemaVersion": 10,
             "leagueId": league_id,
             "leagueName": league_name,
             "generatedAt": generated_at,

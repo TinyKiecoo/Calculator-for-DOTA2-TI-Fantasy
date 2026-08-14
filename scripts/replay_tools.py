@@ -2,8 +2,9 @@
 """Low-level Dota 2 replay download and Fantasy-field parsing tools.
 
 All Fantasy statistics are read from the replay. Most come from its final
-player-data arrays; GPM is calculated from total earned gold and the exact
-replay game duration. The helper also emits player/team identities, match
+player-data arrays; GPM uses total earned gold captured on the first game-end
+tick, before any post-game passive-gold update, divided by the exact replay
+game duration. The helper also emits player/team identities, match
 result and duration, hero selection, and combat-log evidence required by
 advisor-title conditions.
 
@@ -146,9 +147,11 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import skadistats.clarity.io.Util;
 import skadistats.clarity.model.CombatLogEntry;
@@ -158,6 +161,7 @@ import skadistats.clarity.processor.entities.Entities;
 import skadistats.clarity.processor.entities.UsesEntities;
 import skadistats.clarity.processor.gameevents.OnCombatLogEntry;
 import skadistats.clarity.processor.reader.OnMessage;
+import skadistats.clarity.processor.reader.OnTickEnd;
 import skadistats.clarity.processor.runner.Context;
 import skadistats.clarity.processor.runner.SimpleRunner;
 import skadistats.clarity.source.MappedFileSource;
@@ -172,6 +176,8 @@ public final class ReplayFantasyStats {
     private static final double FOUNTAIN_RADIUS = 8.0;
     private final List<DeathRecord> tormentorDeaths = new ArrayList<>();
     private final List<DeathRecord> fountainDeaths = new ArrayList<>();
+    private final Map<Long, Number> gameEndGoldBySteamId = new HashMap<>();
+    private boolean capturedGameEndGold;
     private Float firstBloodTimestamp;
     private Float firstHeroDeathTimestamp;
     private Long replayMatchId;
@@ -206,6 +212,40 @@ public final class ReplayFantasyStats {
         replayMatchId = dota.hasMatchId() ? dota.getMatchId() : null;
         replayLeagueId = dota.hasLeagueid() ? dota.getLeagueid() : null;
         replayEndTime = dota.hasEndTime() ? dota.getEndTime() : null;
+    }
+
+    private void captureGameEndGold(Entities entities) {
+        for (int teamNumber = 2; teamNumber <= 3; teamNumber++) {
+            String side = teamNumber == 2 ? "Radiant" : "Dire";
+            Entity data = entities.getByDtName("CDOTA_Data" + side);
+            if (data == null) continue;
+            for (int position = 0; position < 5; position++) {
+                String index = Util.arrayIdxToString(position);
+                String prefix = "m_vecDataTeam." + index + ".";
+                Number steamId = property(data, prefix + "m_iPlayerSteamID");
+                Number totalEarnedGold = property(
+                    data,
+                    prefix + "m_iTotalEarnedGold"
+                );
+                if (steamId == null || totalEarnedGold == null) continue;
+                gameEndGoldBySteamId.put(
+                    steamId.longValue(),
+                    totalEarnedGold
+                );
+            }
+        }
+        capturedGameEndGold = true;
+    }
+
+    @OnTickEnd
+    public void onTickEnd(Context context, boolean synthetic) {
+        if (capturedGameEndGold) return;
+        Entities entities = context.getProcessor(Entities.class);
+        Entity rules = entities.getByDtName("CDOTAGamerulesProxy");
+        Number gameEnd = property(rules, "m_pGameRules.m_flGameEndTime");
+        if (gameEnd != null && gameEnd.doubleValue() > 0.0) {
+            captureGameEndGold(entities);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -491,7 +531,13 @@ public final class ReplayFantasyStats {
             String index = Util.arrayIdxToString(position);
             String prefix = "m_vecDataTeam." + index + ".";
             Object steamId = property(data, prefix + "m_iPlayerSteamID");
-            Number totalEarnedGold = property(data, prefix + "m_iTotalEarnedGold");
+            Number replayEndTotalEarnedGold = property(
+                data,
+                prefix + "m_iTotalEarnedGold"
+            );
+            Number totalEarnedGold = steamId instanceof Number
+                ? gameEndGoldBySteamId.get(((Number) steamId).longValue())
+                : null;
             Object lastHits = property(data, prefix + "m_iLastHitCount");
             Object denies = property(data, prefix + "m_iDenyCount");
             Object stuns = property(data, prefix + "m_fStuns");
@@ -539,7 +585,8 @@ public final class ReplayFantasyStats {
                 "\"currentMadstones\":%s,\"neutralTokensFound\":%s," +
                 "\"watchersCaptured\":%s," +
                 "\"lotusesCollected\":%s," +
-                "\"rawStats\":{\"totalEarnedGold\":%s,\"lastHits\":%s," +
+                "\"rawStats\":{\"totalEarnedGold\":%s," +
+                "\"replayEndTotalEarnedGold\":%s,\"lastHits\":%s," +
                 "\"denies\":%s,\"assists\":%s}," +
                 "\"stats\":{\"kills\":%s,\"deaths\":%s," +
                 "\"creep_score\":%s," +
@@ -563,6 +610,7 @@ public final class ReplayFantasyStats {
                 jsonNumber(watchers),
                 jsonNumber(lotuses),
                 jsonNumber(totalEarnedGold),
+                jsonNumber(replayEndTotalEarnedGold),
                 jsonNumber(lastHits),
                 jsonNumber(denies),
                 jsonNumber(assists),
@@ -678,6 +726,12 @@ public final class ReplayFantasyStats {
         Entity rules = entities.getByDtName("CDOTAGamerulesProxy");
         Number gameStart = property(rules, "m_pGameRules.m_flGameStartTime");
         Number gameEnd = property(rules, "m_pGameRules.m_flGameEndTime");
+        if (!capturedGameEndGold || gameEndGoldBySteamId.size() != 10) {
+            throw new IllegalStateException(
+                "Expected ten game-end gold snapshots, found "
+                + gameEndGoldBySteamId.size()
+            );
+        }
         emitTeamMetadata(entities, 2);
         emitTeamMetadata(entities, 3);
         int count = emitPlayers(entities, 2, "Radiant");
@@ -1502,7 +1556,7 @@ def calculate_gpm(
     game_start_time: Any,
     game_end_time: Any,
 ) -> float:
-    """Calculate Fantasy GPM entirely from precise replay-owned values."""
+    """Calculate Fantasy GPM from game-end gold and precise replay time."""
 
     if total_earned_gold is None:
         raise RuntimeError("Replay player lacks rawStats.totalEarnedGold")
@@ -1598,7 +1652,7 @@ def parse_replay(
 def new_state() -> dict[str, Any]:
     return {
         "meta": {
-            "schemaVersion": 8,
+            "schemaVersion": 9,
             "leagueId": LEAGUE_ID,
             "leagueName": LEAGUE_NAME,
             "artifact": "replayFantasyStats",
@@ -1607,8 +1661,8 @@ def new_state() -> dict[str, Any]:
             "fieldProvenance": {
                 "stats": "Valve replay final player-data arrays",
                 "gpm": (
-                    "Calculated from CDOTA_Data* m_iTotalEarnedGold and exact "
-                    "replay game duration"
+                    "Calculated from CDOTA_Data* m_iTotalEarnedGold captured "
+                    "on the first game-end tick and exact replay game duration"
                 ),
                 "tormentors_killed": "CDOTA_Data* m_iTormentorKills",
                 "heroId/heroName": "CDOTA_PlayerResource selected hero",
@@ -1636,7 +1690,7 @@ def load_state(path: Path) -> dict[str, Any]:
     state = json.loads(path.read_text(encoding="utf-8"))
     if state.get("meta", {}).get("leagueId") != LEAGUE_ID:
         raise RuntimeError(f"Checkpoint {path} is for a different league")
-    if int(state.get("meta", {}).get("schemaVersion", -1)) != 8:
+    if int(state.get("meta", {}).get("schemaVersion", -1)) != 9:
         return new_state()
     if not isinstance(state.get("matches"), list):
         raise RuntimeError(f"Checkpoint {path} has no matches array")
