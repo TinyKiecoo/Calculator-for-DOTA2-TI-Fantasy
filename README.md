@@ -5,9 +5,7 @@
 <h1 align="center">Calculator for DOTA 2 TI Fantasy</h1>
 
 <p align="center">
-  An open-source calculator for Dota 2 TI Fantasy predictions.
-  <br>
-  Using selectable 2026 tournament replay datasets to predict the Fantasy Score of <strong>TI 2026</strong>.
+  An open-source, real-time calculator for Dota 2 TI Fantasy.
 </p>
 
 <p align="center">
@@ -29,9 +27,6 @@
 ## Run Locally
 
 Clone or download the repository, then open `index.html` in a modern browser.
-The bundled catalog currently includes **Esports World Cup 2026** and
-**1win Essence II**. Each tournament is selected and scored independently;
-their match data is never combined.
 
 ## Repository Structure
 
