@@ -76,60 +76,6 @@ a:focus-visible {
   display: none !important;
 }
 
-.correction-banner {
-  position: relative;
-  z-index: 20;
-  min-height: 30px;
-  padding: 5px 42px 5px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #e8f6de;
-  border-bottom: 1px solid rgba(169, 218, 129, .36);
-  background: linear-gradient(90deg, #183d28, #23623d 50%, #183d28);
-  box-shadow: 0 2px 14px rgba(0, 0, 0, .34);
-  font-size: .73rem;
-  letter-spacing: .045em;
-  text-align: center;
-}
-
-.correction-banner-open {
-  max-width: calc(100% - 16px);
-  padding: 2px 8px;
-  color: inherit;
-  cursor: pointer;
-  border: 0;
-  background: transparent;
-  font: inherit;
-  letter-spacing: inherit;
-  text-align: center;
-}
-
-.correction-banner-open:hover {
-  color: #fff;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.correction-banner-close {
-  position: absolute;
-  top: 0;
-  right: 8px;
-  width: 30px;
-  height: 30px;
-  padding: 0;
-  color: rgba(232, 246, 222, .82);
-  cursor: pointer;
-  border: 0;
-  background: transparent;
-  font-size: 1rem;
-}
-
-.correction-banner-close:hover {
-  color: #fff;
-  background: rgba(255, 255, 255, .08);
-}
-
 .fantasy-app {
   min-height: 100vh;
   overflow: hidden;
@@ -1409,35 +1355,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
   line-height: 1.55;
 }
 
-.live-update-contact-list {
-  margin: 18px 0;
-  padding: 15px 18px 15px 42px;
-  color: #c8bda9;
-  border: 1px solid rgba(217, 182, 111, .2);
-  background: rgba(255, 255, 255, .025);
-}
-
-.live-update-contact-list li {
-  padding: 5px 0;
-  font-size: .84rem;
-  line-height: 1.55;
-}
-
-.live-update-contact-list a {
-  color: #e9c978;
-  text-decoration-color: rgba(233, 201, 120, .52);
-  text-underline-offset: 3px;
-}
-
-.live-update-contact-list a:hover {
-  color: #fff0bd;
-}
-
-.live-update-notice-footnote {
-  padding-top: 15px;
-  border-top: 1px solid rgba(255, 255, 255, .08);
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1988,11 +1905,6 @@ input.emblem-multiplier::-webkit-outer-spin-button {
 }
 
 @media (max-width: 380px) {
-  .correction-banner {
-    padding-left: 10px;
-    font-size: .66rem;
-  }
-
   .topbar,
   .banner-grid {
     width: calc(100% - 16px);

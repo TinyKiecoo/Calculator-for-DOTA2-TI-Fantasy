@@ -74,26 +74,9 @@
       document.documentElement.lang = language === "zh" ? "zh-CN" : "en";
     })();
   </script>
-  <link rel="stylesheet" href="styles.css?v=20260814-compact-multiplier">
+  <link rel="stylesheet" href="styles.css?v=20260814-cleanup">
 </head>
 <body>
-  <aside class="correction-banner" id="correction-banner" role="status" hidden>
-    <button
-      type="button"
-      class="correction-banner-open"
-      id="live-update-notice-open"
-      aria-label="查看数据更新说明与问题报告方式"
-      data-i18n-aria-label="openLiveUpdateNotice"
-      data-i18n="liveUpdateNotice"
-    >2026 年国际邀请赛数据正在更新中</button>
-    <button
-      type="button"
-      class="correction-banner-close"
-      id="correction-banner-close"
-      aria-label="关闭国际邀请赛数据更新提示"
-      data-i18n-aria-label="closeLiveUpdateNotice"
-    >×</button>
-  </aside>
   <div class="fantasy-app">
     <div class="page-shell" id="page-shell">
       <header class="topbar" id="challenge">
@@ -371,7 +354,7 @@
     }
   </script>
   <script src="fantasy.js?v=20260813-heroids"></script>
-  <script src="app.js?v=20260814-default-manual"></script>
+  <script src="app.js?v=20260814-cleanup"></script>
   <script>
     if (window.location.hostname === "www.ti-fantasy.site") {
       const busuanziScript = document.createElement("script");

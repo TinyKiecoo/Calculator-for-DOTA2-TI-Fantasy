@@ -44,17 +44,10 @@
   const multiplierSwitcher = document.getElementById("multiplier-switcher");
   const prefixTitleSelect = document.getElementById("prefix-title-select");
   const suffixTitleSelect = document.getElementById("suffix-title-select");
-  const correctionBanner = document.getElementById("correction-banner");
-  const correctionBannerClose = document.getElementById("correction-banner-close");
-  const liveUpdateNoticeOpen = document.getElementById("live-update-notice-open");
 
   const languageToggle = document.getElementById("language-toggle");
   const LANGUAGE_STORAGE_KEY = "ti-fantasy-language";
   const PAGE_STATE_STORAGE_KEY = "ti-fantasy-page-state-v1";
-  // Change this to true when TI 2026 begins and live data starts updating.
-  const SHOW_TI_LIVE_UPDATE_NOTICE = true;
-  const LIVE_UPDATE_NOTICE_STORAGE_KEY =
-    "ti-fantasy-live-update-notice-v1";
   const MULTIPLIER_MODES = ["calculated", "manual"];
   const EMBLEM_RANKING_MODES = ["average", "highestSeries"];
 
@@ -100,18 +93,6 @@
       manualMultiplierInput: "{role}第 {index} 枚徽标的手动倍率",
       prefixTitle: "前缀",
       suffixTitle: "后缀",
-      liveUpdateNotice: "2026 年国际邀请赛数据正在更新中",
-      openLiveUpdateNotice: "查看数据更新说明与问题报告方式",
-      closeLiveUpdateNotice: "关闭国际邀请赛数据更新提示",
-      liveUpdateNoticeTitle: "2026 年国际邀请赛数据正在更新中",
-      liveUpdateNoticeLead: "2026 年国际邀请赛数据正在更新中，如果计算结果与客户端内显示不一致，欢迎通过以下方式之一报告：",
-      liveUpdateGithubIssue: "提交 GitHub Issue",
-      liveUpdateEmail: "发电子邮件至 tinykiecoo@gmail.com",
-      liveUpdateSteam: "在 Steam 中直接联系: 好友代码 891593807",
-      liveUpdateNga: "NGA BBS",
-      liveUpdateHeybox: "小黑盒",
-      liveUpdateNoticeFootnote: "本站数据更新可能有一定延迟。报告时请以客户端屏幕截图形式提交。感谢您的帮助！",
-      liveUpdateNoticeThankYou: "另外，如果本计算器对您有帮助，欢迎在 GitHub 中送一颗 Star。非常感谢 :)",
       bannerGrid: "三面梦幻战旗",
       loading: "正在载入赛事数据…",
       loadErrorTitle: "赛事数据未能载入",
@@ -246,16 +227,6 @@
       manualMultiplierInput: "Manual multiplier for {role} emblem {index}",
       prefixTitle: "Prefix",
       suffixTitle: "Suffix",
-      liveUpdateNotice: "The International 2026 data is being updated",
-      openLiveUpdateNotice: "View the live-data notice and reporting options",
-      closeLiveUpdateNotice: "Dismiss The International data-update notice",
-      liveUpdateNoticeTitle: "The International 2026 data is being updated",
-      liveUpdateNoticeLead: "The International 2026 data is being updated. If a calculated result differs from the value shown in the Dota 2 client, please report it through one of the following methods:",
-      liveUpdateGithubIssue: "Create a GitHub Issue",
-      liveUpdateEmail: "Email to tinykiecoo@gmail.com",
-      liveUpdateSteam: "Contact me directly on Steam: Friend code 891593807",
-      liveUpdateNoticeFootnote: "Please note that data updates may be delayed. When reporting a discrepancy, please include a screenshot from the Dota 2 client. Thank you for your help!",
-      liveUpdateNoticeThankYou: "By the way, if this calculator helps, please gift me a free Star on GitHub. Thank you :)",
       bannerGrid: "Three fantasy banners",
       loading: "Loading tournament data…",
       loadErrorTitle: "Failed to load tournament data",
@@ -403,17 +374,6 @@
     }
   }
 
-  function initializeLiveUpdateNotice() {
-    let dismissed = false;
-    try {
-      dismissed =
-        localStorage.getItem(LIVE_UPDATE_NOTICE_STORAGE_KEY) === "dismissed";
-    } catch {
-      // Keep the notice visible when storage is unavailable.
-    }
-    correctionBanner.hidden = !SHOW_TI_LIVE_UPDATE_NOTICE || dismissed;
-  }
-
   function applyEnglishTitleFonts(root = document) {
     const titleElements = root.querySelectorAll(
       ".brand strong, h1, h2, h3, .score-method legend",
@@ -476,16 +436,6 @@
   }
 
   applyStaticTranslations();
-  initializeLiveUpdateNotice();
-
-  correctionBannerClose.addEventListener("click", () => {
-    try {
-      localStorage.setItem(LIVE_UPDATE_NOTICE_STORAGE_KEY, "dismissed");
-    } catch {
-      // The current page can still hide the notice when storage is blocked.
-    }
-    correctionBanner.hidden = true;
-  });
 
   languageToggle.addEventListener("click", () => {
     setLanguage(currentLanguage === "zh" ? "en" : "zh");
@@ -1381,26 +1331,6 @@
       </div>`;
   }
 
-  function liveUpdateNoticeMarkup() {
-    const regionalContacts = currentLanguage === "zh"
-      ? `
-          <li><a href="https://ngabbs.com/read.php?tid=47289904" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateNga"))}</a></li>
-          <li><a href="https://xiaoheihe.cn/app/bbs/link/187051484" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateHeybox"))}</a></li>`
-      : "";
-    return `
-      <div class="live-update-notice">
-        <p class="modal-lead">${escapeHtml(text("liveUpdateNoticeLead"))}</p>
-        <ol class="live-update-contact-list">
-          <li><a href="https://github.com/TinyKiecoo/Calculator-for-DOTA2-TI-Fantasy/issues" target="_blank" rel="noopener noreferrer">${escapeHtml(text("liveUpdateGithubIssue"))}</a></li>
-          <li>${escapeHtml(text("liveUpdateEmail"))}</li>
-          <li>${escapeHtml(text("liveUpdateSteam"))}</li>
-          ${regionalContacts}
-        </ol>
-        <p class="modal-lead live-update-notice-footnote">${escapeHtml(text("liveUpdateNoticeFootnote"))}</p>
-        <p class="modal-lead">${escapeHtml(text("liveUpdateNoticeThankYou"))}</p>
-      </div>`;
-  }
-
   function emblemRankingColorMarkup(role, color) {
     const unavailableColor =
       (role === "core" && color === "blue") ||
@@ -1508,13 +1438,10 @@
   }
 
   function updateModalContent(type) {
-    activeModalType = ["data", "emblemRankings", "liveUpdateNotice"].includes(type)
+    activeModalType = ["data", "emblemRankings"].includes(type)
       ? type
       : "data";
-    if (activeModalType === "liveUpdateNotice") {
-      modalTitle.textContent = text("liveUpdateNoticeTitle");
-      modalBody.innerHTML = liveUpdateNoticeMarkup();
-    } else if (activeModalType === "emblemRankings") {
+    if (activeModalType === "emblemRankings") {
       modalTitle.textContent = text("emblemRankings");
       modalBody.innerHTML = emblemRankingsMarkup();
     } else {
@@ -1701,10 +1628,6 @@
     button.addEventListener("click", () => {
       openModal(button, button.dataset.openModal);
     });
-  });
-
-  liveUpdateNoticeOpen.addEventListener("click", () => {
-    openModal(liveUpdateNoticeOpen, "liveUpdateNotice");
   });
 
   modalClose.addEventListener("click", closeModal);

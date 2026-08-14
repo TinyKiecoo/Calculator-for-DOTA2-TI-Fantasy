@@ -101,6 +101,15 @@ test("keeps the compact manual multiplier input aligned to the right", () => {
   );
 });
 
+test("removes the retired correction banner and its dedicated notice", () => {
+  assert.doesNotMatch(html, /correction-banner|live-update-notice/);
+  assert.doesNotMatch(
+    app,
+    /correctionBanner|liveUpdateNotice|LIVE_UPDATE_NOTICE|SHOW_TI_LIVE_UPDATE_NOTICE/,
+  );
+  assert.doesNotMatch(css, /correction-banner|live-update-notice|live-update-contact-list/);
+});
+
 test("uses classic scripts and file-safe relative paths", () => {
   assert.doesNotMatch(html, /type=["']module["']/i);
   assert.doesNotMatch(html, /%BASE_URL%|\/src\/|src=["']\//i);
@@ -556,11 +565,6 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     target: new FakeStageButton("groupStage"),
   });
   assert.equal(element("modal-backdrop").hidden, true);
-  assert.equal(
-    element("correction-banner").hidden,
-    false,
-    "the currently enabled live-update notice should remain visible",
-  );
   const saved = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
   assert.equal(saved.version, 3);
   assert.equal(saved.multiplierMode, "manual");
@@ -596,34 +600,6 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   const updated = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
   assert.equal(updated.pages.groupStage.manualMultipliers.core[0], 123.45);
   assert.equal(multiplier.focusCount, 0, "committing must not restore input focus");
-
-  assert.equal(
-    storage.has("ti-fantasy-live-update-notice-v1"),
-    false,
-    "showing the notice must not write a dismissal record",
-  );
-  assert.match(app, /const SHOW_TI_LIVE_UPDATE_NOTICE = true;/);
-  listeners.get("live-update-notice-open:click")();
-  assert.equal(element("modal-backdrop").hidden, false);
-  assert.equal(
-    element("modal-title").textContent,
-    "2026 年国际邀请赛数据正在更新中",
-  );
-  const notice = element("modal-body").innerHTML;
-  assert.match(notice, /如果计算结果与客户端内显示不一致/);
-  assert.match(notice, /github\.com\/TinyKiecoo\/Calculator-for-DOTA2-TI-Fantasy\/issues/);
-  assert.match(notice, /tinykiecoo@gmail\.com/);
-  assert.match(notice, /好友代码 891593807/);
-  assert.match(notice, /ngabbs\.com\/read\.php\?tid=47289904/);
-  assert.match(notice, /xiaoheihe\.cn\/app\/bbs\/link\/187051484/);
-  assert.match(notice, /本站数据更新可能有一定延迟/);
   assert.doesNotMatch(app, /SCORING_CHANGES|scoringChangesMarkup|tormentorCorrectionBody/);
   assert.doesNotMatch(css, /score-change-table|score-change-row/);
-
-  listeners.get("correction-banner-close:click")();
-  assert.equal(element("correction-banner").hidden, true);
-  assert.equal(
-    storage.get("ti-fantasy-live-update-notice-v1"),
-    "dismissed",
-  );
 });
