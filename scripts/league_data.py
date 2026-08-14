@@ -350,7 +350,7 @@ def build_dataset(
     }
     return {
         "meta": {
-            "schemaVersion": 10,
+            "schemaVersion": 11,
             "leagueId": league_id,
             "leagueName": league_name,
             "generatedAt": generated_at,
@@ -392,6 +392,10 @@ def build_dataset(
             "replayFantasyStats": {
                 "parser": "Clarity 4.0.1",
                 "matchesParsed": len(sorted_matches),
+                "statSnapshot": (
+                    "Valve replay player-data arrays captured on the first "
+                    "game-end tick"
+                ),
                 "exactFields": [key for key in STAT_KEYS if key != "gpm"],
                 "calculatedFields": ["gpm"],
                 "allFantasyStatsFromValveReplay": True,

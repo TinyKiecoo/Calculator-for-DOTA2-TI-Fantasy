@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Low-level Dota 2 replay download and Fantasy-field parsing tools.
 
-All Fantasy statistics are read from the replay. Most come from its final
-player-data arrays; GPM uses total earned gold captured on the first game-end
-tick, before any post-game passive-gold update, divided by the exact replay
-game duration. The helper also emits player/team identities, match
+All Fantasy statistics are read from the replay player-data arrays captured on
+the first game-end tick. GPM uses the total earned gold in that snapshot,
+before any post-game passive-gold update, divided by the exact replay game
+duration. The helper also emits final player/team identities, match
 result and duration, hero selection, and combat-log evidence required by
 advisor-title conditions.
 
@@ -176,8 +176,8 @@ public final class ReplayFantasyStats {
     private static final double FOUNTAIN_RADIUS = 8.0;
     private final List<DeathRecord> tormentorDeaths = new ArrayList<>();
     private final List<DeathRecord> fountainDeaths = new ArrayList<>();
-    private final Map<Long, Number> gameEndGoldBySteamId = new HashMap<>();
-    private boolean capturedGameEndGold;
+    private final Map<Long, Map<String, Object>> gameEndPlayers = new HashMap<>();
+    private boolean capturedGameEndPlayers;
     private Float firstBloodTimestamp;
     private Float firstHeroDeathTimestamp;
     private Long replayMatchId;
@@ -214,7 +214,17 @@ public final class ReplayFantasyStats {
         replayEndTime = dota.hasEndTime() ? dota.getEndTime() : null;
     }
 
-    private void captureGameEndGold(Entities entities) {
+    private static Object snapshotValue(
+        Map<String, Object> snapshot,
+        String key
+    ) {
+        return snapshot == null ? null : snapshot.get(key);
+    }
+
+    private void captureGameEndPlayers(Entities entities) {
+        Entity resource = entities.getByDtName("CDOTA_PlayerResource");
+        if (resource == null) return;
+        Map<Long, Map<String, Object>> players = new HashMap<>();
         for (int teamNumber = 2; teamNumber <= 3; teamNumber++) {
             String side = teamNumber == 2 ? "Radiant" : "Dire";
             Entity data = entities.getByDtName("CDOTA_Data" + side);
@@ -223,28 +233,77 @@ public final class ReplayFantasyStats {
                 String index = Util.arrayIdxToString(position);
                 String prefix = "m_vecDataTeam." + index + ".";
                 Number steamId = property(data, prefix + "m_iPlayerSteamID");
-                Number totalEarnedGold = property(
-                    data,
-                    prefix + "m_iTotalEarnedGold"
+                if (steamId == null) continue;
+                PlayerIdentity identity = playerAtPosition(
+                    entities,
+                    teamNumber,
+                    position
                 );
-                if (steamId == null || totalEarnedGold == null) continue;
-                gameEndGoldBySteamId.put(
-                    steamId.longValue(),
-                    totalEarnedGold
+                String resourceIndex = identity == null
+                    ? null
+                    : Util.arrayIdxToString(identity.resourceIndex());
+                String teamPrefix = resourceIndex == null
+                    ? null
+                    : "m_vecPlayerTeamData." + resourceIndex + ".";
+                Map<String, Object> snapshot = new HashMap<>();
+                snapshot.put("totalEarnedGold", property(data, prefix + "m_iTotalEarnedGold"));
+                snapshot.put("lastHits", property(data, prefix + "m_iLastHitCount"));
+                snapshot.put("denies", property(data, prefix + "m_iDenyCount"));
+                snapshot.put("stuns", property(data, prefix + "m_fStuns"));
+                snapshot.put("towerKills", property(data, prefix + "m_iTowerKills"));
+                snapshot.put("roshanKills", property(data, prefix + "m_iRoshanKills"));
+                snapshot.put("observerWards", property(data, prefix + "m_iObserverWardsPlaced"));
+                snapshot.put("campsStacked", property(data, prefix + "m_iCampsStacked"));
+                snapshot.put("runePickups", property(data, prefix + "m_iRunePickups"));
+                snapshot.put("smokesUsed", property(data, prefix + "m_iSmokesUsed"));
+                snapshot.put("madstones", property(data, prefix + "m_nAcquiredMadstone"));
+                snapshot.put("currentMadstones", property(data, prefix + "m_nCurrentMadstone"));
+                snapshot.put("neutralTokens", property(data, prefix + "m_iNeutralTokensFound"));
+                snapshot.put("watchers", property(data, prefix + "m_iWatchersTaken"));
+                snapshot.put("lotuses", property(data, prefix + "m_iLotusesTaken"));
+                snapshot.put("tormentorKills", property(data, prefix + "m_iTormentorKills"));
+                snapshot.put("courierKills", property(data, prefix + "m_iCourierKills"));
+                snapshot.put(
+                    "kills",
+                    teamPrefix == null ? null : property(resource, teamPrefix + "m_iKills")
                 );
+                snapshot.put(
+                    "deaths",
+                    teamPrefix == null ? null : property(resource, teamPrefix + "m_iDeaths")
+                );
+                snapshot.put(
+                    "assists",
+                    teamPrefix == null ? null : property(resource, teamPrefix + "m_iAssists")
+                );
+                snapshot.put(
+                    "teamfight",
+                    teamPrefix == null
+                        ? null
+                        : property(resource, teamPrefix + "m_flTeamFightParticipation")
+                );
+                snapshot.put(
+                    "firstBlood",
+                    teamPrefix == null
+                        ? null
+                        : property(resource, teamPrefix + "m_iFirstBloodClaimed")
+                );
+                players.put(steamId.longValue(), snapshot);
             }
         }
-        capturedGameEndGold = true;
+        if (players.size() == 10) {
+            gameEndPlayers.putAll(players);
+            capturedGameEndPlayers = true;
+        }
     }
 
     @OnTickEnd
     public void onTickEnd(Context context, boolean synthetic) {
-        if (capturedGameEndGold) return;
+        if (capturedGameEndPlayers) return;
         Entities entities = context.getProcessor(Entities.class);
         Entity rules = entities.getByDtName("CDOTAGamerulesProxy");
         Number gameEnd = property(rules, "m_pGameRules.m_flGameEndTime");
         if (gameEnd != null && gameEnd.doubleValue() > 0.0) {
-            captureGameEndGold(entities);
+            captureGameEndPlayers(entities);
         }
     }
 
@@ -518,12 +577,8 @@ public final class ReplayFantasyStats {
         String side
     ) {
         Entity data = entities.getByDtName("CDOTA_Data" + side);
-        Entity resource = entities.getByDtName("CDOTA_PlayerResource");
         if (data == null) {
             throw new IllegalStateException("Missing CDOTA_Data" + side);
-        }
-        if (resource == null) {
-            throw new IllegalStateException("Missing CDOTA_PlayerResource");
         }
 
         int emitted = 0;
@@ -531,49 +586,41 @@ public final class ReplayFantasyStats {
             String index = Util.arrayIdxToString(position);
             String prefix = "m_vecDataTeam." + index + ".";
             Object steamId = property(data, prefix + "m_iPlayerSteamID");
+            Map<String, Object> gameEnd = steamId instanceof Number
+                ? gameEndPlayers.get(((Number) steamId).longValue())
+                : null;
             Number replayEndTotalEarnedGold = property(
                 data,
                 prefix + "m_iTotalEarnedGold"
             );
-            Number totalEarnedGold = steamId instanceof Number
-                ? gameEndGoldBySteamId.get(((Number) steamId).longValue())
-                : null;
-            Object lastHits = property(data, prefix + "m_iLastHitCount");
-            Object denies = property(data, prefix + "m_iDenyCount");
-            Object stuns = property(data, prefix + "m_fStuns");
-            Object towerKills = property(data, prefix + "m_iTowerKills");
-            Object roshanKills = property(data, prefix + "m_iRoshanKills");
-            Object observerWards = property(data, prefix + "m_iObserverWardsPlaced");
-            Object campsStacked = property(data, prefix + "m_iCampsStacked");
-            Object runePickups = property(data, prefix + "m_iRunePickups");
-            Object smokesUsed = property(data, prefix + "m_iSmokesUsed");
-            Object madstones = property(data, prefix + "m_nAcquiredMadstone");
-            Object currentMadstones = property(data, prefix + "m_nCurrentMadstone");
-            Object neutralTokens = property(data, prefix + "m_iNeutralTokensFound");
-            Object watchers = property(data, prefix + "m_iWatchersTaken");
-            Object lotuses = property(data, prefix + "m_iLotusesTaken");
-            Object tormentorKills = property(data, prefix + "m_iTormentorKills");
-            Object courierKills = property(data, prefix + "m_iCourierKills");
+            Object replayEndStuns = property(data, prefix + "m_fStuns");
+            Object totalEarnedGold = snapshotValue(gameEnd, "totalEarnedGold");
+            Object lastHits = snapshotValue(gameEnd, "lastHits");
+            Object denies = snapshotValue(gameEnd, "denies");
+            Object stuns = snapshotValue(gameEnd, "stuns");
+            Object towerKills = snapshotValue(gameEnd, "towerKills");
+            Object roshanKills = snapshotValue(gameEnd, "roshanKills");
+            Object observerWards = snapshotValue(gameEnd, "observerWards");
+            Object campsStacked = snapshotValue(gameEnd, "campsStacked");
+            Object runePickups = snapshotValue(gameEnd, "runePickups");
+            Object smokesUsed = snapshotValue(gameEnd, "smokesUsed");
+            Object madstones = snapshotValue(gameEnd, "madstones");
+            Object currentMadstones = snapshotValue(gameEnd, "currentMadstones");
+            Object neutralTokens = snapshotValue(gameEnd, "neutralTokens");
+            Object watchers = snapshotValue(gameEnd, "watchers");
+            Object lotuses = snapshotValue(gameEnd, "lotuses");
+            Object tormentorKills = snapshotValue(gameEnd, "tormentorKills");
+            Object courierKills = snapshotValue(gameEnd, "courierKills");
             int playerSlot = teamNumber == 2 ? position : 128 + position;
             PlayerIdentity identity = playerAtPosition(entities, teamNumber, position);
             Object heroId = identity == null || identity.heroId() <= 0 ? null : identity.heroId();
             String heroName = identity == null ? null : identity.heroName();
             String playerName = identity == null ? null : identity.playerName();
-            String resourceIndex = identity == null
-                ? null
-                : Util.arrayIdxToString(identity.resourceIndex());
-            String teamPrefix = resourceIndex == null
-                ? null
-                : "m_vecPlayerTeamData." + resourceIndex + ".";
-            Object kills = teamPrefix == null ? null : property(resource, teamPrefix + "m_iKills");
-            Object deaths = teamPrefix == null ? null : property(resource, teamPrefix + "m_iDeaths");
-            Object assists = teamPrefix == null ? null : property(resource, teamPrefix + "m_iAssists");
-            Object teamfight = teamPrefix == null
-                ? null
-                : property(resource, teamPrefix + "m_flTeamFightParticipation");
-            Object firstBlood = teamPrefix == null
-                ? null
-                : property(resource, teamPrefix + "m_iFirstBloodClaimed");
+            Object kills = snapshotValue(gameEnd, "kills");
+            Object deaths = snapshotValue(gameEnd, "deaths");
+            Object assists = snapshotValue(gameEnd, "assists");
+            Object teamfight = snapshotValue(gameEnd, "teamfight");
+            Object firstBlood = snapshotValue(gameEnd, "firstBlood");
             Object creepScore = lastHits instanceof Number && denies instanceof Number
                 ? ((Number) lastHits).longValue() + ((Number) denies).longValue()
                 : null;
@@ -586,7 +633,8 @@ public final class ReplayFantasyStats {
                 "\"watchersCaptured\":%s," +
                 "\"lotusesCollected\":%s," +
                 "\"rawStats\":{\"totalEarnedGold\":%s," +
-                "\"replayEndTotalEarnedGold\":%s,\"lastHits\":%s," +
+                "\"replayEndTotalEarnedGold\":%s," +
+                "\"replayEndStunSeconds\":%s,\"lastHits\":%s," +
                 "\"denies\":%s,\"assists\":%s}," +
                 "\"stats\":{\"kills\":%s,\"deaths\":%s," +
                 "\"creep_score\":%s," +
@@ -611,6 +659,7 @@ public final class ReplayFantasyStats {
                 jsonNumber(lotuses),
                 jsonNumber(totalEarnedGold),
                 jsonNumber(replayEndTotalEarnedGold),
+                jsonNumber(replayEndStuns),
                 jsonNumber(lastHits),
                 jsonNumber(denies),
                 jsonNumber(assists),
@@ -726,10 +775,10 @@ public final class ReplayFantasyStats {
         Entity rules = entities.getByDtName("CDOTAGamerulesProxy");
         Number gameStart = property(rules, "m_pGameRules.m_flGameStartTime");
         Number gameEnd = property(rules, "m_pGameRules.m_flGameEndTime");
-        if (!capturedGameEndGold || gameEndGoldBySteamId.size() != 10) {
+        if (!capturedGameEndPlayers || gameEndPlayers.size() != 10) {
             throw new IllegalStateException(
-                "Expected ten game-end gold snapshots, found "
-                + gameEndGoldBySteamId.size()
+                "Expected ten game-end player snapshots, found "
+                + gameEndPlayers.size()
             );
         }
         emitTeamMetadata(entities, 2);
@@ -1652,14 +1701,17 @@ def parse_replay(
 def new_state() -> dict[str, Any]:
     return {
         "meta": {
-            "schemaVersion": 9,
+            "schemaVersion": 10,
             "leagueId": LEAGUE_ID,
             "leagueName": LEAGUE_NAME,
             "artifact": "replayFantasyStats",
             "generatedAt": utc_now(),
             "parser": "Clarity 4.0.1",
             "fieldProvenance": {
-                "stats": "Valve replay final player-data arrays",
+                "stats": (
+                    "Valve replay player-data arrays captured on the first "
+                    "game-end tick"
+                ),
                 "gpm": (
                     "Calculated from CDOTA_Data* m_iTotalEarnedGold captured "
                     "on the first game-end tick and exact replay game duration"
@@ -1690,7 +1742,7 @@ def load_state(path: Path) -> dict[str, Any]:
     state = json.loads(path.read_text(encoding="utf-8"))
     if state.get("meta", {}).get("leagueId") != LEAGUE_ID:
         raise RuntimeError(f"Checkpoint {path} is for a different league")
-    if int(state.get("meta", {}).get("schemaVersion", -1)) != 9:
+    if int(state.get("meta", {}).get("schemaVersion", -1)) != 10:
         return new_state()
     if not isinstance(state.get("matches"), list):
         raise RuntimeError(f"Checkpoint {path} has no matches array")

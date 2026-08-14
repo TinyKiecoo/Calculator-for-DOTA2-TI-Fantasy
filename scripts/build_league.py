@@ -239,7 +239,10 @@ EXCLUDED_TEAM_NAMES = {
     "IC x Insanity",
 }
 
-CHECKPOINT_SCHEMA_VERSION = 10
+CHECKPOINT_SCHEMA_VERSION = 11
+REPLAY_STAT_SNAPSHOT = (
+    "Valve replay player-data arrays captured on the first game-end tick"
+)
 REPLAY_GPM_SOURCE = (
     "Calculated from Valve replay m_iTotalEarnedGold captured on the first "
     "game-end tick / exact game duration"
@@ -667,6 +670,7 @@ def checkpoint_from_replay(
             "replayUrl": manifest_item.get("replayUrl"),
             "parser": "Clarity 4.0.1",
             "outputEncoding": "UTF-8",
+            "statSnapshot": REPLAY_STAT_SNAPSHOT,
             "gpmSource": REPLAY_GPM_SOURCE,
             "exactFields": [
                 key for key in league_data.STAT_KEYS if key != "gpm"
@@ -699,6 +703,10 @@ def validate_checkpoint(
     if not isinstance(match, dict) or len(match.get("players", [])) != 10:
         raise RuntimeError(f"Checkpoint {match_id} does not contain ten players")
     replay_meta = checkpoint.get("replay") or {}
+    if require_current_schema and not replay_meta.get("statSnapshot"):
+        raise RuntimeError(
+            f"Checkpoint {match_id} lacks authoritative stat snapshot timing"
+        )
     if not replay_meta.get("gpmSource"):
         raise RuntimeError(f"Checkpoint {match_id} lacks authoritative GPM source")
     if replay_meta.get("outputEncoding") != "UTF-8" and any(

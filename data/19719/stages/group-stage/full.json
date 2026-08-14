@@ -1,24 +1,24 @@
 {
   "meta": {
-    "schemaVersion": 10,
+    "schemaVersion": 11,
     "leagueId": 19719,
     "leagueName": "The International 2026",
-    "generatedAt": "2026-08-14T04:46:32.482980Z",
+    "generatedAt": "2026-08-14T05:28:52.763492Z",
     "eventStartUtc": "2026-08-13T03:24:05Z",
-    "eventEndUtc": "2026-08-14T04:18:42Z",
+    "eventEndUtc": "2026-08-14T05:16:57Z",
     "sources": {
       "openDotaReplayManifest": "OpenDota resolves the league name and discovers its Valve replay links",
       "valveReplays": "http://replay{cluster}.{regional_domain}/570/{match_id}_{replay_salt}.dem.bz2"
     },
     "coverage": {
-      "matches": 37,
-      "parsedMatches": 37,
-      "playerGameRows": 370,
+      "matches": 38,
+      "parsedMatches": 38,
+      "playerGameRows": 380,
       "teams": 16,
       "players": 80,
       "allMatchesHaveTenPlayers": true,
       "completeSeries": 14,
-      "incompleteSeries": 2
+      "incompleteSeries": 3
     },
     "roleMethod": {
       "description": "Global account-ID assignments in build_league.py, with replay-only farm ranking for unknown players.",
@@ -59,7 +59,8 @@
     "caveats": [],
     "replayFantasyStats": {
       "parser": "Clarity 4.0.1",
-      "matchesParsed": 37,
+      "matchesParsed": 38,
+      "statSnapshot": "Valve replay player-data arrays captured on the first game-end tick",
       "exactFields": [
         "kills",
         "deaths",
@@ -90,14 +91,14 @@
     ],
     "stageCoverage": {
       "groupStage": {
-        "matches": 37,
-        "parsedMatches": 37,
-        "playerGameRows": 370,
+        "matches": 38,
+        "parsedMatches": 38,
+        "playerGameRows": 380,
         "teams": 16,
         "players": 80,
         "allMatchesHaveTenPlayers": true,
         "completeSeries": 14,
-        "incompleteSeries": 2
+        "incompleteSeries": 3
       }
     }
   },
@@ -1509,51 +1510,51 @@
           "role": "core",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 678.1666666666666,
-            "averageGpm": 746.7415446126006,
+            "averageCreepScore": 656.8571428571429,
+            "averageGpm": 739.2000963198506,
             "farmRankAscending": 4,
             "manualOverride": "core"
           },
-          "games": 6,
+          "games": 7,
           "totals": {
-            "kills": 45,
-            "deaths": 39,
-            "creep_score": 4069,
-            "gpm": 4480.449267675604,
-            "madstones_collected": 446,
+            "kills": 58,
+            "deaths": 44,
+            "creep_score": 4598,
+            "gpm": 5174.400674238954,
+            "madstones_collected": 486,
             "towers_destroyed": 9,
             "observer_wards_placed": 1,
-            "camps_stacked": 33,
-            "runes_picked_up": 33,
-            "watchers_captured": 40,
+            "camps_stacked": 36,
+            "runes_picked_up": 39,
+            "watchers_captured": 44,
             "smokes_used": 0,
-            "lotuses_collected": 29,
+            "lotuses_collected": 33,
             "roshans_killed": 1,
-            "teamfight_participation": 3.8185185492038727,
-            "stun_seconds": 246.06775569915771,
-            "tormentors_killed": 3,
+            "teamfight_participation": 4.510826259851456,
+            "stun_seconds": 277.83455181121826,
+            "tormentors_killed": 4,
             "first_blood": 1,
-            "couriers_killed": 2
+            "couriers_killed": 3
           },
           "averages": {
-            "kills": 7.5,
-            "deaths": 6.5,
-            "creep_score": 678.1666666666666,
-            "gpm": 746.7415446126006,
-            "madstones_collected": 74.33333333333333,
-            "towers_destroyed": 1.5,
-            "observer_wards_placed": 0.16666666666666666,
-            "camps_stacked": 5.5,
-            "runes_picked_up": 5.5,
-            "watchers_captured": 6.666666666666667,
+            "kills": 8.285714285714286,
+            "deaths": 6.285714285714286,
+            "creep_score": 656.8571428571429,
+            "gpm": 739.2000963198506,
+            "madstones_collected": 69.42857142857143,
+            "towers_destroyed": 1.2857142857142858,
+            "observer_wards_placed": 0.14285714285714285,
+            "camps_stacked": 5.142857142857143,
+            "runes_picked_up": 5.571428571428571,
+            "watchers_captured": 6.285714285714286,
             "smokes_used": 0,
-            "lotuses_collected": 4.833333333333333,
-            "roshans_killed": 0.16666666666666666,
-            "teamfight_participation": 0.6364197582006454,
-            "stun_seconds": 41.01129261652628,
-            "tormentors_killed": 0.5,
-            "first_blood": 0.16666666666666666,
-            "couriers_killed": 0.3333333333333333
+            "lotuses_collected": 4.714285714285714,
+            "roshans_killed": 0.14285714285714285,
+            "teamfight_participation": 0.6444037514073508,
+            "stun_seconds": 39.690650258745464,
+            "tormentors_killed": 0.5714285714285714,
+            "first_blood": 0.14285714285714285,
+            "couriers_killed": 0.42857142857142855
           }
         },
         {
@@ -1562,51 +1563,51 @@
           "role": "core",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 698.8333333333334,
-            "averageGpm": 773.3685351503509,
+            "averageCreepScore": 713.4285714285714,
+            "averageGpm": 780.743150775199,
             "farmRankAscending": 5,
             "manualOverride": "core"
           },
-          "games": 6,
+          "games": 7,
           "totals": {
-            "kills": 73,
-            "deaths": 30,
-            "creep_score": 4193,
-            "gpm": 4640.211210902105,
-            "madstones_collected": 479,
-            "towers_destroyed": 19,
-            "observer_wards_placed": 1,
-            "camps_stacked": 10,
-            "runes_picked_up": 33,
+            "kills": 83,
+            "deaths": 31,
+            "creep_score": 4994,
+            "gpm": 5465.202055426393,
+            "madstones_collected": 558,
+            "towers_destroyed": 21,
+            "observer_wards_placed": 2,
+            "camps_stacked": 13,
+            "runes_picked_up": 38,
             "watchers_captured": 6,
             "smokes_used": 0,
-            "lotuses_collected": 9,
+            "lotuses_collected": 11,
             "roshans_killed": 7,
-            "teamfight_participation": 4.176719605922699,
-            "stun_seconds": 134.1321121454239,
-            "tormentors_killed": 6,
-            "first_blood": 0,
+            "teamfight_participation": 4.869027316570282,
+            "stun_seconds": 223.46631014347076,
+            "tormentors_killed": 7,
+            "first_blood": 1,
             "couriers_killed": 4
           },
           "averages": {
-            "kills": 12.166666666666666,
-            "deaths": 5,
-            "creep_score": 698.8333333333334,
-            "gpm": 773.3685351503509,
-            "madstones_collected": 79.83333333333333,
-            "towers_destroyed": 3.1666666666666665,
-            "observer_wards_placed": 0.16666666666666666,
-            "camps_stacked": 1.6666666666666667,
-            "runes_picked_up": 5.5,
-            "watchers_captured": 1,
+            "kills": 11.857142857142858,
+            "deaths": 4.428571428571429,
+            "creep_score": 713.4285714285714,
+            "gpm": 780.743150775199,
+            "madstones_collected": 79.71428571428571,
+            "towers_destroyed": 3,
+            "observer_wards_placed": 0.2857142857142857,
+            "camps_stacked": 1.8571428571428572,
+            "runes_picked_up": 5.428571428571429,
+            "watchers_captured": 0.8571428571428571,
             "smokes_used": 0,
-            "lotuses_collected": 1.5,
-            "roshans_killed": 1.1666666666666667,
-            "teamfight_participation": 0.6961199343204498,
-            "stun_seconds": 22.355352024237316,
+            "lotuses_collected": 1.5714285714285714,
+            "roshans_killed": 1,
+            "teamfight_participation": 0.6955753309386117,
+            "stun_seconds": 31.923758591924393,
             "tormentors_killed": 1,
-            "first_blood": 0,
-            "couriers_killed": 0.6666666666666666
+            "first_blood": 0.14285714285714285,
+            "couriers_killed": 0.5714285714285714
           }
         },
         {
@@ -1615,51 +1616,51 @@
           "role": "mid",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 496.3333333333333,
-            "averageGpm": 610.5803980308779,
+            "averageCreepScore": 517.5714285714286,
+            "averageGpm": 617.7764225085676,
             "farmRankAscending": 3,
             "manualOverride": "mid"
           },
-          "games": 6,
+          "games": 7,
           "totals": {
-            "kills": 43,
-            "deaths": 32,
-            "creep_score": 2978,
-            "gpm": 3663.482388185267,
-            "madstones_collected": 263,
-            "towers_destroyed": 4,
-            "observer_wards_placed": 8,
-            "camps_stacked": 6,
-            "runes_picked_up": 74,
+            "kills": 45,
+            "deaths": 40,
+            "creep_score": 3623,
+            "gpm": 4324.434957559974,
+            "madstones_collected": 313,
+            "towers_destroyed": 5,
+            "observer_wards_placed": 9,
+            "camps_stacked": 9,
+            "runes_picked_up": 81,
             "watchers_captured": 2,
             "smokes_used": 1,
             "lotuses_collected": 2,
             "roshans_killed": 1,
-            "teamfight_participation": 4.316707491874695,
+            "teamfight_participation": 4.7013228833675385,
             "stun_seconds": 397.4921875,
             "tormentors_killed": 5,
             "first_blood": 0,
             "couriers_killed": 1
           },
           "averages": {
-            "kills": 7.166666666666667,
-            "deaths": 5.333333333333333,
-            "creep_score": 496.3333333333333,
-            "gpm": 610.5803980308779,
-            "madstones_collected": 43.833333333333336,
-            "towers_destroyed": 0.6666666666666666,
-            "observer_wards_placed": 1.3333333333333333,
-            "camps_stacked": 1,
-            "runes_picked_up": 12.333333333333334,
-            "watchers_captured": 0.3333333333333333,
-            "smokes_used": 0.16666666666666666,
-            "lotuses_collected": 0.3333333333333333,
-            "roshans_killed": 0.16666666666666666,
-            "teamfight_participation": 0.7194512486457825,
-            "stun_seconds": 66.24869791666667,
-            "tormentors_killed": 0.8333333333333334,
+            "kills": 6.428571428571429,
+            "deaths": 5.714285714285714,
+            "creep_score": 517.5714285714286,
+            "gpm": 617.7764225085676,
+            "madstones_collected": 44.714285714285715,
+            "towers_destroyed": 0.7142857142857143,
+            "observer_wards_placed": 1.2857142857142858,
+            "camps_stacked": 1.2857142857142858,
+            "runes_picked_up": 11.571428571428571,
+            "watchers_captured": 0.2857142857142857,
+            "smokes_used": 0.14285714285714285,
+            "lotuses_collected": 0.2857142857142857,
+            "roshans_killed": 0.14285714285714285,
+            "teamfight_participation": 0.6716175547667912,
+            "stun_seconds": 56.784598214285715,
+            "tormentors_killed": 0.7142857142857143,
             "first_blood": 0,
-            "couriers_killed": 0.16666666666666666
+            "couriers_killed": 0.14285714285714285
           }
         },
         {
@@ -1668,51 +1669,51 @@
           "role": "support",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 81.16666666666667,
-            "averageGpm": 328.81598909158805,
+            "averageCreepScore": 94.28571428571429,
+            "averageGpm": 331.38747419508536,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
-          "games": 6,
+          "games": 7,
           "totals": {
             "kills": 17,
-            "deaths": 44,
-            "creep_score": 487,
-            "gpm": 1972.8959345495284,
-            "madstones_collected": 43,
+            "deaths": 50,
+            "creep_score": 660,
+            "gpm": 2319.7123193655975,
+            "madstones_collected": 51,
             "towers_destroyed": 0,
-            "observer_wards_placed": 96,
-            "camps_stacked": 31,
-            "runes_picked_up": 16,
-            "watchers_captured": 44,
-            "smokes_used": 31,
-            "lotuses_collected": 14,
+            "observer_wards_placed": 112,
+            "camps_stacked": 37,
+            "runes_picked_up": 20,
+            "watchers_captured": 48,
+            "smokes_used": 35,
+            "lotuses_collected": 18,
             "roshans_killed": 0,
-            "teamfight_participation": 3.7553521394729614,
-            "stun_seconds": 309.4847068786621,
+            "teamfight_participation": 4.293813705444336,
+            "stun_seconds": 325.75169944763184,
             "tormentors_killed": 3,
             "first_blood": 0,
             "couriers_killed": 4
           },
           "averages": {
-            "kills": 2.8333333333333335,
-            "deaths": 7.333333333333333,
-            "creep_score": 81.16666666666667,
-            "gpm": 328.81598909158805,
-            "madstones_collected": 7.166666666666667,
+            "kills": 2.4285714285714284,
+            "deaths": 7.142857142857143,
+            "creep_score": 94.28571428571429,
+            "gpm": 331.38747419508536,
+            "madstones_collected": 7.285714285714286,
             "towers_destroyed": 0,
             "observer_wards_placed": 16,
-            "camps_stacked": 5.166666666666667,
-            "runes_picked_up": 2.6666666666666665,
-            "watchers_captured": 7.333333333333333,
-            "smokes_used": 5.166666666666667,
-            "lotuses_collected": 2.3333333333333335,
+            "camps_stacked": 5.285714285714286,
+            "runes_picked_up": 2.857142857142857,
+            "watchers_captured": 6.857142857142857,
+            "smokes_used": 5,
+            "lotuses_collected": 2.5714285714285716,
             "roshans_killed": 0,
-            "teamfight_participation": 0.6258920232454935,
-            "stun_seconds": 51.580784479777016,
-            "tormentors_killed": 0.5,
+            "teamfight_participation": 0.6134019579206195,
+            "stun_seconds": 46.53595706394741,
+            "tormentors_killed": 0.42857142857142855,
             "first_blood": 0,
-            "couriers_killed": 0.6666666666666666
+            "couriers_killed": 0.5714285714285714
           }
         },
         {
@@ -1721,51 +1722,51 @@
           "role": "support",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 120,
-            "averageGpm": 362.6130746978529,
+            "averageCreepScore": 112.85714285714286,
+            "averageGpm": 349.16997245111935,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
-          "games": 6,
+          "games": 7,
           "totals": {
-            "kills": 22,
-            "deaths": 69,
-            "creep_score": 720,
-            "gpm": 2175.6784481871173,
-            "madstones_collected": 78,
+            "kills": 23,
+            "deaths": 78,
+            "creep_score": 790,
+            "gpm": 2444.1898071578353,
+            "madstones_collected": 81,
             "towers_destroyed": 0,
-            "observer_wards_placed": 45,
-            "camps_stacked": 38,
-            "runes_picked_up": 37,
-            "watchers_captured": 82,
-            "smokes_used": 20,
-            "lotuses_collected": 55,
+            "observer_wards_placed": 50,
+            "camps_stacked": 43,
+            "runes_picked_up": 40,
+            "watchers_captured": 95,
+            "smokes_used": 23,
+            "lotuses_collected": 58,
             "roshans_killed": 0,
-            "teamfight_participation": 4.239336609840393,
-            "stun_seconds": 717.501335144043,
+            "teamfight_participation": 4.816259682178497,
+            "stun_seconds": 971.7054061889648,
             "tormentors_killed": 1,
             "first_blood": 1,
             "couriers_killed": 10
           },
           "averages": {
-            "kills": 3.6666666666666665,
-            "deaths": 11.5,
-            "creep_score": 120,
-            "gpm": 362.6130746978529,
-            "madstones_collected": 13,
+            "kills": 3.2857142857142856,
+            "deaths": 11.142857142857142,
+            "creep_score": 112.85714285714286,
+            "gpm": 349.16997245111935,
+            "madstones_collected": 11.571428571428571,
             "towers_destroyed": 0,
-            "observer_wards_placed": 7.5,
-            "camps_stacked": 6.333333333333333,
-            "runes_picked_up": 6.166666666666667,
-            "watchers_captured": 13.666666666666666,
-            "smokes_used": 3.3333333333333335,
-            "lotuses_collected": 9.166666666666666,
+            "observer_wards_placed": 7.142857142857143,
+            "camps_stacked": 6.142857142857143,
+            "runes_picked_up": 5.714285714285714,
+            "watchers_captured": 13.571428571428571,
+            "smokes_used": 3.2857142857142856,
+            "lotuses_collected": 8.285714285714286,
             "roshans_killed": 0,
-            "teamfight_participation": 0.7065561016400655,
-            "stun_seconds": 119.5835558573405,
-            "tormentors_killed": 0.16666666666666666,
-            "first_blood": 0.16666666666666666,
-            "couriers_killed": 1.6666666666666667
+            "teamfight_participation": 0.688037097454071,
+            "stun_seconds": 138.815058026995,
+            "tormentors_killed": 0.14285714285714285,
+            "first_blood": 0.14285714285714285,
+            "couriers_killed": 1.4285714285714286
           }
         }
       ],
@@ -1788,51 +1789,51 @@
           "role": "core",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 432.75,
-            "averageGpm": 550.466055546374,
+            "averageCreepScore": 464.6,
+            "averageGpm": 599.938253664792,
             "farmRankAscending": 3,
             "manualOverride": "core"
           },
-          "games": 4,
+          "games": 5,
           "totals": {
-            "kills": 9,
-            "deaths": 28,
-            "creep_score": 1731,
-            "gpm": 2201.864222185496,
-            "madstones_collected": 93,
-            "towers_destroyed": 8,
+            "kills": 18,
+            "deaths": 34,
+            "creep_score": 2323,
+            "gpm": 2999.6912683239602,
+            "madstones_collected": 164,
+            "towers_destroyed": 9,
             "observer_wards_placed": 0,
-            "camps_stacked": 16,
-            "runes_picked_up": 8,
+            "camps_stacked": 19,
+            "runes_picked_up": 11,
             "watchers_captured": 2,
             "smokes_used": 1,
-            "lotuses_collected": 8,
+            "lotuses_collected": 10,
             "roshans_killed": 0,
-            "teamfight_participation": 2.395559847354889,
-            "stun_seconds": 89.13482189178467,
-            "tormentors_killed": 0,
+            "teamfight_participation": 3.223146080970764,
+            "stun_seconds": 104.70078754425049,
+            "tormentors_killed": 1,
             "first_blood": 0,
             "couriers_killed": 3
           },
           "averages": {
-            "kills": 2.25,
-            "deaths": 7,
-            "creep_score": 432.75,
-            "gpm": 550.466055546374,
-            "madstones_collected": 23.25,
-            "towers_destroyed": 2,
+            "kills": 3.6,
+            "deaths": 6.8,
+            "creep_score": 464.6,
+            "gpm": 599.938253664792,
+            "madstones_collected": 32.8,
+            "towers_destroyed": 1.8,
             "observer_wards_placed": 0,
-            "camps_stacked": 4,
-            "runes_picked_up": 2,
-            "watchers_captured": 0.5,
-            "smokes_used": 0.25,
+            "camps_stacked": 3.8,
+            "runes_picked_up": 2.2,
+            "watchers_captured": 0.4,
+            "smokes_used": 0.2,
             "lotuses_collected": 2,
             "roshans_killed": 0,
-            "teamfight_participation": 0.5988899618387222,
-            "stun_seconds": 22.283705472946167,
-            "tormentors_killed": 0,
+            "teamfight_participation": 0.6446292161941528,
+            "stun_seconds": 20.9401575088501,
+            "tormentors_killed": 0.2,
             "first_blood": 0,
-            "couriers_killed": 0.75
+            "couriers_killed": 0.6
           }
         },
         {
@@ -1841,49 +1842,49 @@
           "role": "core",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 707.75,
-            "averageGpm": 736.551102302391,
+            "averageCreepScore": 656.6,
+            "averageGpm": 709.5701359524871,
             "farmRankAscending": 5,
             "manualOverride": "core"
           },
-          "games": 4,
+          "games": 5,
           "totals": {
-            "kills": 26,
-            "deaths": 20,
-            "creep_score": 2831,
-            "gpm": 2946.204409209564,
-            "madstones_collected": 381,
+            "kills": 30,
+            "deaths": 23,
+            "creep_score": 3283,
+            "gpm": 3547.8506797624354,
+            "madstones_collected": 405,
             "towers_destroyed": 10,
             "observer_wards_placed": 0,
-            "camps_stacked": 13,
-            "runes_picked_up": 9,
-            "watchers_captured": 19,
+            "camps_stacked": 15,
+            "runes_picked_up": 17,
+            "watchers_captured": 24,
             "smokes_used": 0,
-            "lotuses_collected": 13,
-            "roshans_killed": 0,
-            "teamfight_participation": 1.9339768290519714,
-            "stun_seconds": 94.06667995452881,
+            "lotuses_collected": 18,
+            "roshans_killed": 1,
+            "teamfight_participation": 2.658114731311798,
+            "stun_seconds": 186.13194179534912,
             "tormentors_killed": 1,
             "first_blood": 0,
             "couriers_killed": 0
           },
           "averages": {
-            "kills": 6.5,
-            "deaths": 5,
-            "creep_score": 707.75,
-            "gpm": 736.551102302391,
-            "madstones_collected": 95.25,
-            "towers_destroyed": 2.5,
+            "kills": 6,
+            "deaths": 4.6,
+            "creep_score": 656.6,
+            "gpm": 709.5701359524871,
+            "madstones_collected": 81,
+            "towers_destroyed": 2,
             "observer_wards_placed": 0,
-            "camps_stacked": 3.25,
-            "runes_picked_up": 2.25,
-            "watchers_captured": 4.75,
+            "camps_stacked": 3,
+            "runes_picked_up": 3.4,
+            "watchers_captured": 4.8,
             "smokes_used": 0,
-            "lotuses_collected": 3.25,
-            "roshans_killed": 0,
-            "teamfight_participation": 0.48349420726299286,
-            "stun_seconds": 23.516669988632202,
-            "tormentors_killed": 0.25,
+            "lotuses_collected": 3.6,
+            "roshans_killed": 0.2,
+            "teamfight_participation": 0.5316229462623596,
+            "stun_seconds": 37.22638835906982,
+            "tormentors_killed": 0.2,
             "first_blood": 0,
             "couriers_killed": 0
           }
@@ -1894,51 +1895,51 @@
           "role": "mid",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 588.75,
-            "averageGpm": 676.7277406803237,
+            "averageCreepScore": 646.2,
+            "averageGpm": 761.4846357405929,
             "farmRankAscending": 4,
             "manualOverride": "mid"
           },
-          "games": 4,
+          "games": 5,
           "totals": {
-            "kills": 39,
-            "deaths": 18,
-            "creep_score": 2355,
-            "gpm": 2706.9109627212947,
-            "madstones_collected": 244,
-            "towers_destroyed": 3,
-            "observer_wards_placed": 7,
-            "camps_stacked": 9,
-            "runes_picked_up": 48,
+            "kills": 55,
+            "deaths": 19,
+            "creep_score": 3231,
+            "gpm": 3807.423178702965,
+            "madstones_collected": 326,
+            "towers_destroyed": 13,
+            "observer_wards_placed": 8,
+            "camps_stacked": 14,
+            "runes_picked_up": 54,
             "watchers_captured": 0,
             "smokes_used": 0,
             "lotuses_collected": 10,
-            "roshans_killed": 2,
-            "teamfight_participation": 2.879729688167572,
-            "stun_seconds": 186.20259475708008,
-            "tormentors_killed": 0,
+            "roshans_killed": 4,
+            "teamfight_participation": 3.7417986392974854,
+            "stun_seconds": 191.35713577270508,
+            "tormentors_killed": 1,
             "first_blood": 1,
-            "couriers_killed": 1
+            "couriers_killed": 2
           },
           "averages": {
-            "kills": 9.75,
-            "deaths": 4.5,
-            "creep_score": 588.75,
-            "gpm": 676.7277406803237,
-            "madstones_collected": 61,
-            "towers_destroyed": 0.75,
-            "observer_wards_placed": 1.75,
-            "camps_stacked": 2.25,
-            "runes_picked_up": 12,
+            "kills": 11,
+            "deaths": 3.8,
+            "creep_score": 646.2,
+            "gpm": 761.4846357405929,
+            "madstones_collected": 65.2,
+            "towers_destroyed": 2.6,
+            "observer_wards_placed": 1.6,
+            "camps_stacked": 2.8,
+            "runes_picked_up": 10.8,
             "watchers_captured": 0,
             "smokes_used": 0,
-            "lotuses_collected": 2.5,
-            "roshans_killed": 0.5,
-            "teamfight_participation": 0.719932422041893,
-            "stun_seconds": 46.55064868927002,
-            "tormentors_killed": 0,
-            "first_blood": 0.25,
-            "couriers_killed": 0.25
+            "lotuses_collected": 2,
+            "roshans_killed": 0.8,
+            "teamfight_participation": 0.7483597278594971,
+            "stun_seconds": 38.271427154541016,
+            "tormentors_killed": 0.2,
+            "first_blood": 0.2,
+            "couriers_killed": 0.4
           }
         },
         {
@@ -1947,51 +1948,51 @@
           "role": "support",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 161.25,
-            "averageGpm": 353.2264004849079,
+            "averageCreepScore": 142,
+            "averageGpm": 342.91502331291986,
             "farmRankAscending": 2,
             "manualOverride": "support"
           },
-          "games": 4,
+          "games": 5,
           "totals": {
             "kills": 6,
-            "deaths": 26,
-            "creep_score": 645,
-            "gpm": 1412.9056019396317,
+            "deaths": 31,
+            "creep_score": 710,
+            "gpm": 1714.5751165645993,
             "madstones_collected": 36,
             "towers_destroyed": 2,
-            "observer_wards_placed": 36,
-            "camps_stacked": 14,
-            "runes_picked_up": 13,
-            "watchers_captured": 34,
-            "smokes_used": 13,
-            "lotuses_collected": 16,
+            "observer_wards_placed": 43,
+            "camps_stacked": 16,
+            "runes_picked_up": 16,
+            "watchers_captured": 42,
+            "smokes_used": 18,
+            "lotuses_collected": 24,
             "roshans_killed": 0,
-            "teamfight_participation": 2.3965250849723816,
-            "stun_seconds": 265.9326591491699,
-            "tormentors_killed": 0,
+            "teamfight_participation": 2.9827319979667664,
+            "stun_seconds": 291.47435188293457,
+            "tormentors_killed": 1,
             "first_blood": 0,
             "couriers_killed": 2
           },
           "averages": {
-            "kills": 1.5,
-            "deaths": 6.5,
-            "creep_score": 161.25,
-            "gpm": 353.2264004849079,
-            "madstones_collected": 9,
-            "towers_destroyed": 0.5,
-            "observer_wards_placed": 9,
-            "camps_stacked": 3.5,
-            "runes_picked_up": 3.25,
-            "watchers_captured": 8.5,
-            "smokes_used": 3.25,
-            "lotuses_collected": 4,
+            "kills": 1.2,
+            "deaths": 6.2,
+            "creep_score": 142,
+            "gpm": 342.91502331291986,
+            "madstones_collected": 7.2,
+            "towers_destroyed": 0.4,
+            "observer_wards_placed": 8.6,
+            "camps_stacked": 3.2,
+            "runes_picked_up": 3.2,
+            "watchers_captured": 8.4,
+            "smokes_used": 3.6,
+            "lotuses_collected": 4.8,
             "roshans_killed": 0,
-            "teamfight_participation": 0.5991312712430954,
-            "stun_seconds": 66.48316478729248,
-            "tormentors_killed": 0,
+            "teamfight_participation": 0.5965463995933533,
+            "stun_seconds": 58.294870376586914,
+            "tormentors_killed": 0.2,
             "first_blood": 0,
-            "couriers_killed": 0.5
+            "couriers_killed": 0.4
           }
         },
         {
@@ -2000,51 +2001,51 @@
           "role": "support",
           "roleConfidence": "manual",
           "roleEvidence": {
-            "averageCreepScore": 85.25,
-            "averageGpm": 329.99235366215953,
+            "averageCreepScore": 76.4,
+            "averageGpm": 328.1872756840266,
             "farmRankAscending": 1,
             "manualOverride": "support"
           },
-          "games": 4,
+          "games": 5,
           "totals": {
             "kills": 9,
-            "deaths": 48,
-            "creep_score": 341,
-            "gpm": 1319.9694146486381,
-            "madstones_collected": 3,
+            "deaths": 59,
+            "creep_score": 382,
+            "gpm": 1640.936378420133,
+            "madstones_collected": 6,
             "towers_destroyed": 1,
-            "observer_wards_placed": 55,
-            "camps_stacked": 4,
-            "runes_picked_up": 13,
-            "watchers_captured": 27,
-            "smokes_used": 20,
-            "lotuses_collected": 16,
+            "observer_wards_placed": 71,
+            "camps_stacked": 7,
+            "runes_picked_up": 16,
+            "watchers_captured": 36,
+            "smokes_used": 24,
+            "lotuses_collected": 18,
             "roshans_killed": 2,
-            "teamfight_participation": 2.9368726015090942,
-            "stun_seconds": 337.7651138305664,
-            "tormentors_killed": 1,
+            "teamfight_participation": 3.626527786254883,
+            "stun_seconds": 431.9585266113281,
+            "tormentors_killed": 2,
             "first_blood": 0,
-            "couriers_killed": 4
+            "couriers_killed": 6
           },
           "averages": {
-            "kills": 2.25,
-            "deaths": 12,
-            "creep_score": 85.25,
-            "gpm": 329.99235366215953,
-            "madstones_collected": 0.75,
-            "towers_destroyed": 0.25,
-            "observer_wards_placed": 13.75,
-            "camps_stacked": 1,
-            "runes_picked_up": 3.25,
-            "watchers_captured": 6.75,
-            "smokes_used": 5,
-            "lotuses_collected": 4,
-            "roshans_killed": 0.5,
-            "teamfight_participation": 0.7342181503772736,
-            "stun_seconds": 84.4412784576416,
-            "tormentors_killed": 0.25,
+            "kills": 1.8,
+            "deaths": 11.8,
+            "creep_score": 76.4,
+            "gpm": 328.1872756840266,
+            "madstones_collected": 1.2,
+            "towers_destroyed": 0.2,
+            "observer_wards_placed": 14.2,
+            "camps_stacked": 1.4,
+            "runes_picked_up": 3.2,
+            "watchers_captured": 7.2,
+            "smokes_used": 4.8,
+            "lotuses_collected": 3.6,
+            "roshans_killed": 0.4,
+            "teamfight_participation": 0.7253055572509766,
+            "stun_seconds": 86.39170532226562,
+            "tormentors_killed": 0.4,
             "first_blood": 0,
-            "couriers_killed": 1
+            "couriers_killed": 1.2
           }
         }
       ],
@@ -3084,7 +3085,7 @@
             "lotuses_collected": 20,
             "roshans_killed": 0,
             "teamfight_participation": 4.057673513889313,
-            "stun_seconds": 303.56643295288086,
+            "stun_seconds": 303.54836654663086,
             "tormentors_killed": 1,
             "first_blood": 0,
             "couriers_killed": 6
@@ -3104,7 +3105,7 @@
             "lotuses_collected": 3.3333333333333335,
             "roshans_killed": 0,
             "teamfight_participation": 0.6762789189815521,
-            "stun_seconds": 50.59440549214681,
+            "stun_seconds": 50.59139442443848,
             "tormentors_killed": 0.16666666666666666,
             "first_blood": 0,
             "couriers_killed": 1
@@ -3642,7 +3643,7 @@
             "lotuses_collected": 48,
             "roshans_killed": 1,
             "teamfight_participation": 3.8357372879981995,
-            "stun_seconds": 485.5978698730469,
+            "stun_seconds": 485.5898132324219,
             "tormentors_killed": 1,
             "first_blood": 2,
             "couriers_killed": 5
@@ -3662,7 +3663,7 @@
             "lotuses_collected": 8,
             "roshans_killed": 0.16666666666666666,
             "teamfight_participation": 0.6392895479997,
-            "stun_seconds": 80.93297831217448,
+            "stun_seconds": 80.93163553873698,
             "tormentors_killed": 0.16666666666666666,
             "first_blood": 0.3333333333333333,
             "couriers_killed": 0.8333333333333334
@@ -3921,7 +3922,7 @@
             "lotuses_collected": 8,
             "roshans_killed": 2,
             "teamfight_participation": 2.0679576694965363,
-            "stun_seconds": 108.66650009155273,
+            "stun_seconds": 106.66650009155273,
             "tormentors_killed": 1,
             "first_blood": 0,
             "couriers_killed": 3
@@ -3941,7 +3942,7 @@
             "lotuses_collected": 2,
             "roshans_killed": 0.5,
             "teamfight_participation": 0.5169894173741341,
-            "stun_seconds": 27.166625022888184,
+            "stun_seconds": 26.666625022888184,
             "tormentors_killed": 0.25,
             "first_blood": 0,
             "couriers_killed": 0.75
@@ -3974,7 +3975,7 @@
             "lotuses_collected": 19,
             "roshans_killed": 0,
             "teamfight_participation": 2.8929485082626343,
-            "stun_seconds": 153.96577835083008,
+            "stun_seconds": 153.94893264770508,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 4
@@ -3994,7 +3995,7 @@
             "lotuses_collected": 4.75,
             "roshans_killed": 0,
             "teamfight_participation": 0.7232371270656586,
-            "stun_seconds": 38.49144458770752,
+            "stun_seconds": 38.48723316192627,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 1
@@ -4200,7 +4201,7 @@
             "lotuses_collected": 11,
             "roshans_killed": 0,
             "teamfight_participation": 2.606666713953018,
-            "stun_seconds": 376.56626892089844,
+            "stun_seconds": 376.53941345214844,
             "tormentors_killed": 2,
             "first_blood": 1,
             "couriers_killed": 0
@@ -4220,7 +4221,7 @@
             "lotuses_collected": 2.75,
             "roshans_killed": 0,
             "teamfight_participation": 0.6516666784882545,
-            "stun_seconds": 94.14156723022461,
+            "stun_seconds": 94.13485336303711,
             "tormentors_killed": 0.5,
             "first_blood": 0.25,
             "couriers_killed": 0
@@ -4619,6 +4620,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15623,
             "replayEndTotalEarnedGold": 15623,
+            "replayEndStunSeconds": 95.4666748046875,
             "lastHits": 118,
             "denies": 2,
             "assists": 17
@@ -4667,6 +4669,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28980,
             "replayEndTotalEarnedGold": 28980,
+            "replayEndStunSeconds": 98.80230712890625,
             "lastHits": 411,
             "denies": 2,
             "assists": 5
@@ -4715,6 +4718,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23624,
             "replayEndTotalEarnedGold": 23624,
+            "replayEndStunSeconds": 2.333251953125,
             "lastHits": 367,
             "denies": 15,
             "assists": 5
@@ -4763,6 +4767,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19130,
             "replayEndTotalEarnedGold": 19130,
+            "replayEndStunSeconds": 83.03390502929688,
             "lastHits": 271,
             "denies": 13,
             "assists": 10
@@ -4811,6 +4816,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 11922,
             "replayEndTotalEarnedGold": 11922,
+            "replayEndStunSeconds": 28.033447265625,
             "lastHits": 51,
             "denies": 2,
             "assists": 14
@@ -4859,6 +4865,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35009,
             "replayEndTotalEarnedGold": 35009,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 491,
             "denies": 7,
             "assists": 8
@@ -4907,6 +4914,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25254,
             "replayEndTotalEarnedGold": 25254,
+            "replayEndStunSeconds": 44.83218002319336,
             "lastHits": 317,
             "denies": 6,
             "assists": 13
@@ -4955,6 +4963,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31146,
             "replayEndTotalEarnedGold": 31146,
+            "replayEndStunSeconds": 34.46730041503906,
             "lastHits": 483,
             "denies": 17,
             "assists": 15
@@ -5003,6 +5012,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15965,
             "replayEndTotalEarnedGold": 15965,
+            "replayEndStunSeconds": 39.86741256713867,
             "lastHits": 47,
             "denies": 3,
             "assists": 17
@@ -5051,6 +5061,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14447,
             "replayEndTotalEarnedGold": 14447,
+            "replayEndStunSeconds": 38.865928649902344,
             "lastHits": 49,
             "denies": 6,
             "assists": 16
@@ -5140,6 +5151,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14162,
             "replayEndTotalEarnedGold": 14162,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 275,
             "denies": 35,
             "assists": 1
@@ -5188,6 +5200,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 6597,
             "replayEndTotalEarnedGold": 6635,
+            "replayEndStunSeconds": 28.06560516357422,
             "lastHits": 45,
             "denies": 4,
             "assists": 5
@@ -5236,6 +5249,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 9662,
             "replayEndTotalEarnedGold": 9662,
+            "replayEndStunSeconds": 21.099557876586914,
             "lastHits": 169,
             "denies": 8,
             "assists": 1
@@ -5284,6 +5298,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 6728,
             "replayEndTotalEarnedGold": 6766,
+            "replayEndStunSeconds": 18.466705322265625,
             "lastHits": 50,
             "denies": 1,
             "assists": 3
@@ -5332,6 +5347,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12141,
             "replayEndTotalEarnedGold": 12141,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 230,
             "denies": 17,
             "assists": 0
@@ -5380,6 +5396,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17111,
             "replayEndTotalEarnedGold": 17149,
+            "replayEndStunSeconds": 25.667484283447266,
             "lastHits": 256,
             "denies": 6,
             "assists": 12
@@ -5428,6 +5445,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 9868,
             "replayEndTotalEarnedGold": 9868,
+            "replayEndStunSeconds": 17.533227920532227,
             "lastHits": 44,
             "denies": 2,
             "assists": 15
@@ -5476,6 +5494,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 11467,
             "replayEndTotalEarnedGold": 11505,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 67,
             "denies": 4,
             "assists": 15
@@ -5524,6 +5543,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15322,
             "replayEndTotalEarnedGold": 15360,
+            "replayEndStunSeconds": 65.59971618652344,
             "lastHits": 180,
             "denies": 5,
             "assists": 20
@@ -5572,6 +5592,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 21411,
             "replayEndTotalEarnedGold": 21411,
+            "replayEndStunSeconds": 9.733192443847656,
             "lastHits": 326,
             "denies": 19,
             "assists": 11
@@ -5691,6 +5712,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23547,
             "replayEndTotalEarnedGold": 23547,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 391,
             "denies": 12,
             "assists": 7
@@ -5739,6 +5761,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 18872,
             "replayEndTotalEarnedGold": 18872,
+            "replayEndStunSeconds": 19.06654167175293,
             "lastHits": 248,
             "denies": 7,
             "assists": 12
@@ -5787,6 +5810,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17840,
             "replayEndTotalEarnedGold": 17840,
+            "replayEndStunSeconds": 55.53302764892578,
             "lastHits": 248,
             "denies": 3,
             "assists": 5
@@ -5835,6 +5859,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13211,
             "replayEndTotalEarnedGold": 13264,
+            "replayEndStunSeconds": 39.732521057128906,
             "lastHits": 84,
             "denies": 2,
             "assists": 14
@@ -5883,6 +5908,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 10200,
             "replayEndTotalEarnedGold": 10252,
+            "replayEndStunSeconds": 18.591028213500977,
             "lastHits": 24,
             "denies": 3,
             "assists": 12
@@ -5931,6 +5957,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35815,
             "replayEndTotalEarnedGold": 35815,
+            "replayEndStunSeconds": 42.39989471435547,
             "lastHits": 590,
             "denies": 6,
             "assists": 11
@@ -5979,6 +6006,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27937,
             "replayEndTotalEarnedGold": 27937,
+            "replayEndStunSeconds": 61.53472137451172,
             "lastHits": 426,
             "denies": 14,
             "assists": 21
@@ -6027,6 +6055,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27524,
             "replayEndTotalEarnedGold": 27524,
+            "replayEndStunSeconds": 39.569828033447266,
             "lastHits": 451,
             "denies": 15,
             "assists": 19
@@ -6067,7 +6096,7 @@
             "lotuses_collected": 7,
             "roshans_killed": 1,
             "teamfight_participation": 0.6216216087341309,
-            "stun_seconds": 150.33355712890625,
+            "stun_seconds": 150.32550048828125,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 0
@@ -6075,6 +6104,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16254,
             "replayEndTotalEarnedGold": 16254,
+            "replayEndStunSeconds": 150.33355712890625,
             "lastHits": 76,
             "denies": 5,
             "assists": 17
@@ -6123,6 +6153,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17916,
             "replayEndTotalEarnedGold": 17916,
+            "replayEndStunSeconds": 33.83323669433594,
             "lastHits": 95,
             "denies": 1,
             "assists": 18
@@ -6212,6 +6243,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 38870,
             "replayEndTotalEarnedGold": 38870,
+            "replayEndStunSeconds": 43.701236724853516,
             "lastHits": 657,
             "denies": 23,
             "assists": 8
@@ -6260,6 +6292,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 33401,
             "replayEndTotalEarnedGold": 33401,
+            "replayEndStunSeconds": 71.03419494628906,
             "lastHits": 546,
             "denies": 16,
             "assists": 8
@@ -6308,6 +6341,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 24330,
             "replayEndTotalEarnedGold": 24330,
+            "replayEndStunSeconds": 37.966827392578125,
             "lastHits": 335,
             "denies": 10,
             "assists": 8
@@ -6356,6 +6390,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15904,
             "replayEndTotalEarnedGold": 15904,
+            "replayEndStunSeconds": 42.89995193481445,
             "lastHits": 91,
             "denies": 1,
             "assists": 13
@@ -6404,6 +6439,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14276,
             "replayEndTotalEarnedGold": 14276,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 59,
             "denies": 0,
             "assists": 9
@@ -6452,6 +6488,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25812,
             "replayEndTotalEarnedGold": 25812,
+            "replayEndStunSeconds": 38.868446350097656,
             "lastHits": 458,
             "denies": 15,
             "assists": 3
@@ -6500,6 +6537,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12484,
             "replayEndTotalEarnedGold": 12536,
+            "replayEndStunSeconds": 74.23233032226562,
             "lastHits": 89,
             "denies": 1,
             "assists": 9
@@ -6548,6 +6586,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 21574,
             "replayEndTotalEarnedGold": 21574,
+            "replayEndStunSeconds": 33.49983596801758,
             "lastHits": 321,
             "denies": 6,
             "assists": 8
@@ -6596,6 +6635,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15403,
             "replayEndTotalEarnedGold": 15403,
+            "replayEndStunSeconds": 56.10004806518555,
             "lastHits": 134,
             "denies": 5,
             "assists": 7
@@ -6644,6 +6684,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 24469,
             "replayEndTotalEarnedGold": 24469,
+            "replayEndStunSeconds": 8.03315544128418,
             "lastHits": 444,
             "denies": 6,
             "assists": 3
@@ -6733,6 +6774,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16919,
             "replayEndTotalEarnedGold": 16919,
+            "replayEndStunSeconds": 24.233142852783203,
             "lastHits": 137,
             "denies": 5,
             "assists": 15
@@ -6781,6 +6823,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26536,
             "replayEndTotalEarnedGold": 26536,
+            "replayEndStunSeconds": 31.899749755859375,
             "lastHits": 358,
             "denies": 16,
             "assists": 12
@@ -6829,6 +6872,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26761,
             "replayEndTotalEarnedGold": 26761,
+            "replayEndStunSeconds": 26.51894187927246,
             "lastHits": 337,
             "denies": 17,
             "assists": 9
@@ -6877,6 +6921,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28329,
             "replayEndTotalEarnedGold": 28329,
+            "replayEndStunSeconds": 7.56640625,
             "lastHits": 466,
             "denies": 19,
             "assists": 7
@@ -6925,6 +6970,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14068,
             "replayEndTotalEarnedGold": 14120,
+            "replayEndStunSeconds": 27.66632080078125,
             "lastHits": 62,
             "denies": 0,
             "assists": 16
@@ -6973,6 +7019,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 21740,
             "replayEndTotalEarnedGold": 21740,
+            "replayEndStunSeconds": 27.234210968017578,
             "lastHits": 448,
             "denies": 6,
             "assists": 4
@@ -7021,6 +7068,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17632,
             "replayEndTotalEarnedGold": 17632,
+            "replayEndStunSeconds": 36.233055114746094,
             "lastHits": 313,
             "denies": 3,
             "assists": 4
@@ -7069,6 +7117,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25664,
             "replayEndTotalEarnedGold": 25664,
+            "replayEndStunSeconds": 9.599761009216309,
             "lastHits": 439,
             "denies": 1,
             "assists": 2
@@ -7117,6 +7166,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 10492,
             "replayEndTotalEarnedGold": 10492,
+            "replayEndStunSeconds": 35.80003356933594,
             "lastHits": 57,
             "denies": 0,
             "assists": 5
@@ -7165,6 +7215,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 9584,
             "replayEndTotalEarnedGold": 9584,
+            "replayEndStunSeconds": 25.600229263305664,
             "lastHits": 33,
             "denies": 2,
             "assists": 6
@@ -7254,6 +7305,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 46147,
             "replayEndTotalEarnedGold": 46147,
+            "replayEndStunSeconds": 12.09958553314209,
             "lastHits": 791,
             "denies": 18,
             "assists": 9
@@ -7302,6 +7354,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15803,
             "replayEndTotalEarnedGold": 15803,
+            "replayEndStunSeconds": 97.36647033691406,
             "lastHits": 83,
             "denies": 5,
             "assists": 9
@@ -7350,6 +7403,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28929,
             "replayEndTotalEarnedGold": 28929,
+            "replayEndStunSeconds": 9.265454292297363,
             "lastHits": 398,
             "denies": 5,
             "assists": 8
@@ -7398,6 +7452,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13465,
             "replayEndTotalEarnedGold": 13465,
+            "replayEndStunSeconds": 56.101318359375,
             "lastHits": 15,
             "denies": 2,
             "assists": 15
@@ -7446,6 +7501,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 34801,
             "replayEndTotalEarnedGold": 34801,
+            "replayEndStunSeconds": 31.999584197998047,
             "lastHits": 564,
             "denies": 2,
             "assists": 8
@@ -7494,6 +7550,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 42830,
             "replayEndTotalEarnedGold": 42830,
+            "replayEndStunSeconds": 3.000244140625,
             "lastHits": 559,
             "denies": 4,
             "assists": 29
@@ -7542,6 +7599,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23524,
             "replayEndTotalEarnedGold": 23524,
+            "replayEndStunSeconds": 80.8648452758789,
             "lastHits": 164,
             "denies": 2,
             "assists": 33
@@ -7590,6 +7648,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 18132,
             "replayEndTotalEarnedGold": 18132,
+            "replayEndStunSeconds": 84.80233001708984,
             "lastHits": 19,
             "denies": 4,
             "assists": 39
@@ -7638,6 +7697,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35983,
             "replayEndTotalEarnedGold": 35983,
+            "replayEndStunSeconds": 23.83497428894043,
             "lastHits": 365,
             "denies": 13,
             "assists": 30
@@ -7686,6 +7746,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 44586,
             "replayEndTotalEarnedGold": 44586,
+            "replayEndStunSeconds": 17.965892791748047,
             "lastHits": 646,
             "denies": 17,
             "assists": 24
@@ -7775,6 +7836,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 36708,
             "replayEndTotalEarnedGold": 36708,
+            "replayEndStunSeconds": 0.6665529012680054,
             "lastHits": 569,
             "denies": 10,
             "assists": 7
@@ -7823,6 +7885,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30285,
             "replayEndTotalEarnedGold": 30285,
+            "replayEndStunSeconds": 7.733007431030273,
             "lastHits": 479,
             "denies": 8,
             "assists": 20
@@ -7871,6 +7934,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 24970,
             "replayEndTotalEarnedGold": 24970,
+            "replayEndStunSeconds": 62.23190689086914,
             "lastHits": 340,
             "denies": 10,
             "assists": 17
@@ -7919,6 +7983,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17613,
             "replayEndTotalEarnedGold": 17613,
+            "replayEndStunSeconds": 51.0992431640625,
             "lastHits": 157,
             "denies": 0,
             "assists": 19
@@ -7967,6 +8032,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15501,
             "replayEndTotalEarnedGold": 15501,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 48,
             "denies": 3,
             "assists": 22
@@ -8015,6 +8081,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 44176,
             "replayEndTotalEarnedGold": 44176,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 675,
             "denies": 15,
             "assists": 10
@@ -8063,6 +8130,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28955,
             "replayEndTotalEarnedGold": 28955,
+            "replayEndStunSeconds": 31.69967269897461,
             "lastHits": 315,
             "denies": 9,
             "assists": 17
@@ -8111,6 +8179,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30401,
             "replayEndTotalEarnedGold": 30401,
+            "replayEndStunSeconds": 66.86750030517578,
             "lastHits": 305,
             "denies": 4,
             "assists": 17
@@ -8159,6 +8228,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16337,
             "replayEndTotalEarnedGold": 16337,
+            "replayEndStunSeconds": 64.83078002929688,
             "lastHits": 47,
             "denies": 1,
             "assists": 25
@@ -8207,6 +8277,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 22042,
             "replayEndTotalEarnedGold": 22094,
+            "replayEndStunSeconds": 9.299853324890137,
             "lastHits": 168,
             "denies": 2,
             "assists": 15
@@ -8340,6 +8411,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17183,
             "replayEndTotalEarnedGold": 17183,
+            "replayEndStunSeconds": 18.232196807861328,
             "lastHits": 280,
             "denies": 8,
             "assists": 4
@@ -8388,6 +8460,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 10161,
             "replayEndTotalEarnedGold": 10214,
+            "replayEndStunSeconds": 47.26568603515625,
             "lastHits": 58,
             "denies": 2,
             "assists": 2
@@ -8436,6 +8509,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16574,
             "replayEndTotalEarnedGold": 16574,
+            "replayEndStunSeconds": 38.599998474121094,
             "lastHits": 295,
             "denies": 1,
             "assists": 4
@@ -8484,6 +8558,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 9216,
             "replayEndTotalEarnedGold": 9268,
+            "replayEndStunSeconds": 12.0,
             "lastHits": 32,
             "denies": 0,
             "assists": 3
@@ -8532,6 +8607,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27540,
             "replayEndTotalEarnedGold": 27540,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 548,
             "denies": 12,
             "assists": 2
@@ -8580,6 +8656,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31677,
             "replayEndTotalEarnedGold": 31677,
+            "replayEndStunSeconds": 7.533154487609863,
             "lastHits": 571,
             "denies": 13,
             "assists": 11
@@ -8628,6 +8705,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25250,
             "replayEndTotalEarnedGold": 25250,
+            "replayEndStunSeconds": 27.8676700592041,
             "lastHits": 360,
             "denies": 30,
             "assists": 6
@@ -8676,6 +8754,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13107,
             "replayEndTotalEarnedGold": 13159,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 40,
             "denies": 2,
             "assists": 16
@@ -8724,6 +8803,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26324,
             "replayEndTotalEarnedGold": 26376,
+            "replayEndStunSeconds": 32.76709747314453,
             "lastHits": 395,
             "denies": 9,
             "assists": 13
@@ -8772,6 +8852,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12853,
             "replayEndTotalEarnedGold": 12906,
+            "replayEndStunSeconds": 82.5658950805664,
             "lastHits": 45,
             "denies": 3,
             "assists": 15
@@ -8861,6 +8942,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17153,
             "replayEndTotalEarnedGold": 17153,
+            "replayEndStunSeconds": 80.89990234375,
             "lastHits": 82,
             "denies": 4,
             "assists": 15
@@ -8909,6 +8991,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29817,
             "replayEndTotalEarnedGold": 29817,
+            "replayEndStunSeconds": 23.93359375,
             "lastHits": 480,
             "denies": 11,
             "assists": 8
@@ -8957,6 +9040,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31977,
             "replayEndTotalEarnedGold": 31977,
+            "replayEndStunSeconds": 37.10102462768555,
             "lastHits": 434,
             "denies": 14,
             "assists": 8
@@ -9005,6 +9089,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 32732,
             "replayEndTotalEarnedGold": 32732,
+            "replayEndStunSeconds": 29.26824188232422,
             "lastHits": 465,
             "denies": 6,
             "assists": 9
@@ -9053,6 +9138,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15615,
             "replayEndTotalEarnedGold": 15615,
+            "replayEndStunSeconds": 59.36453628540039,
             "lastHits": 51,
             "denies": 0,
             "assists": 21
@@ -9101,6 +9187,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26056,
             "replayEndTotalEarnedGold": 26056,
+            "replayEndStunSeconds": 18.100147247314453,
             "lastHits": 400,
             "denies": 11,
             "assists": 7
@@ -9149,6 +9236,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23943,
             "replayEndTotalEarnedGold": 23943,
+            "replayEndStunSeconds": 38.56630325317383,
             "lastHits": 421,
             "denies": 11,
             "assists": 13
@@ -9197,6 +9285,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23591,
             "replayEndTotalEarnedGold": 23591,
+            "replayEndStunSeconds": 27.733848571777344,
             "lastHits": 373,
             "denies": 11,
             "assists": 11
@@ -9245,6 +9334,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 11331,
             "replayEndTotalEarnedGold": 11331,
+            "replayEndStunSeconds": 27.666259765625,
             "lastHits": 53,
             "denies": 3,
             "assists": 9
@@ -9293,6 +9383,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14540,
             "replayEndTotalEarnedGold": 14540,
+            "replayEndStunSeconds": 37.06660461425781,
             "lastHits": 77,
             "denies": 4,
             "assists": 13
@@ -9382,6 +9473,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19566,
             "replayEndTotalEarnedGold": 19566,
+            "replayEndStunSeconds": 37.78290557861328,
             "lastHits": 90,
             "denies": 5,
             "assists": 19
@@ -9430,6 +9522,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 41993,
             "replayEndTotalEarnedGold": 41993,
+            "replayEndStunSeconds": 289.9993896484375,
             "lastHits": 676,
             "denies": 10,
             "assists": 25
@@ -9478,6 +9571,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 47861,
             "replayEndTotalEarnedGold": 47861,
+            "replayEndStunSeconds": 97.03602600097656,
             "lastHits": 745,
             "denies": 13,
             "assists": 17
@@ -9526,6 +9620,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 21264,
             "replayEndTotalEarnedGold": 21317,
+            "replayEndStunSeconds": 97.43595123291016,
             "lastHits": 46,
             "denies": 8,
             "assists": 30
@@ -9574,6 +9669,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 49638,
             "replayEndTotalEarnedGold": 49638,
+            "replayEndStunSeconds": 27.299917221069336,
             "lastHits": 662,
             "denies": 16,
             "assists": 13
@@ -9622,6 +9718,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 46778,
             "replayEndTotalEarnedGold": 46778,
+            "replayEndStunSeconds": 27.09926986694336,
             "lastHits": 746,
             "denies": 21,
             "assists": 6
@@ -9670,6 +9767,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30004,
             "replayEndTotalEarnedGold": 30004,
+            "replayEndStunSeconds": 14.566065788269043,
             "lastHits": 424,
             "denies": 10,
             "assists": 15
@@ -9718,6 +9816,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 32041,
             "replayEndTotalEarnedGold": 32041,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 429,
             "denies": 13,
             "assists": 6
@@ -9766,6 +9865,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 22453,
             "replayEndTotalEarnedGold": 22453,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 278,
             "denies": 3,
             "assists": 17
@@ -9814,6 +9914,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17721,
             "replayEndTotalEarnedGold": 17721,
+            "replayEndStunSeconds": 30.66755485534668,
             "lastHits": 56,
             "denies": 0,
             "assists": 10
@@ -9903,6 +10004,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30788,
             "replayEndTotalEarnedGold": 30788,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 529,
             "denies": 14,
             "assists": 13
@@ -9951,6 +10053,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23115,
             "replayEndTotalEarnedGold": 23115,
+            "replayEndStunSeconds": 13.63407039642334,
             "lastHits": 345,
             "denies": 10,
             "assists": 16
@@ -9999,6 +10102,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19520,
             "replayEndTotalEarnedGold": 19573,
+            "replayEndStunSeconds": 23.800676345825195,
             "lastHits": 267,
             "denies": 11,
             "assists": 10
@@ -10047,6 +10151,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12020,
             "replayEndTotalEarnedGold": 12072,
+            "replayEndStunSeconds": 83.1659927368164,
             "lastHits": 43,
             "denies": 5,
             "assists": 16
@@ -10095,6 +10200,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 11959,
             "replayEndTotalEarnedGold": 12011,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 50,
             "denies": 0,
             "assists": 22
@@ -10143,6 +10249,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16365,
             "replayEndTotalEarnedGold": 16365,
+            "replayEndStunSeconds": 20.233787536621094,
             "lastHits": 280,
             "denies": 8,
             "assists": 5
@@ -10191,6 +10298,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17623,
             "replayEndTotalEarnedGold": 17623,
+            "replayEndStunSeconds": 31.7327823638916,
             "lastHits": 238,
             "denies": 2,
             "assists": 6
@@ -10239,6 +10347,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17607,
             "replayEndTotalEarnedGold": 17660,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 284,
             "denies": 5,
             "assists": 6
@@ -10287,6 +10396,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12104,
             "replayEndTotalEarnedGold": 12157,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 121,
             "denies": 1,
             "assists": 8
@@ -10335,6 +10445,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 8078,
             "replayEndTotalEarnedGold": 8130,
+            "replayEndStunSeconds": 8.74960994720459,
             "lastHits": 28,
             "denies": 4,
             "assists": 4
@@ -10439,6 +10550,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 47371,
             "replayEndTotalEarnedGold": 47371,
+            "replayEndStunSeconds": 52.50044631958008,
             "lastHits": 765,
             "denies": 31,
             "assists": 14
@@ -10487,6 +10599,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 45190,
             "replayEndTotalEarnedGold": 45190,
+            "replayEndStunSeconds": 34.09928894042969,
             "lastHits": 596,
             "denies": 8,
             "assists": 18
@@ -10535,6 +10648,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31397,
             "replayEndTotalEarnedGold": 31397,
+            "replayEndStunSeconds": 83.16658020019531,
             "lastHits": 325,
             "denies": 6,
             "assists": 21
@@ -10583,6 +10697,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23662,
             "replayEndTotalEarnedGold": 23662,
+            "replayEndStunSeconds": 217.20005798339844,
             "lastHits": 60,
             "denies": 1,
             "assists": 15
@@ -10631,6 +10746,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 47310,
             "replayEndTotalEarnedGold": 47310,
+            "replayEndStunSeconds": 17.294416427612305,
             "lastHits": 680,
             "denies": 9,
             "assists": 16
@@ -10679,6 +10795,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 52435,
             "replayEndTotalEarnedGold": 52435,
+            "replayEndStunSeconds": 59.20183563232422,
             "lastHits": 748,
             "denies": 14,
             "assists": 15
@@ -10727,6 +10844,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 56590,
             "replayEndTotalEarnedGold": 56590,
+            "replayEndStunSeconds": 65.20403289794922,
             "lastHits": 833,
             "denies": 11,
             "assists": 15
@@ -10775,6 +10893,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 55750,
             "replayEndTotalEarnedGold": 55750,
+            "replayEndStunSeconds": 31.266237258911133,
             "lastHits": 777,
             "denies": 0,
             "assists": 14
@@ -10823,6 +10942,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26698,
             "replayEndTotalEarnedGold": 26698,
+            "replayEndStunSeconds": 72.13153076171875,
             "lastHits": 132,
             "denies": 3,
             "assists": 19
@@ -10871,6 +10991,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26676,
             "replayEndTotalEarnedGold": 26676,
+            "replayEndStunSeconds": 31.773971557617188,
             "lastHits": 105,
             "denies": 3,
             "assists": 15
@@ -10990,6 +11111,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 20831,
             "replayEndTotalEarnedGold": 20831,
+            "replayEndStunSeconds": 16.233837127685547,
             "lastHits": 376,
             "denies": 21,
             "assists": 3
@@ -11038,6 +11160,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12528,
             "replayEndTotalEarnedGold": 12528,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 128,
             "denies": 29,
             "assists": 6
@@ -11086,6 +11209,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14835,
             "replayEndTotalEarnedGold": 14873,
+            "replayEndStunSeconds": 110.03189086914062,
             "lastHits": 198,
             "denies": 17,
             "assists": 8
@@ -11134,6 +11258,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 8206,
             "replayEndTotalEarnedGold": 8206,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 50,
             "denies": 3,
             "assists": 10
@@ -11182,6 +11307,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 11036,
             "replayEndTotalEarnedGold": 11074,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 121,
             "denies": 3,
             "assists": 11
@@ -11230,6 +11356,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 7618,
             "replayEndTotalEarnedGold": 7656,
+            "replayEndStunSeconds": 24.299484252929688,
             "lastHits": 113,
             "denies": 2,
             "assists": 1
@@ -11278,6 +11405,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 6086,
             "replayEndTotalEarnedGold": 6124,
+            "replayEndStunSeconds": 20.400096893310547,
             "lastHits": 54,
             "denies": 1,
             "assists": 0
@@ -11326,6 +11454,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 4456,
             "replayEndTotalEarnedGold": 4494,
+            "replayEndStunSeconds": 4.5,
             "lastHits": 19,
             "denies": 1,
             "assists": 3
@@ -11374,6 +11503,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14392,
             "replayEndTotalEarnedGold": 14392,
+            "replayEndStunSeconds": 15.065637588500977,
             "lastHits": 245,
             "denies": 7,
             "assists": 2
@@ -11422,6 +11552,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 10247,
             "replayEndTotalEarnedGold": 10285,
+            "replayEndStunSeconds": 6.099486827850342,
             "lastHits": 230,
             "denies": 0,
             "assists": 0
@@ -11511,6 +11642,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19226,
             "replayEndTotalEarnedGold": 19226,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 65,
             "denies": 2,
             "assists": 29
@@ -11559,6 +11691,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 42935,
             "replayEndTotalEarnedGold": 42935,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 706,
             "denies": 13,
             "assists": 16
@@ -11607,6 +11740,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35914,
             "replayEndTotalEarnedGold": 35914,
+            "replayEndStunSeconds": 38.83329772949219,
             "lastHits": 460,
             "denies": 9,
             "assists": 17
@@ -11655,6 +11789,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19672,
             "replayEndTotalEarnedGold": 19672,
+            "replayEndStunSeconds": 295.26568603515625,
             "lastHits": 68,
             "denies": 3,
             "assists": 27
@@ -11703,6 +11838,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26530,
             "replayEndTotalEarnedGold": 26530,
+            "replayEndStunSeconds": 21.231882095336914,
             "lastHits": 321,
             "denies": 12,
             "assists": 28
@@ -11751,6 +11887,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31534,
             "replayEndTotalEarnedGold": 31534,
+            "replayEndStunSeconds": 4.166289329528809,
             "lastHits": 464,
             "denies": 13,
             "assists": 11
@@ -11799,6 +11936,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 33281,
             "replayEndTotalEarnedGold": 33281,
+            "replayEndStunSeconds": 28.566221237182617,
             "lastHits": 523,
             "denies": 11,
             "assists": 11
@@ -11847,6 +11985,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27686,
             "replayEndTotalEarnedGold": 27686,
+            "replayEndStunSeconds": 23.631940841674805,
             "lastHits": 394,
             "denies": 3,
             "assists": 13
@@ -11895,6 +12034,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15396,
             "replayEndTotalEarnedGold": 15396,
+            "replayEndStunSeconds": 61.53348159790039,
             "lastHits": 83,
             "denies": 0,
             "assists": 19
@@ -11943,6 +12083,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14659,
             "replayEndTotalEarnedGold": 14711,
+            "replayEndStunSeconds": 12.100122451782227,
             "lastHits": 50,
             "denies": 2,
             "assists": 9
@@ -12032,6 +12173,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 21397,
             "replayEndTotalEarnedGold": 21397,
+            "replayEndStunSeconds": 34.100975036621094,
             "lastHits": 464,
             "denies": 11,
             "assists": 1
@@ -12080,6 +12222,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19583,
             "replayEndTotalEarnedGold": 19583,
+            "replayEndStunSeconds": 16.16650390625,
             "lastHits": 368,
             "denies": 15,
             "assists": 4
@@ -12128,6 +12271,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16883,
             "replayEndTotalEarnedGold": 16883,
+            "replayEndStunSeconds": 59.966304779052734,
             "lastHits": 233,
             "denies": 24,
             "assists": 4
@@ -12176,6 +12320,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 8561,
             "replayEndTotalEarnedGold": 8613,
+            "replayEndStunSeconds": 101.2997055053711,
             "lastHits": 38,
             "denies": 7,
             "assists": 1
@@ -12224,6 +12369,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 9737,
             "replayEndTotalEarnedGold": 9789,
+            "replayEndStunSeconds": 102.93428802490234,
             "lastHits": 25,
             "denies": 3,
             "assists": 2
@@ -12272,6 +12418,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12967,
             "replayEndTotalEarnedGold": 13019,
+            "replayEndStunSeconds": -5.1832275390625,
             "lastHits": 37,
             "denies": 5,
             "assists": 12
@@ -12320,6 +12467,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23201,
             "replayEndTotalEarnedGold": 23201,
+            "replayEndStunSeconds": 37.36561584472656,
             "lastHits": 292,
             "denies": 15,
             "assists": 7
@@ -12368,6 +12516,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 20656,
             "replayEndTotalEarnedGold": 20656,
+            "replayEndStunSeconds": 67.86531829833984,
             "lastHits": 256,
             "denies": 13,
             "assists": 10
@@ -12416,6 +12565,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13945,
             "replayEndTotalEarnedGold": 13945,
+            "replayEndStunSeconds": 15.799825668334961,
             "lastHits": 64,
             "denies": 3,
             "assists": 13
@@ -12464,6 +12614,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30824,
             "replayEndTotalEarnedGold": 30824,
+            "replayEndStunSeconds": 29.566944122314453,
             "lastHits": 567,
             "denies": 16,
             "assists": 4
@@ -12553,6 +12704,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16932,
             "replayEndTotalEarnedGold": 16932,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 117,
             "denies": 0,
             "assists": 19
@@ -12601,6 +12753,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29658,
             "replayEndTotalEarnedGold": 29658,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 396,
             "denies": 14,
             "assists": 11
@@ -12649,6 +12802,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28044,
             "replayEndTotalEarnedGold": 28096,
+            "replayEndStunSeconds": 42.833740234375,
             "lastHits": 357,
             "denies": 5,
             "assists": 9
@@ -12697,6 +12851,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16137,
             "replayEndTotalEarnedGold": 16137,
+            "replayEndStunSeconds": 40.63408660888672,
             "lastHits": 83,
             "denies": 2,
             "assists": 18
@@ -12745,6 +12900,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30600,
             "replayEndTotalEarnedGold": 30600,
+            "replayEndStunSeconds": 46.531982421875,
             "lastHits": 449,
             "denies": 17,
             "assists": 12
@@ -12793,6 +12949,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29821,
             "replayEndTotalEarnedGold": 29821,
+            "replayEndStunSeconds": 24.4659423828125,
             "lastHits": 563,
             "denies": 11,
             "assists": 1
@@ -12841,6 +12998,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12219,
             "replayEndTotalEarnedGold": 12219,
+            "replayEndStunSeconds": 32.7996826171875,
             "lastHits": 19,
             "denies": 0,
             "assists": 7
@@ -12889,6 +13047,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 24294,
             "replayEndTotalEarnedGold": 24294,
+            "replayEndStunSeconds": 60.60292053222656,
             "lastHits": 337,
             "denies": 15,
             "assists": 8
@@ -12937,6 +13096,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 20479,
             "replayEndTotalEarnedGold": 20479,
+            "replayEndStunSeconds": 160.86241149902344,
             "lastHits": 304,
             "denies": 2,
             "assists": 7
@@ -12985,6 +13145,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15269,
             "replayEndTotalEarnedGold": 15269,
+            "replayEndStunSeconds": 34.66667556762695,
             "lastHits": 121,
             "denies": 2,
             "assists": 8
@@ -13104,6 +13265,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 43301,
             "replayEndTotalEarnedGold": 43301,
+            "replayEndStunSeconds": 8.499975204467773,
             "lastHits": 655,
             "denies": 29,
             "assists": 8
@@ -13152,6 +13314,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29293,
             "replayEndTotalEarnedGold": 29293,
+            "replayEndStunSeconds": 35.80017852783203,
             "lastHits": 315,
             "denies": 5,
             "assists": 13
@@ -13200,6 +13363,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 32161,
             "replayEndTotalEarnedGold": 32161,
+            "replayEndStunSeconds": 31.832534790039062,
             "lastHits": 415,
             "denies": 3,
             "assists": 24
@@ -13248,6 +13412,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19462,
             "replayEndTotalEarnedGold": 19462,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 127,
             "denies": 8,
             "assists": 17
@@ -13296,6 +13461,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 18239,
             "replayEndTotalEarnedGold": 18239,
+            "replayEndStunSeconds": 35.03279113769531,
             "lastHits": 22,
             "denies": 0,
             "assists": 21
@@ -13344,6 +13510,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31417,
             "replayEndTotalEarnedGold": 31417,
+            "replayEndStunSeconds": 150.27345275878906,
             "lastHits": 441,
             "denies": 10,
             "assists": 14
@@ -13392,6 +13559,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 11385,
             "replayEndTotalEarnedGold": 11385,
+            "replayEndStunSeconds": 51.89751434326172,
             "lastHits": 36,
             "denies": 0,
             "assists": 11
@@ -13440,6 +13608,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16401,
             "replayEndTotalEarnedGold": 16401,
+            "replayEndStunSeconds": 66.33296966552734,
             "lastHits": 153,
             "denies": 1,
             "assists": 15
@@ -13488,6 +13657,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 38159,
             "replayEndTotalEarnedGold": 38159,
+            "replayEndStunSeconds": 17.199560165405273,
             "lastHits": 724,
             "denies": 13,
             "assists": 6
@@ -13536,6 +13706,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28001,
             "replayEndTotalEarnedGold": 28053,
+            "replayEndStunSeconds": 98.1341323852539,
             "lastHits": 458,
             "denies": 3,
             "assists": 11
@@ -13625,6 +13796,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 36840,
             "replayEndTotalEarnedGold": 36840,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 720,
             "denies": 11,
             "assists": 7
@@ -13673,6 +13845,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27976,
             "replayEndTotalEarnedGold": 27976,
+            "replayEndStunSeconds": 63.100830078125,
             "lastHits": 385,
             "denies": 18,
             "assists": 8
@@ -13721,6 +13894,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29614,
             "replayEndTotalEarnedGold": 29614,
+            "replayEndStunSeconds": 22.466115951538086,
             "lastHits": 515,
             "denies": 4,
             "assists": 9
@@ -13769,6 +13943,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12015,
             "replayEndTotalEarnedGold": 12015,
+            "replayEndStunSeconds": 174.7345733642578,
             "lastHits": 52,
             "denies": 2,
             "assists": 11
@@ -13817,6 +13992,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13914,
             "replayEndTotalEarnedGold": 13914,
+            "replayEndStunSeconds": 13.566308975219727,
             "lastHits": 78,
             "denies": 1,
             "assists": 8
@@ -13865,6 +14041,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14919,
             "replayEndTotalEarnedGold": 14972,
+            "replayEndStunSeconds": 119.96475982666016,
             "lastHits": 19,
             "denies": 1,
             "assists": 14
@@ -13913,6 +14090,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 41222,
             "replayEndTotalEarnedGold": 41222,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 675,
             "denies": 13,
             "assists": 13
@@ -13961,6 +14139,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29294,
             "replayEndTotalEarnedGold": 29294,
+            "replayEndStunSeconds": 9.433398246765137,
             "lastHits": 427,
             "denies": 2,
             "assists": 13
@@ -14009,6 +14188,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19057,
             "replayEndTotalEarnedGold": 19057,
+            "replayEndStunSeconds": 36.89836120605469,
             "lastHits": 105,
             "denies": 2,
             "assists": 10
@@ -14057,6 +14237,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 34266,
             "replayEndTotalEarnedGold": 34266,
+            "replayEndStunSeconds": 434.8765869140625,
             "lastHits": 493,
             "denies": 23,
             "assists": 14
@@ -14146,6 +14327,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 50298,
             "replayEndTotalEarnedGold": 50298,
+            "replayEndStunSeconds": 5.699731826782227,
             "lastHits": 759,
             "denies": 20,
             "assists": 12
@@ -14194,6 +14376,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 41437,
             "replayEndTotalEarnedGold": 41437,
+            "replayEndStunSeconds": 56.66838836669922,
             "lastHits": 588,
             "denies": 14,
             "assists": 13
@@ -14242,6 +14425,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30019,
             "replayEndTotalEarnedGold": 30019,
+            "replayEndStunSeconds": 44.29975891113281,
             "lastHits": 372,
             "denies": 14,
             "assists": 16
@@ -14290,6 +14474,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 20396,
             "replayEndTotalEarnedGold": 20448,
+            "replayEndStunSeconds": 31.165695190429688,
             "lastHits": 106,
             "denies": 4,
             "assists": 23
@@ -14338,6 +14523,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17881,
             "replayEndTotalEarnedGold": 17881,
+            "replayEndStunSeconds": 107.1016616821289,
             "lastHits": 42,
             "denies": 3,
             "assists": 18
@@ -14386,6 +14572,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30028,
             "replayEndTotalEarnedGold": 30081,
+            "replayEndStunSeconds": 39.56724548339844,
             "lastHits": 484,
             "denies": 10,
             "assists": 8
@@ -14434,6 +14621,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16332,
             "replayEndTotalEarnedGold": 16332,
+            "replayEndStunSeconds": 65.09999084472656,
             "lastHits": 167,
             "denies": 1,
             "assists": 11
@@ -14482,6 +14670,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15164,
             "replayEndTotalEarnedGold": 15217,
+            "replayEndStunSeconds": 36.53374099731445,
             "lastHits": 34,
             "denies": 2,
             "assists": 13
@@ -14530,6 +14719,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35827,
             "replayEndTotalEarnedGold": 35827,
+            "replayEndStunSeconds": 165.4988250732422,
             "lastHits": 566,
             "denies": 5,
             "assists": 13
@@ -14578,6 +14768,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 38821,
             "replayEndTotalEarnedGold": 38821,
+            "replayEndStunSeconds": 22.633277893066406,
             "lastHits": 746,
             "denies": 6,
             "assists": 9
@@ -14667,6 +14858,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 55151,
             "replayEndTotalEarnedGold": 55151,
+            "replayEndStunSeconds": 58.26250457763672,
             "lastHits": 681,
             "denies": 23,
             "assists": 28
@@ -14715,6 +14907,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 45358,
             "replayEndTotalEarnedGold": 45358,
+            "replayEndStunSeconds": 344.8144226074219,
             "lastHits": 566,
             "denies": 16,
             "assists": 25
@@ -14763,6 +14956,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 37137,
             "replayEndTotalEarnedGold": 37137,
+            "replayEndStunSeconds": 54.43062973022461,
             "lastHits": 389,
             "denies": 9,
             "assists": 30
@@ -14803,7 +14997,7 @@
             "lotuses_collected": 10,
             "roshans_killed": 0,
             "teamfight_participation": 0.6129032373428345,
-            "stun_seconds": 102.23290252685547,
+            "stun_seconds": 102.21483612060547,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 0
@@ -14811,6 +15005,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30387,
             "replayEndTotalEarnedGold": 30387,
+            "replayEndStunSeconds": 102.23290252685547,
             "lastHits": 293,
             "denies": 1,
             "assists": 31
@@ -14859,6 +15054,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30362,
             "replayEndTotalEarnedGold": 30362,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 175,
             "denies": 2,
             "assists": 33
@@ -14907,6 +15103,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 45432,
             "replayEndTotalEarnedGold": 45432,
+            "replayEndStunSeconds": 1.600000023841858,
             "lastHits": 818,
             "denies": 10,
             "assists": 17
@@ -14955,6 +15152,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 42098,
             "replayEndTotalEarnedGold": 42098,
+            "replayEndStunSeconds": 48.06450653076172,
             "lastHits": 589,
             "denies": 7,
             "assists": 15
@@ -15003,6 +15201,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 58537,
             "replayEndTotalEarnedGold": 58537,
+            "replayEndStunSeconds": 37.43264389038086,
             "lastHits": 1021,
             "denies": 1,
             "assists": 10
@@ -15051,6 +15250,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23343,
             "replayEndTotalEarnedGold": 23343,
+            "replayEndStunSeconds": 36.098567962646484,
             "lastHits": 141,
             "denies": 0,
             "assists": 23
@@ -15099,6 +15299,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16689,
             "replayEndTotalEarnedGold": 16689,
+            "replayEndStunSeconds": 123.5336685180664,
             "lastHits": 45,
             "denies": 7,
             "assists": 16
@@ -15188,6 +15389,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 47360,
             "replayEndTotalEarnedGold": 47360,
+            "replayEndStunSeconds": 29.50090789794922,
             "lastHits": 770,
             "denies": 19,
             "assists": 8
@@ -15228,7 +15430,7 @@
             "lotuses_collected": 5,
             "roshans_killed": 1,
             "teamfight_participation": 0.6071428656578064,
-            "stun_seconds": 122.8364028930664,
+            "stun_seconds": 122.8359146118164,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 0
@@ -15236,6 +15438,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 20861,
             "replayEndTotalEarnedGold": 20861,
+            "replayEndStunSeconds": 122.8364028930664,
             "lastHits": 98,
             "denies": 6,
             "assists": 16
@@ -15276,7 +15479,7 @@
             "lotuses_collected": 6,
             "roshans_killed": 1,
             "teamfight_participation": 0.75,
-            "stun_seconds": 77.46642303466797,
+            "stun_seconds": 77.45421600341797,
             "tormentors_killed": 0,
             "first_blood": 1,
             "couriers_killed": 0
@@ -15284,6 +15487,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 39954,
             "replayEndTotalEarnedGold": 39954,
+            "replayEndStunSeconds": 77.46642303466797,
             "lastHits": 561,
             "denies": 7,
             "assists": 9
@@ -15324,7 +15528,7 @@
             "lotuses_collected": 2,
             "roshans_killed": 0,
             "teamfight_participation": 0.5357142686843872,
-            "stun_seconds": 27.965572357177734,
+            "stun_seconds": 27.943111419677734,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 1
@@ -15332,6 +15536,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17239,
             "replayEndTotalEarnedGold": 17239,
+            "replayEndStunSeconds": 27.965572357177734,
             "lastHits": 79,
             "denies": 3,
             "assists": 13
@@ -15372,7 +15577,7 @@
             "lotuses_collected": 1,
             "roshans_killed": 0,
             "teamfight_participation": 0.6428571343421936,
-            "stun_seconds": 13.931861877441406,
+            "stun_seconds": 13.331371307373047,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 1
@@ -15380,6 +15585,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30280,
             "replayEndTotalEarnedGold": 30280,
+            "replayEndStunSeconds": 13.931861877441406,
             "lastHits": 355,
             "denies": 3,
             "assists": 17
@@ -15428,6 +15634,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25806,
             "replayEndTotalEarnedGold": 25806,
+            "replayEndStunSeconds": 174.83384704589844,
             "lastHits": 384,
             "denies": 15,
             "assists": 13
@@ -15476,6 +15683,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15886,
             "replayEndTotalEarnedGold": 15939,
+            "replayEndStunSeconds": 217.96705627441406,
             "lastHits": 48,
             "denies": 0,
             "assists": 10
@@ -15524,6 +15732,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 18998,
             "replayEndTotalEarnedGold": 18998,
+            "replayEndStunSeconds": 70.36620330810547,
             "lastHits": 163,
             "denies": 5,
             "assists": 9
@@ -15572,6 +15781,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30078,
             "replayEndTotalEarnedGold": 30078,
+            "replayEndStunSeconds": 61.966529846191406,
             "lastHits": 461,
             "denies": 5,
             "assists": 10
@@ -15620,6 +15830,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 41822,
             "replayEndTotalEarnedGold": 41822,
+            "replayEndStunSeconds": 32.33404541015625,
             "lastHits": 795,
             "denies": 15,
             "assists": 9
@@ -15709,6 +15920,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29622,
             "replayEndTotalEarnedGold": 29622,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 611,
             "denies": 12,
             "assists": 5
@@ -15757,6 +15969,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 24916,
             "replayEndTotalEarnedGold": 24916,
+            "replayEndStunSeconds": 13.799975395202637,
             "lastHits": 484,
             "denies": 9,
             "assists": 0
@@ -15805,6 +16018,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17333,
             "replayEndTotalEarnedGold": 17333,
+            "replayEndStunSeconds": 5.765199661254883,
             "lastHits": 254,
             "denies": 7,
             "assists": 6
@@ -15853,6 +16067,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 9051,
             "replayEndTotalEarnedGold": 9051,
+            "replayEndStunSeconds": 56.66676330566406,
             "lastHits": 32,
             "denies": 2,
             "assists": 6
@@ -15901,6 +16116,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 10045,
             "replayEndTotalEarnedGold": 10098,
+            "replayEndStunSeconds": 64.53421783447266,
             "lastHits": 31,
             "denies": 0,
             "assists": 7
@@ -15949,6 +16165,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 36206,
             "replayEndTotalEarnedGold": 36346,
+            "replayEndStunSeconds": 17.565481185913086,
             "lastHits": 500,
             "denies": 10,
             "assists": 14
@@ -15997,6 +16214,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17495,
             "replayEndTotalEarnedGold": 17495,
+            "replayEndStunSeconds": 53.53311538696289,
             "lastHits": 180,
             "denies": 0,
             "assists": 19
@@ -16045,6 +16263,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14585,
             "replayEndTotalEarnedGold": 14637,
+            "replayEndStunSeconds": 51.76689910888672,
             "lastHits": 18,
             "denies": 2,
             "assists": 17
@@ -16093,6 +16312,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 32151,
             "replayEndTotalEarnedGold": 32151,
+            "replayEndStunSeconds": 38.06344223022461,
             "lastHits": 423,
             "denies": 9,
             "assists": 23
@@ -16141,6 +16361,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 38240,
             "replayEndTotalEarnedGold": 38240,
+            "replayEndStunSeconds": 11.933520317077637,
             "lastHits": 613,
             "denies": 11,
             "assists": 8
@@ -16230,6 +16451,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16312,
             "replayEndTotalEarnedGold": 16312,
+            "replayEndStunSeconds": 31.933246612548828,
             "lastHits": 103,
             "denies": 7,
             "assists": 19
@@ -16278,6 +16500,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35752,
             "replayEndTotalEarnedGold": 35752,
+            "replayEndStunSeconds": 57.53297805786133,
             "lastHits": 493,
             "denies": 16,
             "assists": 18
@@ -16326,6 +16549,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27777,
             "replayEndTotalEarnedGold": 27777,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 367,
             "denies": 5,
             "assists": 6
@@ -16374,6 +16598,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 33650,
             "replayEndTotalEarnedGold": 33650,
+            "replayEndStunSeconds": 79.367919921875,
             "lastHits": 491,
             "denies": 7,
             "assists": 17
@@ -16422,6 +16647,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17607,
             "replayEndTotalEarnedGold": 17607,
+            "replayEndStunSeconds": 38.7327880859375,
             "lastHits": 86,
             "denies": 1,
             "assists": 19
@@ -16470,6 +16696,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 42893,
             "replayEndTotalEarnedGold": 42893,
+            "replayEndStunSeconds": 86.26873779296875,
             "lastHits": 803,
             "denies": 16,
             "assists": 6
@@ -16518,6 +16745,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28538,
             "replayEndTotalEarnedGold": 28538,
+            "replayEndStunSeconds": 15.465091705322266,
             "lastHits": 454,
             "denies": 6,
             "assists": 16
@@ -16566,6 +16794,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23309,
             "replayEndTotalEarnedGold": 23309,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 332,
             "denies": 24,
             "assists": 12
@@ -16614,6 +16843,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15791,
             "replayEndTotalEarnedGold": 15791,
+            "replayEndStunSeconds": 36.698631286621094,
             "lastHits": 26,
             "denies": 1,
             "assists": 12
@@ -16662,6 +16892,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15559,
             "replayEndTotalEarnedGold": 15612,
+            "replayEndStunSeconds": 38.36830520629883,
             "lastHits": 69,
             "denies": 1,
             "assists": 16
@@ -16751,6 +16982,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 51246,
             "replayEndTotalEarnedGold": 51246,
+            "replayEndStunSeconds": 64.06694793701172,
             "lastHits": 767,
             "denies": 11,
             "assists": 8
@@ -16799,6 +17031,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31672,
             "replayEndTotalEarnedGold": 31672,
+            "replayEndStunSeconds": 75.73136901855469,
             "lastHits": 277,
             "denies": 3,
             "assists": 24
@@ -16847,6 +17080,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 62583,
             "replayEndTotalEarnedGold": 62583,
+            "replayEndStunSeconds": 44.73359298706055,
             "lastHits": 1098,
             "denies": 24,
             "assists": 10
@@ -16895,6 +17129,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 37436,
             "replayEndTotalEarnedGold": 37436,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 427,
             "denies": 2,
             "assists": 21
@@ -16943,6 +17178,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30345,
             "replayEndTotalEarnedGold": 30345,
+            "replayEndStunSeconds": 61.96672058105469,
             "lastHits": 276,
             "denies": 3,
             "assists": 24
@@ -16991,6 +17227,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 52230,
             "replayEndTotalEarnedGold": 52230,
+            "replayEndStunSeconds": 52.4661865234375,
             "lastHits": 910,
             "denies": 13,
             "assists": 8
@@ -17039,6 +17276,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29872,
             "replayEndTotalEarnedGold": 29872,
+            "replayEndStunSeconds": 89.49663543701172,
             "lastHits": 99,
             "denies": 1,
             "assists": 22
@@ -17087,6 +17325,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 56199,
             "replayEndTotalEarnedGold": 56199,
+            "replayEndStunSeconds": 44.837947845458984,
             "lastHits": 790,
             "denies": 3,
             "assists": 23
@@ -17135,6 +17374,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 44632,
             "replayEndTotalEarnedGold": 44632,
+            "replayEndStunSeconds": 163.39906311035156,
             "lastHits": 495,
             "denies": 0,
             "assists": 27
@@ -17183,6 +17423,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 65650,
             "replayEndTotalEarnedGold": 65650,
+            "replayEndStunSeconds": 76.73658752441406,
             "lastHits": 961,
             "denies": 13,
             "assists": 8
@@ -17272,6 +17513,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 70593,
             "replayEndTotalEarnedGold": 70593,
+            "replayEndStunSeconds": 68.499267578125,
             "lastHits": 1007,
             "denies": 5,
             "assists": 12
@@ -17320,6 +17562,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 55117,
             "replayEndTotalEarnedGold": 55117,
+            "replayEndStunSeconds": 140.70346069335938,
             "lastHits": 762,
             "denies": 6,
             "assists": 31
@@ -17368,6 +17611,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 56916,
             "replayEndTotalEarnedGold": 56916,
+            "replayEndStunSeconds": 57.93141555786133,
             "lastHits": 791,
             "denies": 6,
             "assists": 24
@@ -17408,7 +17652,7 @@
             "lotuses_collected": 17,
             "roshans_killed": 0,
             "teamfight_participation": 0.6851851940155029,
-            "stun_seconds": 308.80181884765625,
+            "stun_seconds": 308.77496337890625,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 0
@@ -17416,6 +17660,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 32630,
             "replayEndTotalEarnedGold": 32630,
+            "replayEndStunSeconds": 308.80181884765625,
             "lastHits": 190,
             "denies": 2,
             "assists": 33
@@ -17464,6 +17709,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29948,
             "replayEndTotalEarnedGold": 29948,
+            "replayEndStunSeconds": 55.468082427978516,
             "lastHits": 127,
             "denies": 2,
             "assists": 26
@@ -17512,6 +17758,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 69053,
             "replayEndTotalEarnedGold": 69053,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 1406,
             "denies": 8,
             "assists": 11
@@ -17560,6 +17807,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 55318,
             "replayEndTotalEarnedGold": 55318,
+            "replayEndStunSeconds": 32.50028991699219,
             "lastHits": 1056,
             "denies": 6,
             "assists": 15
@@ -17608,6 +17856,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 40047,
             "replayEndTotalEarnedGold": 40047,
+            "replayEndStunSeconds": 66.33354187011719,
             "lastHits": 646,
             "denies": 9,
             "assists": 14
@@ -17656,6 +17905,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 36994,
             "replayEndTotalEarnedGold": 36994,
+            "replayEndStunSeconds": 26.834362030029297,
             "lastHits": 433,
             "denies": 4,
             "assists": 17
@@ -17704,6 +17954,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27851,
             "replayEndTotalEarnedGold": 27851,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 195,
             "denies": 2,
             "assists": 17
@@ -17793,6 +18044,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 62327,
             "replayEndTotalEarnedGold": 62327,
+            "replayEndStunSeconds": 2.5,
             "lastHits": 918,
             "denies": 13,
             "assists": 16
@@ -17841,6 +18093,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 46514,
             "replayEndTotalEarnedGold": 46514,
+            "replayEndStunSeconds": 29.332292556762695,
             "lastHits": 681,
             "denies": 20,
             "assists": 13
@@ -17889,6 +18142,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 42249,
             "replayEndTotalEarnedGold": 42249,
+            "replayEndStunSeconds": 37.83595657348633,
             "lastHits": 437,
             "denies": 10,
             "assists": 18
@@ -17937,6 +18191,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28562,
             "replayEndTotalEarnedGold": 28562,
+            "replayEndStunSeconds": 112.80096435546875,
             "lastHits": 172,
             "denies": 3,
             "assists": 20
@@ -17985,6 +18240,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25984,
             "replayEndTotalEarnedGold": 25984,
+            "replayEndStunSeconds": 145.47059631347656,
             "lastHits": 94,
             "denies": 2,
             "assists": 20
@@ -18033,6 +18289,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 47393,
             "replayEndTotalEarnedGold": 47673,
+            "replayEndStunSeconds": 36.36592483520508,
             "lastHits": 598,
             "denies": 12,
             "assists": 15
@@ -18081,6 +18338,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 22910,
             "replayEndTotalEarnedGold": 22910,
+            "replayEndStunSeconds": 76.63062286376953,
             "lastHits": 189,
             "denies": 0,
             "assists": 15
@@ -18129,6 +18387,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 22985,
             "replayEndTotalEarnedGold": 22985,
+            "replayEndStunSeconds": 41.999488830566406,
             "lastHits": 50,
             "denies": 1,
             "assists": 18
@@ -18177,6 +18436,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 47946,
             "replayEndTotalEarnedGold": 47946,
+            "replayEndStunSeconds": 109.93104553222656,
             "lastHits": 724,
             "denies": 10,
             "assists": 13
@@ -18225,6 +18485,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 68173,
             "replayEndTotalEarnedGold": 68173,
+            "replayEndStunSeconds": 107.73124694824219,
             "lastHits": 871,
             "denies": 7,
             "assists": 16
@@ -18314,6 +18575,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13864,
             "replayEndTotalEarnedGold": 13864,
+            "replayEndStunSeconds": 46.23213577270508,
             "lastHits": 91,
             "denies": 2,
             "assists": 12
@@ -18362,6 +18624,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28383,
             "replayEndTotalEarnedGold": 28383,
+            "replayEndStunSeconds": 64.43290710449219,
             "lastHits": 442,
             "denies": 15,
             "assists": 7
@@ -18410,6 +18673,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25427,
             "replayEndTotalEarnedGold": 25427,
+            "replayEndStunSeconds": 27.7001953125,
             "lastHits": 394,
             "denies": 24,
             "assists": 8
@@ -18458,6 +18722,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26356,
             "replayEndTotalEarnedGold": 26356,
+            "replayEndStunSeconds": 69.20245361328125,
             "lastHits": 416,
             "denies": 3,
             "assists": 10
@@ -18506,6 +18771,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 18513,
             "replayEndTotalEarnedGold": 18513,
+            "replayEndStunSeconds": 55.566650390625,
             "lastHits": 235,
             "denies": 2,
             "assists": 9
@@ -18554,6 +18820,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 52428,
             "replayEndTotalEarnedGold": 52428,
+            "replayEndStunSeconds": 65.40061950683594,
             "lastHits": 868,
             "denies": 19,
             "assists": 17
@@ -18602,6 +18869,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26459,
             "replayEndTotalEarnedGold": 26459,
+            "replayEndStunSeconds": 38.964866638183594,
             "lastHits": 328,
             "denies": 6,
             "assists": 25
@@ -18650,6 +18918,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 33383,
             "replayEndTotalEarnedGold": 33383,
+            "replayEndStunSeconds": 85.46682739257812,
             "lastHits": 449,
             "denies": 6,
             "assists": 16
@@ -18698,6 +18967,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 22994,
             "replayEndTotalEarnedGold": 22994,
+            "replayEndStunSeconds": 67.1339111328125,
             "lastHits": 164,
             "denies": 2,
             "assists": 23
@@ -18746,6 +19016,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 20469,
             "replayEndTotalEarnedGold": 20469,
+            "replayEndStunSeconds": 43.39931869506836,
             "lastHits": 108,
             "denies": 4,
             "assists": 29
@@ -18865,6 +19136,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 70597,
             "replayEndTotalEarnedGold": 70597,
+            "replayEndStunSeconds": 18.698486328125,
             "lastHits": 985,
             "denies": 5,
             "assists": 17
@@ -18913,6 +19185,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 47338,
             "replayEndTotalEarnedGold": 47338,
+            "replayEndStunSeconds": 89.09268188476562,
             "lastHits": 536,
             "denies": 7,
             "assists": 34
@@ -18961,6 +19234,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 61032,
             "replayEndTotalEarnedGold": 61032,
+            "replayEndStunSeconds": 78.90278625488281,
             "lastHits": 918,
             "denies": 8,
             "assists": 27
@@ -19009,6 +19283,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 32971,
             "replayEndTotalEarnedGold": 32971,
+            "replayEndStunSeconds": 269.2672424316406,
             "lastHits": 219,
             "denies": 5,
             "assists": 37
@@ -19057,6 +19332,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27453,
             "replayEndTotalEarnedGold": 27453,
+            "replayEndStunSeconds": 28.950193405151367,
             "lastHits": 132,
             "denies": 3,
             "assists": 32
@@ -19105,6 +19381,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 48734,
             "replayEndTotalEarnedGold": 48734,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 882,
             "denies": 8,
             "assists": 6
@@ -19153,6 +19430,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 36551,
             "replayEndTotalEarnedGold": 36551,
+            "replayEndStunSeconds": 73.9368896484375,
             "lastHits": 500,
             "denies": 0,
             "assists": 14
@@ -19201,6 +19479,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 45765,
             "replayEndTotalEarnedGold": 45765,
+            "replayEndStunSeconds": 15.90048885345459,
             "lastHits": 688,
             "denies": 11,
             "assists": 8
@@ -19249,6 +19528,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 33936,
             "replayEndTotalEarnedGold": 33936,
+            "replayEndStunSeconds": 69.93586730957031,
             "lastHits": 367,
             "denies": 2,
             "assists": 16
@@ -19297,6 +19577,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 22856,
             "replayEndTotalEarnedGold": 22856,
+            "replayEndStunSeconds": 0.8661133050918579,
             "lastHits": 118,
             "denies": 2,
             "assists": 11
@@ -19386,6 +19667,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 96083,
             "replayEndTotalEarnedGold": 96083,
+            "replayEndStunSeconds": 1.8340575695037842,
             "lastHits": 1361,
             "denies": 8,
             "assists": 7
@@ -19434,6 +19716,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 60307,
             "replayEndTotalEarnedGold": 60307,
+            "replayEndStunSeconds": 68.59944152832031,
             "lastHits": 738,
             "denies": 5,
             "assists": 35
@@ -19482,6 +19765,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 73189,
             "replayEndTotalEarnedGold": 73189,
+            "replayEndStunSeconds": 120.76345825195312,
             "lastHits": 849,
             "denies": 4,
             "assists": 29
@@ -19530,6 +19814,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 43621,
             "replayEndTotalEarnedGold": 43621,
+            "replayEndStunSeconds": 97.16653442382812,
             "lastHits": 318,
             "denies": 1,
             "assists": 34
@@ -19578,6 +19863,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 37681,
             "replayEndTotalEarnedGold": 37681,
+            "replayEndStunSeconds": 78.76983642578125,
             "lastHits": 149,
             "denies": 2,
             "assists": 30
@@ -19626,6 +19912,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 41768,
             "replayEndTotalEarnedGold": 41768,
+            "replayEndStunSeconds": 119.60317993164062,
             "lastHits": 373,
             "denies": 3,
             "assists": 19
@@ -19674,6 +19961,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 70483,
             "replayEndTotalEarnedGold": 70483,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 995,
             "denies": 48,
             "assists": 16
@@ -19722,6 +20010,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 79779,
             "replayEndTotalEarnedGold": 79779,
+            "replayEndStunSeconds": 38.23234939575195,
             "lastHits": 1060,
             "denies": 19,
             "assists": 14
@@ -19770,6 +20059,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 81328,
             "replayEndTotalEarnedGold": 81328,
+            "replayEndStunSeconds": 11.86752986907959,
             "lastHits": 1362,
             "denies": 13,
             "assists": 12
@@ -19818,6 +20108,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27198,
             "replayEndTotalEarnedGold": 27198,
+            "replayEndStunSeconds": 131.93026733398438,
             "lastHits": 72,
             "denies": 1,
             "assists": 14
@@ -19907,6 +20198,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 42342,
             "replayEndTotalEarnedGold": 42342,
+            "replayEndStunSeconds": 13.333083152770996,
             "lastHits": 672,
             "denies": 9,
             "assists": 11
@@ -19955,6 +20247,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 36665,
             "replayEndTotalEarnedGold": 36665,
+            "replayEndStunSeconds": 95.50601959228516,
             "lastHits": 472,
             "denies": 11,
             "assists": 16
@@ -20003,6 +20296,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 34766,
             "replayEndTotalEarnedGold": 34906,
+            "replayEndStunSeconds": 21.134733200073242,
             "lastHits": 432,
             "denies": 9,
             "assists": 11
@@ -20043,7 +20337,7 @@
             "lotuses_collected": 3,
             "roshans_killed": 1,
             "teamfight_participation": 0.529411792755127,
-            "stun_seconds": 28.765819549560547,
+            "stun_seconds": 26.765819549560547,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 0
@@ -20051,6 +20345,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16776,
             "replayEndTotalEarnedGold": 16776,
+            "replayEndStunSeconds": 28.765819549560547,
             "lastHits": 57,
             "denies": 5,
             "assists": 13
@@ -20091,7 +20386,7 @@
             "lotuses_collected": 6,
             "roshans_killed": 0,
             "teamfight_participation": 0.7647058963775635,
-            "stun_seconds": 63.03341293334961,
+            "stun_seconds": 63.01656723022461,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 1
@@ -20099,6 +20394,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28665,
             "replayEndTotalEarnedGold": 28665,
+            "replayEndStunSeconds": 63.03341293334961,
             "lastHits": 236,
             "denies": 0,
             "assists": 21
@@ -20147,6 +20443,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16991,
             "replayEndTotalEarnedGold": 16991,
+            "replayEndStunSeconds": 42.83326721191406,
             "lastHits": 177,
             "denies": 6,
             "assists": 14
@@ -20195,6 +20492,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28738,
             "replayEndTotalEarnedGold": 28738,
+            "replayEndStunSeconds": 167.7657928466797,
             "lastHits": 520,
             "denies": 8,
             "assists": 15
@@ -20243,6 +20541,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25077,
             "replayEndTotalEarnedGold": 25077,
+            "replayEndStunSeconds": 16.666643142700195,
             "lastHits": 387,
             "denies": 14,
             "assists": 14
@@ -20291,6 +20590,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 22365,
             "replayEndTotalEarnedGold": 22417,
+            "replayEndStunSeconds": 2.833203077316284,
             "lastHits": 226,
             "denies": 6,
             "assists": 16
@@ -20339,6 +20639,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 33308,
             "replayEndTotalEarnedGold": 33308,
+            "replayEndStunSeconds": 43.76679229736328,
             "lastHits": 598,
             "denies": 13,
             "assists": 16
@@ -20458,6 +20759,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 37442,
             "replayEndTotalEarnedGold": 37442,
+            "replayEndStunSeconds": 6.3166985511779785,
             "lastHits": 756,
             "denies": 19,
             "assists": 6
@@ -20506,6 +20808,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25218,
             "replayEndTotalEarnedGold": 25218,
+            "replayEndStunSeconds": 27.233373641967773,
             "lastHits": 447,
             "denies": 6,
             "assists": 5
@@ -20554,6 +20857,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 24196,
             "replayEndTotalEarnedGold": 24196,
+            "replayEndStunSeconds": 25.1988468170166,
             "lastHits": 374,
             "denies": 33,
             "assists": 4
@@ -20594,7 +20898,7 @@
             "lotuses_collected": 1,
             "roshans_killed": 0,
             "teamfight_participation": 0.8333333134651184,
-            "stun_seconds": 50.29936981201172,
+            "stun_seconds": 50.27251434326172,
             "tormentors_killed": 0,
             "first_blood": 0,
             "couriers_killed": 0
@@ -20602,6 +20906,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14574,
             "replayEndTotalEarnedGold": 14574,
+            "replayEndStunSeconds": 50.29936981201172,
             "lastHits": 123,
             "denies": 4,
             "assists": 15
@@ -20650,6 +20955,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14135,
             "replayEndTotalEarnedGold": 14135,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 65,
             "denies": 1,
             "assists": 10
@@ -20698,6 +21004,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31229,
             "replayEndTotalEarnedGold": 31229,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 413,
             "denies": 19,
             "assists": 5
@@ -20746,6 +21053,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13617,
             "replayEndTotalEarnedGold": 13617,
+            "replayEndStunSeconds": 38.700199127197266,
             "lastHits": 38,
             "denies": 2,
             "assists": 12
@@ -20794,6 +21102,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 46431,
             "replayEndTotalEarnedGold": 46431,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 862,
             "denies": 18,
             "assists": 10
@@ -20842,6 +21151,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 19170,
             "replayEndTotalEarnedGold": 19222,
+            "replayEndStunSeconds": 37.86606216430664,
             "lastHits": 116,
             "denies": 0,
             "assists": 17
@@ -20890,6 +21200,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26435,
             "replayEndTotalEarnedGold": 26488,
+            "replayEndStunSeconds": 62.268009185791016,
             "lastHits": 327,
             "denies": 6,
             "assists": 16
@@ -20979,6 +21290,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12916,
             "replayEndTotalEarnedGold": 12916,
+            "replayEndStunSeconds": 4.8332037925720215,
             "lastHits": 204,
             "denies": 19,
             "assists": 6
@@ -21027,6 +21339,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 11971,
             "replayEndTotalEarnedGold": 12009,
+            "replayEndStunSeconds": 15.26667594909668,
             "lastHits": 196,
             "denies": 17,
             "assists": 10
@@ -21075,6 +21388,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 5791,
             "replayEndTotalEarnedGold": 5829,
+            "replayEndStunSeconds": 27.6666259765625,
             "lastHits": 29,
             "denies": 1,
             "assists": 10
@@ -21123,6 +21437,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 6815,
             "replayEndTotalEarnedGold": 6852,
+            "replayEndStunSeconds": 12.133320808410645,
             "lastHits": 46,
             "denies": 4,
             "assists": 9
@@ -21171,6 +21486,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 11478,
             "replayEndTotalEarnedGold": 11478,
+            "replayEndStunSeconds": 26.66691780090332,
             "lastHits": 168,
             "denies": 24,
             "assists": 7
@@ -21219,6 +21535,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 8894,
             "replayEndTotalEarnedGold": 8894,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 160,
             "denies": 13,
             "assists": 2
@@ -21267,6 +21584,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 8160,
             "replayEndTotalEarnedGold": 8160,
+            "replayEndStunSeconds": 3.0,
             "lastHits": 127,
             "denies": 6,
             "assists": 1
@@ -21315,6 +21633,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 7767,
             "replayEndTotalEarnedGold": 7805,
+            "replayEndStunSeconds": 6.367867469787598,
             "lastHits": 113,
             "denies": 10,
             "assists": 5
@@ -21363,6 +21682,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 4580,
             "replayEndTotalEarnedGold": 4580,
+            "replayEndStunSeconds": 52.36662292480469,
             "lastHits": 26,
             "denies": 3,
             "assists": 5
@@ -21411,6 +21731,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 3699,
             "replayEndTotalEarnedGold": 3699,
+            "replayEndStunSeconds": 5.366528034210205,
             "lastHits": 18,
             "denies": 1,
             "assists": 3
@@ -21500,6 +21821,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14169,
             "replayEndTotalEarnedGold": 14221,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 75,
             "denies": 6,
             "assists": 18
@@ -21548,6 +21870,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 40694,
             "replayEndTotalEarnedGold": 40694,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 684,
             "denies": 4,
             "assists": 15
@@ -21596,6 +21919,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25998,
             "replayEndTotalEarnedGold": 25998,
+            "replayEndStunSeconds": 65.33287048339844,
             "lastHits": 346,
             "denies": 14,
             "assists": 14
@@ -21644,6 +21968,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15736,
             "replayEndTotalEarnedGold": 15788,
+            "replayEndStunSeconds": 25.799205780029297,
             "lastHits": 73,
             "denies": 1,
             "assists": 17
@@ -21692,6 +22017,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28970,
             "replayEndTotalEarnedGold": 28970,
+            "replayEndStunSeconds": 55.801307678222656,
             "lastHits": 381,
             "denies": 3,
             "assists": 16
@@ -21740,6 +22066,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28699,
             "replayEndTotalEarnedGold": 28699,
+            "replayEndStunSeconds": 9.0506591796875,
             "lastHits": 449,
             "denies": 16,
             "assists": 14
@@ -21788,6 +22115,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25085,
             "replayEndTotalEarnedGold": 25085,
+            "replayEndStunSeconds": 73.86627197265625,
             "lastHits": 385,
             "denies": 9,
             "assists": 14
@@ -21836,6 +22164,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25217,
             "replayEndTotalEarnedGold": 25217,
+            "replayEndStunSeconds": 42.76655197143555,
             "lastHits": 295,
             "denies": 4,
             "assists": 9
@@ -21884,6 +22213,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 14607,
             "replayEndTotalEarnedGold": 14607,
+            "replayEndStunSeconds": 44.46537780761719,
             "lastHits": 143,
             "denies": 3,
             "assists": 17
@@ -21932,6 +22262,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 9907,
             "replayEndTotalEarnedGold": 9960,
+            "replayEndStunSeconds": 54.033592224121094,
             "lastHits": 12,
             "denies": 3,
             "assists": 9
@@ -22051,6 +22382,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30269,
             "replayEndTotalEarnedGold": 30269,
+            "replayEndStunSeconds": 1.2000000476837158,
             "lastHits": 602,
             "denies": 6,
             "assists": 2
@@ -22099,6 +22431,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 23299,
             "replayEndTotalEarnedGold": 23299,
+            "replayEndStunSeconds": 20.066650390625,
             "lastHits": 364,
             "denies": 42,
             "assists": 1
@@ -22147,6 +22480,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 29994,
             "replayEndTotalEarnedGold": 30047,
+            "replayEndStunSeconds": 15.433349609375,
             "lastHits": 533,
             "denies": 10,
             "assists": 0
@@ -22195,6 +22529,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15616,
             "replayEndTotalEarnedGold": 15616,
+            "replayEndStunSeconds": 148.5394287109375,
             "lastHits": 141,
             "denies": 0,
             "assists": 10
@@ -22243,6 +22578,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13340,
             "replayEndTotalEarnedGold": 13392,
+            "replayEndStunSeconds": 53.367130279541016,
             "lastHits": 97,
             "denies": 1,
             "assists": 8
@@ -22291,6 +22627,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 37811,
             "replayEndTotalEarnedGold": 37811,
+            "replayEndStunSeconds": 6.000365734100342,
             "lastHits": 535,
             "denies": 22,
             "assists": 8
@@ -22339,6 +22676,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30427,
             "replayEndTotalEarnedGold": 30427,
+            "replayEndStunSeconds": 67.6659164428711,
             "lastHits": 378,
             "denies": 2,
             "assists": 16
@@ -22387,6 +22725,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 17034,
             "replayEndTotalEarnedGold": 17034,
+            "replayEndStunSeconds": 21.666210174560547,
             "lastHits": 53,
             "denies": 3,
             "assists": 17
@@ -22435,6 +22774,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16051,
             "replayEndTotalEarnedGold": 16051,
+            "replayEndStunSeconds": 121.16596221923828,
             "lastHits": 23,
             "denies": 4,
             "assists": 20
@@ -22483,6 +22823,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31934,
             "replayEndTotalEarnedGold": 31934,
+            "replayEndStunSeconds": 69.03461456298828,
             "lastHits": 451,
             "denies": 12,
             "assists": 23
@@ -22602,6 +22943,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 30512,
             "replayEndTotalEarnedGold": 30512,
+            "replayEndStunSeconds": 42.3997802734375,
             "lastHits": 538,
             "denies": 9,
             "assists": 7
@@ -22650,6 +22992,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25846,
             "replayEndTotalEarnedGold": 25846,
+            "replayEndStunSeconds": 44.66719055175781,
             "lastHits": 388,
             "denies": 21,
             "assists": 12
@@ -22698,6 +23041,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25625,
             "replayEndTotalEarnedGold": 25625,
+            "replayEndStunSeconds": 36.100528717041016,
             "lastHits": 383,
             "denies": 1,
             "assists": 6
@@ -22746,6 +23090,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15431,
             "replayEndTotalEarnedGold": 15483,
+            "replayEndStunSeconds": 52.5662841796875,
             "lastHits": 60,
             "denies": 7,
             "assists": 11
@@ -22794,6 +23139,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15257,
             "replayEndTotalEarnedGold": 15257,
+            "replayEndStunSeconds": 1.86669921875,
             "lastHits": 129,
             "denies": 1,
             "assists": 9
@@ -22842,6 +23188,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 16147,
             "replayEndTotalEarnedGold": 16200,
+            "replayEndStunSeconds": 33.9337158203125,
             "lastHits": 73,
             "denies": 2,
             "assists": 19
@@ -22890,6 +23237,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 41894,
             "replayEndTotalEarnedGold": 41894,
+            "replayEndStunSeconds": 88.768310546875,
             "lastHits": 685,
             "denies": 13,
             "assists": 11
@@ -22938,6 +23286,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27976,
             "replayEndTotalEarnedGold": 27976,
+            "replayEndStunSeconds": 15.499924659729004,
             "lastHits": 336,
             "denies": 9,
             "assists": 14
@@ -22986,6 +23335,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13747,
             "replayEndTotalEarnedGold": 13800,
+            "replayEndStunSeconds": 83.33387756347656,
             "lastHits": 39,
             "denies": 3,
             "assists": 13
@@ -23034,6 +23384,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 26708,
             "replayEndTotalEarnedGold": 26708,
+            "replayEndStunSeconds": 57.167240142822266,
             "lastHits": 384,
             "denies": 7,
             "assists": 10
@@ -23123,6 +23474,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35696,
             "replayEndTotalEarnedGold": 35696,
+            "replayEndStunSeconds": 6.650243759155273,
             "lastHits": 562,
             "denies": 11,
             "assists": 8
@@ -23171,6 +23523,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31538,
             "replayEndTotalEarnedGold": 31538,
+            "replayEndStunSeconds": 36.03662872314453,
             "lastHits": 489,
             "denies": 17,
             "assists": 13
@@ -23219,6 +23572,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 31556,
             "replayEndTotalEarnedGold": 31556,
+            "replayEndStunSeconds": 24.099971771240234,
             "lastHits": 428,
             "denies": 18,
             "assists": 11
@@ -23267,6 +23621,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 18145,
             "replayEndTotalEarnedGold": 18145,
+            "replayEndStunSeconds": 224.96719360351562,
             "lastHits": 112,
             "denies": 3,
             "assists": 14
@@ -23315,6 +23670,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15501,
             "replayEndTotalEarnedGold": 15501,
+            "replayEndStunSeconds": 38.80088424682617,
             "lastHits": 40,
             "denies": 3,
             "assists": 19
@@ -23363,6 +23719,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25468,
             "replayEndTotalEarnedGold": 25468,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 442,
             "denies": 14,
             "assists": 6
@@ -23411,6 +23768,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 13677,
             "replayEndTotalEarnedGold": 13729,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 50,
             "denies": 0,
             "assists": 8
@@ -23459,6 +23817,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 12665,
             "replayEndTotalEarnedGold": 12718,
+            "replayEndStunSeconds": 38.100341796875,
             "lastHits": 36,
             "denies": 4,
             "assists": 9
@@ -23507,6 +23866,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35790,
             "replayEndTotalEarnedGold": 35790,
+            "replayEndStunSeconds": 0.0,
             "lastHits": 682,
             "denies": 7,
             "assists": 7
@@ -23555,6 +23915,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 27547,
             "replayEndTotalEarnedGold": 27600,
+            "replayEndStunSeconds": 171.66517639160156,
             "lastHits": 406,
             "denies": 4,
             "assists": 6
@@ -23644,6 +24005,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15183,
             "replayEndTotalEarnedGold": 15235,
+            "replayEndStunSeconds": 32.59942626953125,
             "lastHits": 31,
             "denies": 1,
             "assists": 19
@@ -23692,6 +24054,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 25544,
             "replayEndTotalEarnedGold": 25544,
+            "replayEndStunSeconds": 6.666699409484863,
             "lastHits": 308,
             "denies": 7,
             "assists": 23
@@ -23740,6 +24103,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 28957,
             "replayEndTotalEarnedGold": 28957,
+            "replayEndStunSeconds": 88.70350646972656,
             "lastHits": 391,
             "denies": 20,
             "assists": 16
@@ -23788,6 +24152,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15166,
             "replayEndTotalEarnedGold": 15166,
+            "replayEndStunSeconds": 81.39842224121094,
             "lastHits": 65,
             "denies": 3,
             "assists": 22
@@ -23836,6 +24201,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 35945,
             "replayEndTotalEarnedGold": 35945,
+            "replayEndStunSeconds": 40.299251556396484,
             "lastHits": 506,
             "denies": 13,
             "assists": 19
@@ -23884,6 +24250,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 33065,
             "replayEndTotalEarnedGold": 33065,
+            "replayEndStunSeconds": 59.56884002685547,
             "lastHits": 653,
             "denies": 11,
             "assists": 5
@@ -23932,6 +24299,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 20398,
             "replayEndTotalEarnedGold": 20398,
+            "replayEndStunSeconds": 59.704307556152344,
             "lastHits": 289,
             "denies": 11,
             "assists": 8
@@ -23980,6 +24348,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 21622,
             "replayEndTotalEarnedGold": 21674,
+            "replayEndStunSeconds": 43.70036315917969,
             "lastHits": 306,
             "denies": 2,
             "assists": 7
@@ -24028,6 +24397,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 10590,
             "replayEndTotalEarnedGold": 10642,
+            "replayEndStunSeconds": 79.90068054199219,
             "lastHits": 30,
             "denies": 2,
             "assists": 6
@@ -24076,6 +24446,7 @@
           "rawReplayStats": {
             "totalEarnedGold": 15614,
             "replayEndTotalEarnedGold": 15614,
+            "replayEndStunSeconds": 55.899574279785156,
             "lastHits": 120,
             "denies": 2,
             "assists": 14
@@ -24107,6 +24478,537 @@
       "titleConditions": {
         "anyPlayerDiedToTormentor": false,
         "firstBloodBeforeHorn": true,
+        "firstBloodAfterTenMinutes": false,
+        "durationUnder25Minutes": false,
+        "possibleFinalSeriesGame": false,
+        "durationEndsInEight": false,
+        "anyPlayerDiedInOwnFountain": false
+      }
+    },
+    {
+      "matchId": 8944553935,
+      "seriesId": 8944553935,
+      "seriesType": 1,
+      "startTime": 1786681604.166565,
+      "endTime": 1786684617,
+      "duration": 3012.8334350585938,
+      "radiantTeamId": 10150538,
+      "direTeamId": 10136357,
+      "radiantTeamName": "LGD Gaming",
+      "direTeamName": "Nigma Galaxy ",
+      "radiantTeamTag": "LGD",
+      "direTeamTag": "NGX",
+      "radiantWin": false,
+      "lobbyGameName": "Line C The international 2026 - Group Stage",
+      "players": [
+        {
+          "accountId": 177203952,
+          "name": "Yuma",
+          "teamId": 10150538,
+          "opponent": {
+            "teamId": 10136357,
+            "name": "Nigma Galaxy ",
+            "tag": "NGX"
+          },
+          "playerSlot": 0,
+          "heroId": 80,
+          "heroName": "npc_dota_hero_lone_druid",
+          "stats": {
+            "kills": 10,
+            "deaths": 1,
+            "creep_score": 801,
+            "gpm": 824.9908445242877,
+            "madstones_collected": 79,
+            "towers_destroyed": 2,
+            "observer_wards_placed": 1,
+            "camps_stacked": 3,
+            "runes_picked_up": 5,
+            "watchers_captured": 0,
+            "smokes_used": 0,
+            "lotuses_collected": 2,
+            "roshans_killed": 0,
+            "teamfight_participation": 0.692307710647583,
+            "stun_seconds": 89.33419799804688,
+            "tormentors_killed": 1,
+            "first_blood": 1,
+            "couriers_killed": 0
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 41426,
+            "replayEndTotalEarnedGold": 41426,
+            "replayEndStunSeconds": 89.33419799804688,
+            "lastHits": 787,
+            "denies": 14,
+            "assists": 8
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 79
+          },
+          "won": false,
+          "lost": true,
+          "role": "core"
+        },
+        {
+          "accountId": 94054712,
+          "name": "TOPSON",
+          "teamId": 10150538,
+          "opponent": {
+            "teamId": 10136357,
+            "name": "Nigma Galaxy ",
+            "tag": "NGX"
+          },
+          "playerSlot": 1,
+          "heroId": 47,
+          "heroName": "npc_dota_hero_viper",
+          "stats": {
+            "kills": 2,
+            "deaths": 8,
+            "creep_score": 645,
+            "gpm": 660.9525693747063,
+            "madstones_collected": 50,
+            "towers_destroyed": 1,
+            "observer_wards_placed": 1,
+            "camps_stacked": 3,
+            "runes_picked_up": 7,
+            "watchers_captured": 0,
+            "smokes_used": 0,
+            "lotuses_collected": 0,
+            "roshans_killed": 0,
+            "teamfight_participation": 0.38461539149284363,
+            "stun_seconds": 0.0,
+            "tormentors_killed": 0,
+            "first_blood": 0,
+            "couriers_killed": 0
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 33189,
+            "replayEndTotalEarnedGold": 33189,
+            "replayEndStunSeconds": 0.0,
+            "lastHits": 636,
+            "denies": 9,
+            "assists": 8
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 50
+          },
+          "won": false,
+          "lost": true,
+          "role": "mid"
+        },
+        {
+          "accountId": 292921272,
+          "name": "Wisper",
+          "teamId": 10150538,
+          "opponent": {
+            "teamId": 10136357,
+            "name": "Nigma Galaxy ",
+            "tag": "NGX"
+          },
+          "playerSlot": 2,
+          "heroId": 2,
+          "heroName": "npc_dota_hero_axe",
+          "stats": {
+            "kills": 13,
+            "deaths": 5,
+            "creep_score": 529,
+            "gpm": 693.9514065633498,
+            "madstones_collected": 40,
+            "towers_destroyed": 0,
+            "observer_wards_placed": 0,
+            "camps_stacked": 3,
+            "runes_picked_up": 6,
+            "watchers_captured": 4,
+            "smokes_used": 0,
+            "lotuses_collected": 4,
+            "roshans_killed": 0,
+            "teamfight_participation": 0.692307710647583,
+            "stun_seconds": 31.766796112060547,
+            "tormentors_killed": 1,
+            "first_blood": 0,
+            "couriers_killed": 1
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 34846,
+            "replayEndTotalEarnedGold": 34846,
+            "replayEndStunSeconds": 31.766796112060547,
+            "lastHits": 523,
+            "denies": 6,
+            "assists": 5
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 40
+          },
+          "won": false,
+          "lost": true,
+          "role": "core"
+        },
+        {
+          "accountId": 105045291,
+          "name": "Thiolicor",
+          "teamId": 10150538,
+          "opponent": {
+            "teamId": 10136357,
+            "name": "Nigma Galaxy ",
+            "tag": "NGX"
+          },
+          "playerSlot": 3,
+          "heroId": 119,
+          "heroName": "npc_dota_hero_dark_willow",
+          "stats": {
+            "kills": 1,
+            "deaths": 9,
+            "creep_score": 70,
+            "gpm": 268.51135897071816,
+            "madstones_collected": 3,
+            "towers_destroyed": 0,
+            "observer_wards_placed": 5,
+            "camps_stacked": 5,
+            "runes_picked_up": 3,
+            "watchers_captured": 13,
+            "smokes_used": 3,
+            "lotuses_collected": 3,
+            "roshans_killed": 0,
+            "teamfight_participation": 0.5769230723381042,
+            "stun_seconds": 254.23092651367188,
+            "tormentors_killed": 0,
+            "first_blood": 0,
+            "couriers_killed": 0
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 13483,
+            "replayEndTotalEarnedGold": 13483,
+            "replayEndStunSeconds": 254.26315307617188,
+            "lastHits": 69,
+            "denies": 1,
+            "assists": 14
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 3
+          },
+          "won": false,
+          "lost": true,
+          "role": "support"
+        },
+        {
+          "accountId": 81306398,
+          "name": "KingJungles",
+          "teamId": 10150538,
+          "opponent": {
+            "teamId": 10136357,
+            "name": "Nigma Galaxy ",
+            "tag": "NGX"
+          },
+          "playerSlot": 4,
+          "heroId": 110,
+          "heroName": "npc_dota_hero_phoenix",
+          "stats": {
+            "kills": 0,
+            "deaths": 6,
+            "creep_score": 173,
+            "gpm": 346.81638481606893,
+            "madstones_collected": 8,
+            "towers_destroyed": 0,
+            "observer_wards_placed": 16,
+            "camps_stacked": 6,
+            "runes_picked_up": 4,
+            "watchers_captured": 4,
+            "smokes_used": 4,
+            "lotuses_collected": 4,
+            "roshans_killed": 0,
+            "teamfight_participation": 0.5384615659713745,
+            "stun_seconds": 16.266992568969727,
+            "tormentors_killed": 0,
+            "first_blood": 0,
+            "couriers_killed": 0
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 17415,
+            "replayEndTotalEarnedGold": 17415,
+            "replayEndStunSeconds": 16.266992568969727,
+            "lastHits": 169,
+            "denies": 4,
+            "assists": 14
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 8
+          },
+          "won": false,
+          "lost": true,
+          "role": "support"
+        },
+        {
+          "accountId": 111620041,
+          "name": "SumaiL-",
+          "teamId": 10136357,
+          "opponent": {
+            "teamId": 10150538,
+            "name": "LGD Gaming",
+            "tag": "LGD"
+          },
+          "playerSlot": 128,
+          "heroId": 106,
+          "heroName": "npc_dota_hero_ember_spirit",
+          "stats": {
+            "kills": 4,
+            "deaths": 3,
+            "creep_score": 452,
+            "gpm": 601.6462705528716,
+            "madstones_collected": 24,
+            "towers_destroyed": 0,
+            "observer_wards_placed": 0,
+            "camps_stacked": 2,
+            "runes_picked_up": 8,
+            "watchers_captured": 5,
+            "smokes_used": 0,
+            "lotuses_collected": 5,
+            "roshans_killed": 1,
+            "teamfight_participation": 0.7241379022598267,
+            "stun_seconds": 92.06526184082031,
+            "tormentors_killed": 0,
+            "first_blood": 0,
+            "couriers_killed": 0
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 30211,
+            "replayEndTotalEarnedGold": 30211,
+            "replayEndStunSeconds": 92.06526184082031,
+            "lastHits": 434,
+            "denies": 18,
+            "assists": 17
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 24
+          },
+          "won": true,
+          "lost": false,
+          "role": "core"
+        },
+        {
+          "accountId": 152168157,
+          "name": "OmaR",
+          "teamId": 10136357,
+          "opponent": {
+            "teamId": 10150538,
+            "name": "LGD Gaming",
+            "tag": "LGD"
+          },
+          "playerSlot": 129,
+          "heroId": 51,
+          "heroName": "npc_dota_hero_rattletrap",
+          "stats": {
+            "kills": 0,
+            "deaths": 11,
+            "creep_score": 41,
+            "gpm": 320.9669637714948,
+            "madstones_collected": 3,
+            "towers_destroyed": 0,
+            "observer_wards_placed": 16,
+            "camps_stacked": 3,
+            "runes_picked_up": 3,
+            "watchers_captured": 9,
+            "smokes_used": 4,
+            "lotuses_collected": 2,
+            "roshans_killed": 0,
+            "teamfight_participation": 0.6896551847457886,
+            "stun_seconds": 94.19390106201172,
+            "tormentors_killed": 1,
+            "first_blood": 0,
+            "couriers_killed": 2
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 16117,
+            "replayEndTotalEarnedGold": 16117,
+            "replayEndStunSeconds": 95.92630004882812,
+            "lastHits": 41,
+            "denies": 0,
+            "assists": 20
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 3
+          },
+          "won": true,
+          "lost": false,
+          "role": "support"
+        },
+        {
+          "accountId": 138880576,
+          "name": "Davai",
+          "teamId": 10136357,
+          "opponent": {
+            "teamId": 10150538,
+            "name": "LGD Gaming",
+            "tag": "LGD"
+          },
+          "playerSlot": 130,
+          "heroId": 36,
+          "heroName": "npc_dota_hero_necrolyte",
+          "stats": {
+            "kills": 9,
+            "deaths": 6,
+            "creep_score": 592,
+            "gpm": 797.8270461384641,
+            "madstones_collected": 71,
+            "towers_destroyed": 1,
+            "observer_wards_placed": 0,
+            "camps_stacked": 3,
+            "runes_picked_up": 3,
+            "watchers_captured": 0,
+            "smokes_used": 0,
+            "lotuses_collected": 2,
+            "roshans_killed": 0,
+            "teamfight_participation": 0.8275862336158752,
+            "stun_seconds": 16.16645622253418,
+            "tormentors_killed": 1,
+            "first_blood": 0,
+            "couriers_killed": 0
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 40062,
+            "replayEndTotalEarnedGold": 40062,
+            "replayEndStunSeconds": 16.16645622253418,
+            "lastHits": 585,
+            "denies": 7,
+            "assists": 15
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 71
+          },
+          "won": true,
+          "lost": false,
+          "role": "core"
+        },
+        {
+          "accountId": 101356886,
+          "name": "GH",
+          "teamId": 10136357,
+          "opponent": {
+            "teamId": 10150538,
+            "name": "LGD Gaming",
+            "tag": "LGD"
+          },
+          "playerSlot": 131,
+          "heroId": 50,
+          "heroName": "npc_dota_hero_dazzle",
+          "stats": {
+            "kills": 0,
+            "deaths": 5,
+            "creep_score": 65,
+            "gpm": 301.66951462496763,
+            "madstones_collected": 0,
+            "towers_destroyed": 0,
+            "observer_wards_placed": 7,
+            "camps_stacked": 2,
+            "runes_picked_up": 3,
+            "watchers_captured": 8,
+            "smokes_used": 5,
+            "lotuses_collected": 8,
+            "roshans_killed": 0,
+            "teamfight_participation": 0.5862069129943848,
+            "stun_seconds": 25.56415367126465,
+            "tormentors_killed": 1,
+            "first_blood": 0,
+            "couriers_killed": 0
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 15148,
+            "replayEndTotalEarnedGold": 15148,
+            "replayEndStunSeconds": 25.63178062438965,
+            "lastHits": 64,
+            "denies": 1,
+            "assists": 18
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 0
+          },
+          "won": true,
+          "lost": false,
+          "role": "support"
+        },
+        {
+          "accountId": 210053851,
+          "name": "lorenof",
+          "teamId": 10136357,
+          "opponent": {
+            "teamId": 10150538,
+            "name": "LGD Gaming",
+            "tag": "LGD"
+          },
+          "playerSlot": 132,
+          "heroId": 53,
+          "heroName": "npc_dota_hero_furion",
+          "stats": {
+            "kills": 16,
+            "deaths": 1,
+            "creep_score": 876,
+            "gpm": 1100.5122159816701,
+            "madstones_collected": 82,
+            "towers_destroyed": 10,
+            "observer_wards_placed": 1,
+            "camps_stacked": 5,
+            "runes_picked_up": 6,
+            "watchers_captured": 0,
+            "smokes_used": 0,
+            "lotuses_collected": 0,
+            "roshans_killed": 2,
+            "teamfight_participation": 0.8620689511299133,
+            "stun_seconds": 5.166748046875,
+            "tormentors_killed": 1,
+            "first_blood": 0,
+            "couriers_killed": 1
+          },
+          "rawReplayStats": {
+            "totalEarnedGold": 55261,
+            "replayEndTotalEarnedGold": 55261,
+            "replayEndStunSeconds": 5.166748046875,
+            "lastHits": 861,
+            "denies": 15,
+            "assists": 9
+          },
+          "replayCounters": {
+            "acquiredMadstones": 36,
+            "currentMadstones": 0,
+            "neutralTokensFound": 82
+          },
+          "won": true,
+          "lost": false,
+          "role": "mid"
+        }
+      ],
+      "titleData": {
+        "gameStartTime": 860.5000610351562,
+        "gameEndTime": 3873.33349609375,
+        "firstBloodTime": 72.26666259765625,
+        "seriesType": 1,
+        "radiantSeriesWins": 0,
+        "direSeriesWins": 0,
+        "fountainRadius": 8.0,
+        "tormentorDeaths": [],
+        "fountainDeaths": [],
+        "ownFountainDeaths": [],
+        "seriesGameNumber": 1,
+        "maxSeriesGames": 3
+      },
+      "titleConditions": {
+        "anyPlayerDiedToTormentor": false,
+        "firstBloodBeforeHorn": false,
         "firstBloodAfterTenMinutes": false,
         "durationUnder25Minutes": false,
         "possibleFinalSeriesGame": false,

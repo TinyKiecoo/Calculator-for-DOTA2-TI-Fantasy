@@ -591,6 +591,10 @@ class TitleDataTests(unittest.TestCase):
         )
         self.assertNotIn("gpm", checkpoint["replay"]["exactFields"])
         self.assertEqual(checkpoint["replay"]["calculatedFields"], ["gpm"])
+        self.assertEqual(
+            checkpoint["replay"]["statSnapshot"],
+            build_league.REPLAY_STAT_SNAPSHOT,
+        )
         self.assertTrue(checkpoint["replay"]["allFantasyStatsFromReplay"])
 
     def test_gpm_uses_total_gold_and_exact_replay_duration(self) -> None:
