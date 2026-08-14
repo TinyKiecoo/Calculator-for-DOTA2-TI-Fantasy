@@ -671,7 +671,7 @@
       scoreMode: pages[stage].scoreMode,
       multiplierMode: MULTIPLIER_MODES.includes(saved?.multiplierMode)
         ? saved.multiplierMode
-        : "calculated",
+        : "manual",
       titles: {
         prefix: engine.prefixTitles[saved?.titles?.prefix]
           ? saved.titles.prefix

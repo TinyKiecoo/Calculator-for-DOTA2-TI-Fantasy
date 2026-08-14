@@ -503,9 +503,6 @@
     if (result.seriesId !== null && result.seriesId !== undefined) {
       return `series:${result.seriesId}`;
     }
-    // OpenDota leaves series_id empty for standalone BO1 matches. Treat each
-    // such match as its own series; this avoids incorrectly combining unrelated
-    // matches while older snapshots are being regenerated.
     return `match:${result.matchId}`;
   }
 

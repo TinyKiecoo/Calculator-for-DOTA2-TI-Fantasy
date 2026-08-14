@@ -799,10 +799,12 @@ a:focus-visible {
 }
 
 .manual-multiplier-control {
-  min-width: 58px;
+  min-width: 0;
+  width: max-content;
   display: grid;
-  grid-template-columns: minmax(34px, 1fr) auto;
+  grid-template-columns: auto auto;
   align-items: center;
+  justify-self: end;
   gap: 2px;
   color: #fff8e9;
   font-family: "Reaver";
@@ -811,7 +813,8 @@ a:focus-visible {
 
 input.emblem-multiplier {
   appearance: textfield;
-  width: 45px;
+  box-sizing: content-box;
+  width: 3ch;
   height: 23px;
   min-width: 0;
   padding: 1px 3px;

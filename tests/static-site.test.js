@@ -79,6 +79,28 @@ test("publishes crawl and discovery metadata for the canonical site", () => {
   assert.equal(structuredData.offers.price, 0);
 });
 
+test("defaults the emblem multiplier switcher to manual mode", () => {
+  assert.match(
+    html,
+    /class="is-active"\s+data-multiplier-mode="manual"\s+aria-pressed="true"/,
+  );
+  assert.match(
+    app,
+    /multiplierMode:\s*MULTIPLIER_MODES\.includes\(saved\?\.multiplierMode\)[\s\S]*?:\s*"manual"/,
+  );
+});
+
+test("keeps the compact manual multiplier input aligned to the right", () => {
+  assert.match(
+    css,
+    /\.manual-multiplier-control\s*\{[\s\S]*?width:\s*max-content;[\s\S]*?grid-template-columns:\s*auto auto;[\s\S]*?justify-self:\s*end;/,
+  );
+  assert.match(
+    css,
+    /input\.emblem-multiplier\s*\{[\s\S]*?box-sizing:\s*content-box;[\s\S]*?width:\s*3ch;/,
+  );
+});
+
 test("uses classic scripts and file-safe relative paths", () => {
   assert.doesNotMatch(html, /type=["']module["']/i);
   assert.doesNotMatch(html, /%BASE_URL%|\/src\/|src=["']\//i);
