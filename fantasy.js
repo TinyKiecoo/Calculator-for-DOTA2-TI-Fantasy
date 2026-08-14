@@ -100,75 +100,57 @@
   const statDefinitions = {
     kills: {
       color: "red",
-      label: "击杀",
     },
     deaths: {
       color: "red",
-      label: "死亡",
     },
     creep_score: {
       color: "red",
-      label: "正反补",
     },
     gpm: {
       color: "red",
-      label: "GPM",
     },
     madstone_collected: {
       color: "red",
-      label: "狂石收集数量",
     },
     tower_kills: {
       color: "red",
-      label: "摧毁防御塔",
     },
     observer_wards_placed: {
       color: "blue",
-      label: "放置侦察守卫",
     },
     camps_stacked: {
       color: "blue",
-      label: "堆叠野怪",
     },
     runes_grabbed: {
       color: "blue",
-      label: "拾取神符",
     },
     watchers_taken: {
       color: "blue",
-      label: "占领观察者",
     },
     smokes_used: {
       color: "blue",
-      label: "使用诡计之雾",
     },
     lotuses_collected: {
       color: "blue",
-      label: "采集莲花",
     },
     roshan_kills: {
       color: "green",
-      label: "击杀肉山",
     },
     teamfight_participation: {
       color: "green",
-      label: "参与团战",
     },
     stun_seconds: {
       color: "green",
-      label: "眩晕时间",
     },
     tormentor_kills: {
       color: "green",
-      label: "消灭痛苦魔方",
     },
     first_blood: {
       color: "green",
-      label: "第一滴血",
     },
     courier_kills: {
       color: "green",
-      label: "杀害信使",
     },
   };
 
@@ -941,7 +923,9 @@
   }
 
   function formatScore(value) {
-    if (value === null || !Number.isFinite(value)) return "数据不足";
+    if (!Number.isFinite(value)) {
+      throw new Error("积分必须是有限数值。");
+    }
     return new Intl.NumberFormat("zh-CN", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,

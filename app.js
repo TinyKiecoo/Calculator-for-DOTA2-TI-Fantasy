@@ -102,8 +102,6 @@
       teamFallback: "队伍 {id}",
       playerFallback: "选手 {id}",
       unknown: "未知",
-      insufficientData: "数据不足",
-      waitingForData: "等待有效数据",
       statistic: "统计数据",
       quality: "品质",
       trait: "特性",
@@ -112,7 +110,7 @@
       liveRanking: "{role}实时排名",
       scoreMethod: "积分方式",
       highestScore: "最高系列赛",
-      averageScore: "全部比赛平均 ×2",
+      averageScore: "全部比赛平均 × 2",
       emblemPennant: "{role}徽标挂幅",
       bannerScore: "{role}战旗积分",
       dataLead: "本页面使用当前选择的 {name} 录像数据来计算梦幻挑战积分。",
@@ -125,7 +123,7 @@
       scoringMethodTitle: "积分规则",
       scoringMethodBodyClientDescription: "对于每个定位，每位选手的梦幻积分是根据他们参与的每场比赛来单独结算。只有战旗上存在的统计数据才会提供积分，如果指导员称号满足特定条件还有加成效果。然后一个定位里两个选手的得分会计算出平均数，作为该场比赛相应的最终积分。",
       scoringMethodBodyBestSeries: "“最高系列赛”采用的规则与客户端完全一致。每个定位的最终积分来自一个系列赛中积分最高的两场比赛。如果一个定位在一个结算期内参与了多个系列赛，那么会采用得分最高的系列赛。",
-      scoringMethodBodyAllMatchAverage: "“全部比赛平均 ×2”对全结算期所有有效比赛的得分取平均并 ×2。",
+      scoringMethodBodyAllMatchAverage: "“全部比赛平均 × 2”对全结算期所有有效比赛的得分取平均并翻倍。",
       dataSources: "数据来源",
       dataSourcesBody: "全部比赛信息与梦幻统计均直接读取 Valve 比赛录像。",
       disclaimerTitle: "免责声明",
@@ -182,7 +180,7 @@
         stun_seconds: { label: "眩晕时间" },
         tormentor_kills: { label: "痛苦魔方消灭次数" },
         first_blood: { label: "第一滴血" },
-        courier_kills: { label: "杀害信使" },
+        courier_kills: { label: "击杀信使次数" },
       },
     },
     en: {
@@ -235,8 +233,6 @@
       teamFallback: "Team {id}",
       playerFallback: "Player {id}",
       unknown: "Unknown",
-      insufficientData: "Insufficient data",
-      waitingForData: "Waiting for valid data",
       statistic: "Statistic",
       quality: "Quality",
       trait: "Trait",
@@ -245,7 +241,7 @@
       liveRanking: "Live {role} ranking",
       scoreMethod: "Scoring method",
       highestScore: "Best Series",
-      averageScore: "All-Match Average ×2",
+      averageScore: "All-Match Average × 2",
       emblemPennant: "{role} emblem pennant",
       bannerScore: "{role} banner score",
       dataLead: "This page uses replay data from the currently selected {name} tournament to calculate Fantasy scores.",
@@ -258,7 +254,7 @@
       scoringMethodTitle: "Scoring Rules",
       scoringMethodBodyClientDescription: "For each role, each player's score is calculated individually in every game they participate in. Players receive points only for the stats present on their War Banner, amplified if any of the conditions of your coach Titles are met. We then average the score of all players for a role and use that to decide the final score for the match.",
       scoringMethodBodyBestSeries: "Best Series use the same rule as the client. The top two scoring games within a series are used to get the role's final score for the match. If a role participates in more than one series in a period, the best scoring series will be used.",
-      scoringMethodBodyAllMatchAverage: "All-Match Average ×2 averages every valid match in the full scoring period and doubles it.",
+      scoringMethodBodyAllMatchAverage: "All-Match Average × 2 averages every valid match in the full scoring period and doubles it.",
       dataSources: "Data Sources",
       dataSourcesBody: "All match information and Fantasy statistics are read directly from Valve replays.",
       disclaimerTitle: "Disclaimer",
@@ -353,7 +349,7 @@
   }
 
   function statDefinition(stat) {
-    return copy().stats[stat] || engine.statDefinitions[stat];
+    return copy().stats[stat];
   }
 
   function detectLanguage() {
@@ -830,7 +826,6 @@
   }
 
   function formatScore(value) {
-    if (value === null || !Number.isFinite(value)) return text("insufficientData");
     return new Intl.NumberFormat(copy().locale, {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
@@ -1100,7 +1095,7 @@
                 <strong>${escapeHtml(entry.label)}</strong>
                 <small>${escapeHtml(entry.subtitle)}</small>
               </span>
-              <span class="${scoreClass}">${escapeHtml(formatScore(entry.score))}</span>
+              <span class="${scoreClass}">${escapeHtml(entry.score === null ? "—" : formatScore(entry.score))}</span>
             </button>
           </li>`;
       })
@@ -1146,7 +1141,7 @@
         ),
       )
       .join("");
-    const selectedLabel = selected ? selected.label : text("waitingForData");
+    const selectedLabel = selected?.label || "—";
     const selectedSubtitle = selectedRosterSubtitle(role, selected);
     const selectedScore =
       selected && selected.score !== null ? formatScore(selected.score) : "—";
@@ -1248,7 +1243,7 @@
         )
       : null;
 
-    totalScore.textContent = formatScore(combined);
+    totalScore.textContent = combined === null ? "—" : formatScore(combined);
   }
 
   function render(focusRequest) {

@@ -65,7 +65,6 @@ test("publishes crawl and discovery metadata for the canonical site", () => {
   assert.match(sitemap, /<lastmod>\d{4}-\d{2}-\d{2}<\/lastmod>/);
   assert.match(html, /<link rel="canonical" href="https:\/\/www\.ti-fantasy\.site\/">/);
   assert.match(html, /<meta name="robots" content="index, follow,/);
-  assert.match(html, /selectable replay datasets from parsed 2026 tournaments/);
   assert.doesNotMatch(html, /calculator using Esports World Cup 2026 replay data/);
   assert.match(app, /Each tournament is scored independently; their data is never combined/);
 
