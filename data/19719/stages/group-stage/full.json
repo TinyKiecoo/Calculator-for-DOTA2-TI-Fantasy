@@ -100,7 +100,22 @@
         "completeSeries": 32,
         "incompleteSeries": 2
       }
-    }
+    },
+    "groupStageExcludedTeamNames": [
+      "IC x Insanity",
+      "L1 TEAM",
+      "Level UP",
+      "MOUZ",
+      "Poor Rangers",
+      "PTime",
+      "REKONIX",
+      "Rune Eaters",
+      "Team Nemesis",
+      "Virtus.pro"
+    ],
+    "playoffsExcludedTeamNames": [
+      "HULIGANI"
+    ]
   },
   "teams": [
     {

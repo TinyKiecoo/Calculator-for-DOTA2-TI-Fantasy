@@ -819,7 +819,10 @@ class TitleDataTests(unittest.TestCase):
         )
         args = SimpleNamespace(league_id=30000)
 
+        build_dataset_exclusions = []
+
         def build_dataset(matches, league_id, league_name, *_args):
+            build_dataset_exclusions.append(set(_args[-1]))
             return {
                 "meta": {
                     "leagueId": league_id,
@@ -919,6 +922,26 @@ class TitleDataTests(unittest.TestCase):
             self.assertEqual(
                 bundle["stages"]["international"]["meta"]["coverage"]["matches"],
                 2,
+            )
+            self.assertEqual(
+                bundle["meta"]["groupStageExcludedTeamNames"],
+                sorted(
+                    build_league.GROUP_STAGE_EXCLUDED_TEAM_NAMES,
+                    key=str.casefold,
+                ),
+            )
+            self.assertEqual(
+                bundle["meta"]["playoffsExcludedTeamNames"],
+                ["HULIGANI"],
+            )
+            self.assertEqual(
+                build_dataset_exclusions[-2],
+                build_league.GROUP_STAGE_EXCLUDED_TEAM_NAMES,
+            )
+            self.assertEqual(
+                build_dataset_exclusions[-1],
+                build_league.GROUP_STAGE_EXCLUDED_TEAM_NAMES
+                | build_league.PLAYOFFS_EXCLUDED_TEAM_NAMES,
             )
             self.assertTrue(
                 (league_dir / "stages" / "group-stage" / "summary.json").is_file()

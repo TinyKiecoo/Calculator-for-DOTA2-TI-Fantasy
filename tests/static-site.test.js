@@ -519,12 +519,22 @@ test("renders all three banners with a minimal classic-script DOM", () => {
 
   const groupDataset = structuredClone(nextDataset);
   const playoffDataset = structuredClone(nextDataset);
+  groupDataset.meta.groupStageExcludedTeamNames = [];
+  groupDataset.meta.playoffsExcludedTeamNames = ["HULIGANI"];
   for (const team of groupDataset.teams) {
     for (const player of team.players) player.name = "Group Stage Sentinel";
   }
   for (const team of playoffDataset.teams) {
     for (const player of team.players) player.name = "Playoffs Sentinel";
   }
+  const eliminatedTeam = structuredClone(groupDataset.teams[0]);
+  eliminatedTeam.teamId = 999999;
+  eliminatedTeam.name = "HULIGANI";
+  for (const player of eliminatedTeam.players) {
+    player.accountId += 900000000;
+    player.name = "Eliminated Sentinel";
+  }
+  groupDataset.teams.push(eliminatedTeam);
   const stageBundle = {
     meta: { leagueId: 20009 },
     stages: {
@@ -560,9 +570,19 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     /Group Stage Sentinel/,
     "the TI page must fall back to group-stage data before playoffs exist",
   );
+  assert.doesNotMatch(
+    element("banner-grid").innerHTML,
+    /Eliminated Sentinel/,
+    "playoffs-only exclusions must still apply while playoffs use group data",
+  );
   listeners.get("stage-switcher:click")({
     target: new FakeStageButton("groupStage"),
   });
+  assert.match(
+    element("banner-grid").innerHTML,
+    /Eliminated Sentinel/,
+    "a playoffs-only exclusion must remain selectable on the group-stage page",
+  );
   assert.equal(element("modal-backdrop").hidden, true);
   const saved = JSON.parse(storage.get("ti-fantasy-page-state-v1"));
   assert.equal(saved.version, 3);

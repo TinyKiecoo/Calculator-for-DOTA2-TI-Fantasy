@@ -421,7 +421,7 @@
 
     if (dataset && engine) {
       updateAdvisorTitleSelectors();
-      players = normalizePlayers(dataset);
+      players = normalizePlayers(dataset, state.stage);
       render();
       if (!modalBackdrop.hidden) {
         updateModalContent(activeModalType || "data");
@@ -640,7 +640,7 @@
     state.scoreMode = page.scoreMode;
     dataset = datasetForStage(stage);
     meta = dataset.meta || {};
-    players = normalizePlayers(dataset);
+    players = normalizePlayers(dataset, stage);
     emblemContributionCache.clear();
     return true;
   }
@@ -694,7 +694,7 @@
   let modalTrigger = null;
   let activeModalType = null;
   let emblemRankingMode = "highestSeries";
-  let players = normalizePlayers(dataset);
+  let players = normalizePlayers(dataset, state.stage);
   let meta = dataset.meta || {};
   const emblemContributionCache = new Map();
 
@@ -718,13 +718,26 @@
     return result;
   }
 
-  function normalizePlayers(rawDataset) {
+  function excludedTeamNameKeys(rawDataset, stage) {
+    const meta = rawDataset?.meta || {};
+    const names = [
+      ...(meta.groupStageExcludedTeamNames || []),
+      ...(stage === "international"
+        ? meta.playoffsExcludedTeamNames || []
+        : []),
+    ];
+    return new Set(names.map((name) => String(name).trim().toLowerCase()));
+  }
+
+  function normalizePlayers(rawDataset, stage) {
     const result = [];
+    const excludedTeamNames = excludedTeamNameKeys(rawDataset, stage);
     for (const team of rawDataset.teams || []) {
       const teamId = String(
         team.teamId ?? team.id ?? team.name ?? "unknown-team",
       );
       const teamName = team.name || team.tag || text("teamFallback", { id: teamId });
+      if (excludedTeamNames.has(String(teamName).trim().toLowerCase())) continue;
 
       for (const player of team.players || []) {
         if (!engine.bannerRoles.includes(player.role)) continue;
@@ -786,7 +799,7 @@
     );
     dataset = datasetForStage(state.stage);
     meta = dataset.meta || {};
-    players = normalizePlayers(dataset);
+    players = normalizePlayers(dataset, state.stage);
     emblemContributionCache.clear();
     try {
       bannerGrid.hidden = false;

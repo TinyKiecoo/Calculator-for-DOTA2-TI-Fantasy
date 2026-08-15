@@ -224,9 +224,10 @@ PLAYER_ROLE_OVERRIDES: dict[int, str] = {
     123787715: "support",  # RESPECT
 }
 
-# Global display-name exclusions. Excluded teams are hidden from selection and
-# rankings, while their opponents still receive points from shared matches.
-EXCLUDED_TEAM_NAMES = {
+# Teams excluded from the Group Stage are also excluded from the playoffs.
+# Exclusions only hide the named team's own players; opponents still receive
+# points from every shared match.
+GROUP_STAGE_EXCLUDED_TEAM_NAMES = {
     "Virtus.pro",
     "Rune Eaters",
     "REKONIX",
@@ -237,6 +238,12 @@ EXCLUDED_TEAM_NAMES = {
     "Poor Rangers",
     "L1 TEAM",
     "IC x Insanity",
+}
+
+# Teams excluded here remain available on the Group Stage page, but are hidden
+# from the playoffs page.
+PLAYOFFS_EXCLUDED_TEAM_NAMES = {
+    "HULIGANI",
 }
 
 CHECKPOINT_SCHEMA_VERSION = 11
@@ -1172,20 +1179,41 @@ def refresh_browser_data(
     assign_series_ids(checkpoints)
     overrides = LEAGUE_TEAM_OVERRIDES.get(args.league_id, {})
 
-    def assemble(matches: list[dict[str, Any]]) -> dict[str, Any]:
-        return league_data.build_dataset(
+    exclusions_by_stage = {
+        "groupStage": set(GROUP_STAGE_EXCLUDED_TEAM_NAMES),
+        "international": (
+            set(GROUP_STAGE_EXCLUDED_TEAM_NAMES)
+            | set(PLAYOFFS_EXCLUDED_TEAM_NAMES)
+        ),
+    }
+    exclusion_metadata = {
+        "groupStageExcludedTeamNames": sorted(
+            GROUP_STAGE_EXCLUDED_TEAM_NAMES, key=str.casefold
+        ),
+        "playoffsExcludedTeamNames": sorted(
+            PLAYOFFS_EXCLUDED_TEAM_NAMES, key=str.casefold
+        ),
+    }
+
+    def assemble(
+        matches: list[dict[str, Any]], stage: str
+    ) -> dict[str, Any]:
+        dataset = league_data.build_dataset(
             matches,
             args.league_id,
             league_name,
             overrides.get("names"),
             overrides.get("tags"),
             PLAYER_ROLE_OVERRIDES,
-            EXCLUDED_TEAM_NAMES,
+            exclusions_by_stage[stage],
         )
+        dataset["meta"].update(exclusion_metadata)
+        return dataset
 
     if not is_the_international(league_name):
         dataset = assemble(
-            [checkpoint["match"] for checkpoint in checkpoints]
+            [checkpoint["match"] for checkpoint in checkpoints],
+            "groupStage",
         )
         summary = league_data.build_summary(dataset, "full.json")
         payload = json.dumps(
@@ -1211,7 +1239,7 @@ def refresh_browser_data(
     for stage, stage_series in series_by_stage.items():
         if not stage_series:
             continue
-        dataset = assemble(flatten_series(stage_series))
+        dataset = assemble(flatten_series(stage_series), stage)
         dataset["meta"]["eventStage"] = stage
         complete_series_count = sum(
             is_complete_series(matches) for matches in stage_series
@@ -1255,6 +1283,7 @@ def refresh_browser_data(
             "leagueName": league_name,
             "isTheInternational": True,
             "availableStages": available_stages,
+            **exclusion_metadata,
         },
         "stages": {
             stage: output[1] for stage, output in stage_outputs.items()
