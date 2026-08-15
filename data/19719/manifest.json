@@ -990,6 +990,17 @@
     ]
   },
   {
+    "matchId": 8946858055,
+    "cluster": 413,
+    "replaySalt": 1441039913,
+    "filename": "8946858055_1441039913.dem.bz2",
+    "replayUrl": "http://replay413.dota2.com.cn/570/8946858055_1441039913.dem.bz2",
+    "replayUrls": [
+      "http://replay413.dota2.com.cn/570/8946858055_1441039913.dem.bz2",
+      "http://replay413.valve.net/570/8946858055_1441039913.dem.bz2"
+    ]
+  },
+  {
     "matchId": 8946860406,
     "cluster": 413,
     "replaySalt": 775780604,
@@ -1009,6 +1020,50 @@
     "replayUrls": [
       "http://replay413.dota2.com.cn/570/8946872708_708178433.dem.bz2",
       "http://replay413.valve.net/570/8946872708_708178433.dem.bz2"
+    ]
+  },
+  {
+    "matchId": 8946889239,
+    "cluster": 413,
+    "replaySalt": 2084865264,
+    "filename": "8946889239_2084865264.dem.bz2",
+    "replayUrl": "http://replay413.dota2.com.cn/570/8946889239_2084865264.dem.bz2",
+    "replayUrls": [
+      "http://replay413.dota2.com.cn/570/8946889239_2084865264.dem.bz2",
+      "http://replay413.valve.net/570/8946889239_2084865264.dem.bz2"
+    ]
+  },
+  {
+    "matchId": 8946996385,
+    "cluster": 413,
+    "replaySalt": 176297089,
+    "filename": "8946996385_176297089.dem.bz2",
+    "replayUrl": "http://replay413.dota2.com.cn/570/8946996385_176297089.dem.bz2",
+    "replayUrls": [
+      "http://replay413.dota2.com.cn/570/8946996385_176297089.dem.bz2",
+      "http://replay413.valve.net/570/8946996385_176297089.dem.bz2"
+    ]
+  },
+  {
+    "matchId": 8947008125,
+    "cluster": 413,
+    "replaySalt": 226077243,
+    "filename": "8947008125_226077243.dem.bz2",
+    "replayUrl": "http://replay413.dota2.com.cn/570/8947008125_226077243.dem.bz2",
+    "replayUrls": [
+      "http://replay413.dota2.com.cn/570/8947008125_226077243.dem.bz2",
+      "http://replay413.valve.net/570/8947008125_226077243.dem.bz2"
+    ]
+  },
+  {
+    "matchId": 8947050343,
+    "cluster": 413,
+    "replaySalt": 1789614092,
+    "filename": "8947050343_1789614092.dem.bz2",
+    "replayUrl": "http://replay413.dota2.com.cn/570/8947050343_1789614092.dem.bz2",
+    "replayUrls": [
+      "http://replay413.dota2.com.cn/570/8947050343_1789614092.dem.bz2",
+      "http://replay413.valve.net/570/8947050343_1789614092.dem.bz2"
     ]
   }
 ]
