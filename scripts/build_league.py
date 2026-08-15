@@ -244,6 +244,8 @@ GROUP_STAGE_EXCLUDED_TEAM_NAMES = {
 # from the playoffs page.
 PLAYOFFS_EXCLUDED_TEAM_NAMES = {
     "HULIGANI",
+    "Xtreme Gaming",
+    "OG",
 }
 
 CHECKPOINT_SCHEMA_VERSION = 11
