@@ -2,11 +2,11 @@
   "schemaVersion": 1,
   "leagueId": 19719,
   "leagueName": "The International 2026",
-  "generatedAt": "2026-08-15T06:59:04.873226Z",
+  "generatedAt": "2026-08-15T07:37:23.873043Z",
   "gpmSource": "Calculated from Valve replay m_iTotalEarnedGold captured on the first game-end tick / exact game duration",
   "comparison": "New replay parsing compared with the match checkpoint that existed before this run",
   "summary": {
-    "reparsedMatchesThisRun": 1,
+    "reparsedMatchesThisRun": 3,
     "comparedMatchesThisRun": 0,
     "changedMatchesThisRun": 0,
     "changedPlayersThisRun": 0,
