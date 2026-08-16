@@ -3,7 +3,7 @@
     "schemaVersion": 11,
     "leagueId": 19719,
     "leagueName": "The International 2026",
-    "generatedAt": "2026-08-16T11:51:36.870897Z",
+    "generatedAt": "2026-08-16T11:52:58.323741Z",
     "eventStartUtc": "2026-08-13T03:24:05Z",
     "eventEndUtc": "2026-08-16T11:49:11Z",
     "sources": {
@@ -101,6 +101,7 @@
       "Aurora Gaming",
       "GamerLegion",
       "HULIGANI",
+      "LGD Gaming",
       "OG",
       "Team Resilience",
       "Vici Gaming",

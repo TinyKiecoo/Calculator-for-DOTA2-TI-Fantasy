@@ -249,7 +249,8 @@ PLAYOFFS_EXCLUDED_TEAM_NAMES = {
     "GamerLegion",
     "Vici Gaming",
     "Aurora Gaming",
-    "Team Resilience"
+    "Team Resilience",
+    "LGD Gaming",
 }
 
 CHECKPOINT_SCHEMA_VERSION = 11
