@@ -95,7 +95,6 @@
       bannerGrid: "三面梦幻战旗",
       loading: "正在载入赛事数据…",
       loadErrorTitle: "赛事数据未能载入",
-      loadErrorBody: "请确认 index.html、app.js、fantasy.js 与 data 文件夹保持原有相对位置。",
       closeModal: "关闭弹窗",
       close: "关闭 ×",
       localSnapshot: "本地快照",
@@ -226,7 +225,6 @@
       bannerGrid: "Three fantasy banners",
       loading: "Loading tournament data…",
       loadErrorTitle: "Failed to load tournament data",
-      loadErrorBody: "Keep index.html, app.js, fantasy.js, and the data folder in their original relative locations.",
       closeModal: "Close dialog",
       close: "Close ×",
       localSnapshot: "Local snapshot",
@@ -335,7 +333,6 @@
   function populateLoadError() {
     loadError.innerHTML = `
       <strong>${escapeHtml(text("loadErrorTitle"))}</strong>
-      <p>${escapeHtml(text("loadErrorBody"))}</p>
     `;
   }
 
@@ -381,7 +378,6 @@
     try {
       localStorage.setItem(LANGUAGE_STORAGE_KEY, language);
     } catch {
-      // The page still works when storage is blocked.
     }
   }
 
@@ -577,7 +573,6 @@
       engine.validateBannerConfig(candidate, stage);
       page.config = candidate;
     } catch {
-      // Ignore malformed or obsolete saved emblem data.
     }
 
     page.manualMultipliers = defaultManualMultipliers(page.config);
@@ -612,7 +607,6 @@
     try {
       saved = JSON.parse(localStorage.getItem(PAGE_STATE_STORAGE_KEY) || "null");
     } catch {
-      // Use a clean state when localStorage is unavailable or invalid.
     }
 
     const stage = engine.stageKeys.includes(saved?.stage)
@@ -676,7 +670,6 @@
         }),
       );
     } catch {
-      // The calculator still works when storage is blocked or full.
     }
   }
 

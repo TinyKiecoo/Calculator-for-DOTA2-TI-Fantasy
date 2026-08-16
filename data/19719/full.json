@@ -3,7 +3,7 @@
     "schemaVersion": 11,
     "leagueId": 19719,
     "leagueName": "The International 2026",
-    "generatedAt": "2026-08-16T07:59:13.970810Z",
+    "generatedAt": "2026-08-16T08:50:59.744816Z",
     "eventStartUtc": "2026-08-13T03:24:05Z",
     "eventEndUtc": "2026-08-16T07:49:34Z",
     "sources": {
@@ -98,7 +98,7 @@
       "Virtus.pro"
     ],
     "playoffsExcludedTeamNames": [
-      "BoomBoys",
+      "Aurora Gaming",
       "GamerLegion",
       "HULIGANI",
       "OG",

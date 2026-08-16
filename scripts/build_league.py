@@ -248,7 +248,7 @@ PLAYOFFS_EXCLUDED_TEAM_NAMES = {
     "OG",
     "GamerLegion",
     "Vici Gaming",
-    "BoomBoys",
+    "Aurora Gaming",
     "Team Resilience"
 }
 
