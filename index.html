@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -81,13 +81,13 @@
     <div class="page-shell" id="page-shell">
       <header class="topbar" id="challenge">
         <div class="brand">
-          <strong data-i18n="brandName">梦幻挑战</strong>
+          <strong data-i18n="brandName">FANTASY</strong>
           <div class="stage-switcher-row">
             <label class="league-selector" for="league-select">
-              <span data-i18n="leagueSelector">赛事数据</span>
+              <span data-i18n="leagueSelector">Tournament data</span>
               <select
                 id="league-select"
-                aria-label="赛事数据"
+                aria-label="Tournament data"
                 data-i18n-aria-label="leagueSelector"
               ></select>
             </label>
@@ -95,7 +95,7 @@
               class="stage-switcher"
               id="stage-switcher"
               role="group"
-              aria-label="赛事阶段"
+              aria-label="Tournament stage"
               data-i18n-aria-label="stageSwitcher"
             >
               <button
@@ -116,7 +116,7 @@
               class="stage-switcher multiplier-switcher"
               id="multiplier-switcher"
               role="group"
-              aria-label="徽标倍率方式"
+              aria-label="Emblem multiplier mode"
               data-i18n-aria-label="multiplierSwitcher"
             >
               <button
@@ -124,14 +124,14 @@
                 data-multiplier-mode="calculated"
                 aria-pressed="false"
                 data-i18n="calculatedMultiplier"
-              >品质与特性</button>
+              >Quality &amp; Trait</button>
               <button
                 type="button"
                 class="is-active"
                 data-multiplier-mode="manual"
                 aria-pressed="true"
                 data-i18n="manualMultiplier"
-              >手动倍率</button>
+              >Manual Multiplier</button>
             </div>
           </div>
         </div>
@@ -143,29 +143,29 @@
             alt="The International"
           >
           <div class="subtitle-row">
-            <h1 data-i18n="pageHeading">开源的 Dota 2 梦幻挑战实时计算器</h1>
+            <h1 data-i18n="pageHeading">An open-source, real-time calculator for DOTA 2 TI Fantasy.</h1>
           </div>
           <div
             class="advisor-titles"
             role="group"
-            aria-label="指导员称号"
+            aria-label="Coach Titles"
             data-i18n-aria-label="advisorTitles"
           >
             <label>
-              <span data-i18n="prefixTitle">前缀</span>
-              <select id="prefix-title-select" aria-label="前缀" data-i18n-aria-label="prefixTitle"></select>
+              <span data-i18n="prefixTitle">Prefix</span>
+              <select id="prefix-title-select" aria-label="Prefix" data-i18n-aria-label="prefixTitle"></select>
             </label>
             <label>
-              <span data-i18n="suffixTitle">后缀</span>
-              <select id="suffix-title-select" aria-label="后缀" data-i18n-aria-label="suffixTitle"></select>
+              <span data-i18n="suffixTitle">Suffix</span>
+              <select id="suffix-title-select" aria-label="Suffix" data-i18n-aria-label="suffixTitle"></select>
             </label>
           </div>
         </div>
 
         <div class="topbar-actions">
-          <nav aria-label="页面操作" data-i18n-aria-label="pageActions">
-            <button type="button" data-open-modal="emblemRankings" data-i18n="emblemRankings">徽标排行</button>
-            <button type="button" data-open-modal="data" data-i18n="dataNotes">数据说明</button>
+          <nav aria-label="Page actions" data-i18n-aria-label="pageActions">
+            <button type="button" data-open-modal="emblemRankings" data-i18n="emblemRankings">Emblem Rankings</button>
+            <button type="button" data-open-modal="data" data-i18n="dataNotes">Data Notes</button>
             <a
               href="https://github.com/TinyKiecoo/Calculator-for-DOTA2-TI-Fantasy"
               target="_blank"
@@ -173,14 +173,14 @@
               data-i18n="githubRepository"
               data-i18n-aria-label="githubAria"
             >GitHub</a>
-            <button type="button" id="language-toggle" aria-label="切换为英文">English</button>
+            <button type="button" id="language-toggle" aria-label="Switch to Chinese">Chinese</button>
             <a
               href="https://www.candyworks.site/"
               target="_blank"
               rel="noopener noreferrer"
               data-i18n="candyworksCalculator"
               data-i18n-aria-label="candyworksAria"
-            >糖果车计算器</a>
+            >Candyworks Calculator</a>
           </nav>
           <div class="total-score" aria-live="polite">
             <strong id="total-score">—</strong>
@@ -188,14 +188,18 @@
         </div>
       </header>
 
-      <main class="banner-grid" id="banner-grid" aria-label="三面梦幻战旗" data-i18n-aria-label="bannerGrid">
-        <p class="loading-message" data-i18n="loading">正在载入赛事数据…</p>
+      <main class="banner-grid" id="banner-grid" aria-label="Three fantasy banners" data-i18n-aria-label="bannerGrid">
+        <p class="loading-message" data-i18n="loading">Loading tournament data…</p>
       </main>
 
-      <section class="load-error" id="load-error" hidden>
-        <strong data-i18n="loadErrorTitle">赛事数据未能载入</strong>
-        <p data-i18n="loadErrorBody">请确认 index.html、app.js、fantasy.js 与 data 文件夹保持原有相对位置。</p>
-      </section>
+      <section
+        class="load-error"
+        id="load-error"
+        role="alert"
+        aria-live="assertive"
+        data-nosnippet
+        hidden
+      ></section>
     </div>
   </div>
 
@@ -210,16 +214,16 @@
     >
       <header class="modal-header">
         <div>
-          <h2 id="modal-title" data-i18n="dataNotes">数据说明</h2>
+          <h2 id="modal-title" data-i18n="dataNotes">Data Notes</h2>
         </div>
-        <button type="button" id="modal-close" aria-label="关闭弹窗" data-i18n-aria-label="closeModal" data-i18n="close">关闭 ×</button>
+        <button type="button" id="modal-close" aria-label="Close dialog" data-i18n-aria-label="closeModal" data-i18n="close">Close ×</button>
       </header>
       <div class="modal-body" id="modal-body"></div>
     </section>
   </div>
 
   <noscript>
-    <p class="noscript-message">此计算器需要浏览器启用 JavaScript。 / This calculator requires JavaScript.</p>
+    <p class="noscript-message" data-nosnippet>This calculator requires JavaScript.</p>
   </noscript>
 
   <script>window.FANTASY_LEAGUES = [];</script>
@@ -354,7 +358,7 @@
     }
   </script>
   <script src="fantasy.js?v=20260813-heroids"></script>
-  <script src="app.js?v=20260814-cleanup"></script>
+  <script src="app.js?v=20260816-english-source"></script>
   <script>
     if (window.location.hostname === "www.ti-fantasy.site") {
       const busuanziScript = document.createElement("script");

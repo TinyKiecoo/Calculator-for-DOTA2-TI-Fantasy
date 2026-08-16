@@ -78,6 +78,19 @@ test("publishes crawl and discovery metadata for the canonical site", () => {
   assert.equal(structuredData.offers.price, 0);
 });
 
+test("ships English source text without indexable load-error copy", () => {
+  assert.match(html, /<html lang="en">/);
+  assert.match(html, /<h1 data-i18n="pageHeading">An open-source, real-time calculator for DOTA 2 TI Fantasy\.<\/h1>/);
+  assert.doesNotMatch(html, /[\u3400-\u9fff]/);
+  assert.match(
+    html,
+    /<section\s+class="load-error"[\s\S]*?data-nosnippet[\s\S]*?hidden\s*>\s*<\/section>/,
+  );
+  assert.doesNotMatch(html, /Failed to load tournament data|Keep index\.html, app\.js, fantasy\.js/);
+  assert.match(app, /function showLoadError\(\)[\s\S]*?populateLoadError\(\);[\s\S]*?loadError\.hidden = false;/);
+  assert.match(app, /function hideLoadError\(\)[\s\S]*?loadError\.innerHTML = "";/);
+});
+
 test("defaults the emblem multiplier switcher to manual mode", () => {
   assert.match(
     html,
@@ -141,7 +154,7 @@ test("uses classic scripts and file-safe relative paths", () => {
 });
 
 test("orders the topbar actions and links to the Candyworks Calculator", () => {
-  const navSource = html.match(/<nav aria-label="页面操作"[\s\S]*?<\/nav>/)?.[0];
+  const navSource = html.match(/<nav aria-label="Page actions"[\s\S]*?<\/nav>/)?.[0];
   assert.ok(navSource, "the page-actions navigation must exist");
   assert.ok(navSource.indexOf('data-open-modal="emblemRankings"') < navSource.indexOf('data-open-modal="data"'));
   assert.ok(navSource.indexOf('data-open-modal="data"') < navSource.indexOf('github.com'));

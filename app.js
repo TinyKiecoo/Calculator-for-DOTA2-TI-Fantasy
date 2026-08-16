@@ -332,6 +332,23 @@
     );
   }
 
+  function populateLoadError() {
+    loadError.innerHTML = `
+      <strong>${escapeHtml(text("loadErrorTitle"))}</strong>
+      <p>${escapeHtml(text("loadErrorBody"))}</p>
+    `;
+  }
+
+  function showLoadError() {
+    populateLoadError();
+    loadError.hidden = false;
+  }
+
+  function hideLoadError() {
+    loadError.hidden = true;
+    loadError.innerHTML = "";
+  }
+
   function roleName(role) {
     return copy().roles[role] || role;
   }
@@ -409,6 +426,7 @@
     languageToggle.textContent = currentLanguage === "zh" ? "English" : "中文";
     languageToggle.setAttribute("aria-label", text("switchLanguage"));
     languageToggle.setAttribute("title", text("switchLanguage"));
+    if (!loadError.hidden) populateLoadError();
     applyEnglishTitleFonts();
   }
 
@@ -443,7 +461,7 @@
 
   if (!dataset || !engine) {
     bannerGrid.hidden = true;
-    loadError.hidden = false;
+    showLoadError();
     return;
   }
 
@@ -803,7 +821,7 @@
     emblemContributionCache.clear();
     try {
       bannerGrid.hidden = false;
-      loadError.hidden = true;
+      hideLoadError();
       render();
       if (!modalBackdrop.hidden) {
         updateModalContent(activeModalType || "data");
@@ -811,7 +829,7 @@
     } catch (error) {
       console.error(error);
       bannerGrid.hidden = true;
-      loadError.hidden = false;
+      showLoadError();
     }
   });
 
@@ -1703,6 +1721,6 @@
   } catch (error) {
     console.error(error);
     bannerGrid.hidden = true;
-    loadError.hidden = false;
+    showLoadError();
   }
 })();
