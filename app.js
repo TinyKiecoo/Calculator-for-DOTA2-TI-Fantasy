@@ -1116,7 +1116,7 @@
 
     return `
       <section class="leaderboard" aria-label="${escapeHtml(text("liveRanking", { role: roleName(role) }))}">
-        <ol class="ranking-list">${rows}</ol>
+        <ol class="ranking-list" data-ranking-list-role="${role}">${rows}</ol>
       </section>`;
   }
 
@@ -1231,7 +1231,7 @@
         element.dataset.rankingRole === request.role &&
         element.dataset.rankingKey === request.key
       ) {
-        element.focus();
+        element.focus({ preventScroll: true });
         return;
       }
       if (
@@ -1242,6 +1242,26 @@
         element.focus();
         return;
       }
+    }
+  }
+
+  function captureLeaderboardScrollPositions() {
+    const positions = {};
+    for (const list of bannerGrid.querySelectorAll(
+      ".ranking-list[data-ranking-list-role]",
+    )) {
+      positions[list.dataset.rankingListRole] = list.scrollTop;
+    }
+    return positions;
+  }
+
+  function restoreLeaderboardScrollPositions(positions) {
+    if (!positions) return;
+    for (const list of bannerGrid.querySelectorAll(
+      ".ranking-list[data-ranking-list-role]",
+    )) {
+      const scrollTop = positions[list.dataset.rankingListRole];
+      if (Number.isFinite(scrollTop)) list.scrollTop = scrollTop;
     }
   }
 
@@ -1260,6 +1280,10 @@
   }
 
   function render(focusRequest) {
+    const leaderboardScrollPositions =
+      focusRequest?.type === "ranking"
+        ? captureLeaderboardScrollPositions()
+        : null;
     const view = getView();
     bannerGrid.innerHTML = engine.bannerRoles
       .map((role) =>
@@ -1270,6 +1294,7 @@
     updateTotalScore(view);
     applyEnglishTitleFonts(bannerGrid);
     restoreFocus(focusRequest);
+    restoreLeaderboardScrollPositions(leaderboardScrollPositions);
   }
 
   function renderScoreMode(role, focusRequest) {

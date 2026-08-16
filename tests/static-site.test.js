@@ -292,6 +292,8 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   );
   const elements = new Map();
   const listeners = new Map();
+  const rankingLists = new Map();
+  let rankingButtons = [];
   const returningVisitorPageState = JSON.stringify({
       version: 3,
       stage: "groupStage",
@@ -304,6 +306,31 @@ test("renders all three banners with a minimal classic-script DOM", () => {
   ]);
 
   class FakeElement {}
+  class FakeRankingList extends FakeElement {
+    constructor(role) {
+      super();
+      this.dataset = { rankingListRole: role };
+      this.scrollTop = 0;
+    }
+  }
+  class FakeRankingButton extends FakeElement {
+    constructor(role, key) {
+      super();
+      this.dataset = { rankingRole: role, rankingKey: key };
+      this.focusOptions = null;
+    }
+
+    closest(selector) {
+      return selector === "button[data-ranking-role]" ? this : null;
+    }
+
+    focus(options) {
+      this.focusOptions = options;
+      if (!options?.preventScroll) {
+        rankingLists.get(this.dataset.rankingRole).scrollTop = 999999;
+      }
+    }
+  }
   class FakeInput extends FakeElement {
     constructor(dataset, value) {
       super();
@@ -340,7 +367,7 @@ test("renders all three banners with a minimal classic-script DOM", () => {
 
   function element(id) {
     if (!elements.has(id)) {
-      elements.set(id, {
+      const nextElement = {
         id,
         hidden: id === "modal-backdrop" || id === "load-error",
         inert: false,
@@ -355,7 +382,40 @@ test("renders all three banners with a minimal classic-script DOM", () => {
         querySelectorAll() {
           return [];
         },
-      });
+      };
+      if (id === "banner-grid") {
+        let markup = "";
+        Object.defineProperty(nextElement, "innerHTML", {
+          get() {
+            return markup;
+          },
+          set(value) {
+            markup = String(value);
+            rankingLists.clear();
+            for (const match of markup.matchAll(
+              /data-ranking-list-role="([^"]+)"/g,
+            )) {
+              rankingLists.set(match[1], new FakeRankingList(match[1]));
+            }
+            rankingButtons = Array.from(
+              markup.matchAll(
+                /data-ranking-role="([^"]+)"\s+data-ranking-key="([^"]+)"/g,
+              ),
+              (match) => new FakeRankingButton(match[1], match[2]),
+            );
+          },
+        });
+        nextElement.querySelectorAll = (selector) => {
+          if (selector === ".ranking-list[data-ranking-list-role]") {
+            return Array.from(rankingLists.values());
+          }
+          if (selector === "button[data-ranking-role]") {
+            return rankingButtons;
+          }
+          return [];
+        };
+      }
+      elements.set(id, nextElement);
     }
     return elements.get(id);
   }
@@ -458,6 +518,32 @@ test("renders all three banners with a minimal classic-script DOM", () => {
     "the pennant tip must keep a fixed depth instead of growing with the stack",
   );
   assert.equal((rendered.match(/class="leaderboard"/g) || []).length, 3);
+  const scrollPositions = { core: 83, mid: 146, support: 31 };
+  for (const [role, scrollTop] of Object.entries(scrollPositions)) {
+    rankingLists.get(role).scrollTop = scrollTop;
+  }
+  const selectedRankingButton = rankingButtons.find(
+    (button) => button.dataset.rankingRole === "core",
+  );
+  assert.ok(selectedRankingButton, "the core ranking must contain an option");
+  listeners.get("banner-grid:click")({ target: selectedRankingButton });
+  for (const [role, scrollTop] of Object.entries(scrollPositions)) {
+    assert.equal(
+      rankingLists.get(role).scrollTop,
+      scrollTop,
+      `${role} leaderboard scroll position must survive a ranking selection`,
+    );
+  }
+  const focusedRankingButton = rankingButtons.find(
+    (button) =>
+      button.dataset.rankingRole === selectedRankingButton.dataset.rankingRole &&
+      button.dataset.rankingKey === selectedRankingButton.dataset.rankingKey,
+  );
+  assert.equal(
+    focusedRankingButton.focusOptions?.preventScroll,
+    true,
+    "restoring ranking focus must not scroll the selected option into view",
+  );
   assert.equal((rendered.match(/data-score-mode="highest"/g) || []).length, 3);
   assert.equal((rendered.match(/data-field="multiplier"/g) || []).length, 9);
   assert.doesNotMatch(rendered, /class="emblem-detail"/);
