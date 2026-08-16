@@ -246,6 +246,10 @@ PLAYOFFS_EXCLUDED_TEAM_NAMES = {
     "HULIGANI",
     "Xtreme Gaming",
     "OG",
+    "GamerLegion",
+    "Vici Gaming",
+    "BoomBoys",
+    "Team Resilience"
 }
 
 CHECKPOINT_SCHEMA_VERSION = 11
