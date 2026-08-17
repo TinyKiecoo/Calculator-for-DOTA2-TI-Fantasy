@@ -102,6 +102,21 @@ test("defaults the emblem multiplier switcher to manual mode", () => {
   );
 });
 
+test("defaults the tournament stage switcher to The International", () => {
+  assert.match(
+    html,
+    /data-stage="groupStage"\s+aria-pressed="false"/,
+  );
+  assert.match(
+    html,
+    /class="is-active"\s+data-stage="international"\s+aria-pressed="true"/,
+  );
+  assert.match(
+    app,
+    /const stage = engine\.stageKeys\.includes\(saved\?\.stage\)[\s\S]*?: "international";/,
+  );
+});
+
 test("keeps the compact manual multiplier input aligned to the right", () => {
   assert.match(
     css,

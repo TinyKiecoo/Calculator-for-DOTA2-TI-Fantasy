@@ -611,7 +611,7 @@
 
     const stage = engine.stageKeys.includes(saved?.stage)
       ? saved.stage
-      : "groupStage";
+      : "international";
     const pages = Object.fromEntries(
       engine.stageKeys.map((stageKey) => [
         stageKey,
