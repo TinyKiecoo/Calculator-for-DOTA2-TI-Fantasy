@@ -3,11 +3,11 @@
   "leagueId": 19719,
   "leagueName": "The International 2026",
   "isTheInternational": true,
-  "generatedAt": "2026-08-20T11:46:01.287942Z",
+  "generatedAt": "2026-08-20T12:58:00.341456Z",
   "replayCache": "replays/19719",
   "coverage": {
-    "parsedCheckpoints": 115,
-    "publishedMatches": 115,
+    "parsedCheckpoints": 116,
+    "publishedMatches": 116,
     "stages": {
       "groupStage": {
         "matches": 109,
@@ -20,14 +20,14 @@
         "incompleteSeries": 0
       },
       "international": {
-        "matches": 6,
-        "parsedMatches": 6,
-        "playerGameRows": 60,
+        "matches": 7,
+        "parsedMatches": 7,
+        "playerGameRows": 70,
         "teams": 6,
         "players": 30,
         "allMatchesHaveTenPlayers": true,
-        "completeSeries": 2,
-        "incompleteSeries": 1
+        "completeSeries": 3,
+        "incompleteSeries": 0
       }
     }
   },
