@@ -29,7 +29,7 @@ jobs:
         run: |
           if [[ "$EVENT_NAME" == "push" ]]; then
             active=false
-          else [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+          else
             active=true
           fi
           echo "active=$active" >> "$GITHUB_OUTPUT"
