@@ -29,10 +29,8 @@ jobs:
         run: |
           if [[ "$EVENT_NAME" == "push" ]]; then
             active=false
-          elif [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
+          else [[ "$EVENT_NAME" == "workflow_dispatch" ]]; then
             active=true
-          else
-            active="$(python -c 'from datetime import datetime; from zoneinfo import ZoneInfo; now = datetime.now(ZoneInfo("Asia/Shanghai")); active = now.year == 2026 and now.month == 8 and 13 <= now.day <= 16 and (10, 30) <= (now.hour, now.minute) <= (22, 10); print("true" if active else "false")')"
           fi
           echo "active=$active" >> "$GITHUB_OUTPUT"
 

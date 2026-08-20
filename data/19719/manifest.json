@@ -1197,5 +1197,27 @@
       "http://replay413.dota2.com.cn/570/8948533452_1651256334.dem.bz2",
       "http://replay413.valve.net/570/8948533452_1651256334.dem.bz2"
     ]
+  },
+  {
+    "matchId": 8955197224,
+    "cluster": 413,
+    "replaySalt": 525912241,
+    "filename": "8955197224_525912241.dem.bz2",
+    "replayUrl": "http://replay413.dota2.com.cn/570/8955197224_525912241.dem.bz2",
+    "replayUrls": [
+      "http://replay413.dota2.com.cn/570/8955197224_525912241.dem.bz2",
+      "http://replay413.valve.net/570/8955197224_525912241.dem.bz2"
+    ]
+  },
+  {
+    "matchId": 8955247801,
+    "cluster": 413,
+    "replaySalt": 1516418650,
+    "filename": "8955247801_1516418650.dem.bz2",
+    "replayUrl": "http://replay413.dota2.com.cn/570/8955247801_1516418650.dem.bz2",
+    "replayUrls": [
+      "http://replay413.dota2.com.cn/570/8955247801_1516418650.dem.bz2",
+      "http://replay413.valve.net/570/8955247801_1516418650.dem.bz2"
+    ]
   }
 ]
