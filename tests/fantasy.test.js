@@ -347,7 +347,7 @@ test("takes the best two maps from the highest-scoring series", () => {
   assertEmblemScoresSum(scorePlayer(player, emblems, "highest"));
 });
 
-test("temporarily takes only the best two maps from a best-of-five series", () => {
+test("takes only the best two maps from a non-TI best-of-five series", () => {
   const emblems = [
     { color: "red", stat: "kills", quality: 1, trait: "unique" },
     { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
@@ -381,6 +381,98 @@ test("temporarily takes only the best two maps from a best-of-five series", () =
   assertEmblemScoresSum(result);
 });
 
+test("takes the best three maps from a TI best-of-five series", () => {
+  const emblems = [
+    { color: "red", stat: "kills", quality: 1, trait: "unique" },
+    { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
+    { color: "red", stat: "gpm", quality: 1, trait: "benevolent" },
+  ];
+  const player = {
+    id: "p1",
+    role: "mid",
+    maps: [1, 2, 3, 4, 5].map((value) => ({
+      matchId: value,
+      seriesId: 10,
+      seriesType: 2,
+      stats: {
+        kills: value,
+        stun_seconds: value * 2,
+        gpm: value * 100,
+      },
+    })),
+  };
+  const isolated = player.maps.map((map) =>
+    scorePlayer(
+      { ...player, maps: [{ ...map, seriesId: map.matchId }] },
+      emblems,
+      "highest",
+    ).score,
+  );
+  const result = scorePlayer(
+    player,
+    emblems,
+    "highest",
+    {},
+    null,
+    { useTiBestOfFiveScoring: true },
+  );
+
+  assert.equal(result.score, isolated[4] + isolated[3] + isolated[2]);
+  assert.deepEqual(result.matchIds, [5, 4, 3]);
+  assertEmblemScoresSum(result);
+});
+
+test("applies the TI best-of-five rule after averaging a role's player pair", () => {
+  const emblems = [
+    { color: "red", stat: "kills", quality: 1, trait: "unique" },
+    { color: "green", stat: "stun_seconds", quality: 1, trait: "fractal" },
+    { color: "red", stat: "gpm", quality: 1, trait: "benevolent" },
+  ];
+  const makePlayer = (id, offset) => ({
+    id,
+    teamId: "same-team",
+    teamName: "Same Team",
+    role: "core",
+    maps: [1, 2, 3, 4, 5].map((value) => ({
+      matchId: value,
+      seriesId: 10,
+      seriesType: 2,
+      stats: {
+        kills: value + offset,
+        stun_seconds: value * 2 + offset,
+        gpm: value * 100 + offset,
+      },
+    })),
+  });
+  const first = makePlayer("first", 0);
+  const second = makePlayer("second", 1);
+  const scoringOptions = { useTiBestOfFiveScoring: true };
+
+  const pair = scorePair(
+    first,
+    second,
+    emblems,
+    "highest",
+    {},
+    null,
+    scoringOptions,
+  );
+  const rankings = buildRankings(
+    "core",
+    [first, second],
+    emblems,
+    "highest",
+    {},
+    null,
+    scoringOptions,
+  );
+
+  assert.deepEqual(pair.matchIds, [5, 4, 3]);
+  assert.deepEqual(rankings[0].matchIds, [5, 4, 3]);
+  assert.equal(rankings[0].score, pair.score);
+  assertEmblemScoresSum(pair);
+});
+
 test("scores an unfinished series from every map currently available", () => {
   const emblems = [
     { color: "red", stat: "kills", quality: 1, trait: "unique" },
@@ -409,7 +501,7 @@ test("scores an unfinished series from every map currently available", () => {
   assertEmblemScoresSum(result);
 });
 
-test("keeps the TI best-of-five three-map rule ready to enable", () => {
+test("selects map counts according to the active tournament rule", () => {
   assert.equal(countedGamesForSeries(1, true), 2);
   assert.equal(countedGamesForSeries(2, true), 3);
   assert.equal(countedGamesForSeries(3, true), 2);

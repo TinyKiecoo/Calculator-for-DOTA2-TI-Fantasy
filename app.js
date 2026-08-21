@@ -113,7 +113,7 @@
       emblemPennant: "{role}徽标挂幅",
       bannerScore: "{role}战旗积分",
       dataLead: "本页面使用当前选择的 {name} 录像数据来计算梦幻挑战积分。",
-      dataSelectionBody: "赛事下拉框可从所有已解析存储的赛事间切换；每项赛事单独计算，数据不会相互合并。",
+      dataSelectionBody: "赛事下拉框可切换赛事；每项赛事单独计算，数据不会相互合并。",
       tournamentSnapshot: "赛事快照",
       leagueId: "联赛 ID",
       parsedMatches: "已解析比赛",
@@ -121,10 +121,10 @@
       generatedDate: "生成日期",
       scoringMethodTitle: "积分规则",
       scoringMethodBodyClientDescription: "对于每个定位，每位选手的梦幻积分是根据他们参与的每场比赛来单独结算。只有战旗上存在的统计数据才会提供积分，如果指导员称号满足特定条件还有加成效果。然后一个定位里两个选手的得分会计算出平均数，作为该场比赛相应的最终积分。",
-      scoringMethodBodyBestSeries: "“最高系列赛”采用的规则与客户端完全一致。每个定位的最终积分来自一个系列赛中积分最高的两场比赛。如果一个定位在一个结算期内参与了多个系列赛，那么会采用得分最高的系列赛。",
+      scoringMethodBodyBestSeries: "“最高系列赛”采用的规则与客户端完全一致。每个定位的最终积分来自一个系列赛中积分最高的两场比赛；五局三胜则取积分最高的三场。如果一个定位在一个结算期内参与了多个系列赛，那么会采用得分最高的系列赛。",
       scoringMethodBodyAllMatchAverage: "“全部比赛平均 × 2”对全结算期所有有效比赛的得分取平均并翻倍。",
       dataSources: "数据来源",
-      dataSourcesBody: "全部比赛信息与梦幻统计均直接读取 Valve 比赛录像。",
+      dataSourcesBody: "全部梦幻统计数值均直接读取 Valve 比赛录像。",
       disclaimerTitle: "免责声明",
       disclaimerProject: "这是一个免费、开源、非商业的玩家项目，与 Valve、Steam 或 Dota 2 官方无关联。计算结果可能不准确，数据仅供参考。",
       disclaimerAssets: "本项目使用了 Dota 2 / Valve 相关图片、字体、名称和界面素材。这些素材仍归 Valve 及相应权利方所有；本项目的开源许可证不授予这些素材的使用权。",
@@ -243,7 +243,7 @@
       emblemPennant: "{role} emblem pennant",
       bannerScore: "{role} banner score",
       dataLead: "This page uses replay data from the currently selected {name} tournament to calculate Fantasy scores.",
-      dataSelectionBody: "The tournament dropdown can switch between every parsed event. Each tournament is scored independently; their data is never combined.",
+      dataSelectionBody: "The tournament dropdown can switch between every event. Each tournament is scored independently; their data is never combined.",
       tournamentSnapshot: "Tournament Snapshot",
       leagueId: "League ID",
       parsedMatches: "Parsed matches",
@@ -251,10 +251,10 @@
       generatedDate: "Generated",
       scoringMethodTitle: "Scoring Rules",
       scoringMethodBodyClientDescription: "For each role, each player's score is calculated individually in every game they participate in. Players receive points only for the stats present on their War Banner, amplified if any of the conditions of your coach Titles are met. We then average the score of all players for a role and use that to decide the final score for the match.",
-      scoringMethodBodyBestSeries: "Best Series use the same rule as the client. The top two scoring games within a series are used to get the role's final score for the match. If a role participates in more than one series in a period, the best scoring series will be used.",
+      scoringMethodBodyBestSeries: "Best Series uses the same rule as the client. The top two scoring games within a series are used to get the role's final score for the match; for a best-of-five series, the top three games are used instead. If a role participates in more than one series in a period, the best scoring series will be used.",
       scoringMethodBodyAllMatchAverage: "All-Match Average × 2 averages every valid match in the full scoring period and doubles it.",
       dataSources: "Data Sources",
-      dataSourcesBody: "All match information and Fantasy statistics are read directly from Valve replays.",
+      dataSourcesBody: "All Fantasy statistics are read directly from Valve replays.",
       disclaimerTitle: "Disclaimer",
       disclaimerProject: "This is a free, open-source, non-commercial fan project and is not affiliated with Valve, Steam, or Dota 2. Results may be inaccurate and are for reference only.",
       disclaimerAssets: "It uses Dota 2 / Valve-derived images, fonts, names, and UI materials. Those materials remain the property of Valve and their respective rights holders; this project's open-source license does not grant rights to them.",
@@ -901,6 +901,7 @@
           "highest",
           { prefix: "none", suffix: "none" },
           [1],
+          activeSeriesScoringOptions(),
         );
         const scores = candidates
           .map((candidate) => candidate.score)
@@ -945,6 +946,14 @@
     return state.manualMultipliers[role].map((value) => Number(value) / 100);
   }
 
+  function activeSeriesScoringOptions() {
+    return {
+      useTiBestOfFiveScoring: /^The International \d{4}$/.test(
+        String(meta.leagueName || "").trim(),
+      ),
+    };
+  }
+
   function getView() {
     const rankings = {};
     const selected = {};
@@ -957,6 +966,7 @@
         state.scoreMode[role],
         state.titles,
         activeMultipliers(role),
+        activeSeriesScoringOptions(),
       );
       selected[role] =
         rankings[role].find(

@@ -13,8 +13,6 @@
   const bannerRoles = ["core", "mid", "support"];
   const stageKeys = ["groupStage", "international"];
   const scoreModes = ["highest", "average"];
-  const enableTiBestOfFiveScoring = false;
-  const countedGamesBySeriesType = { 1: 2, 2: 3, 3: 2 };
   const emblemColors = ["red", "blue", "green"];
   const qualities = [1, 2, 3, 4, 5];
   const traits = [
@@ -490,13 +488,12 @@
 
   function countedGamesForSeries(
     seriesType,
-    enableBestOfFiveScoring = enableTiBestOfFiveScoring,
+    useTiBestOfFiveScoring = false,
   ) {
-    if (!enableBestOfFiveScoring) return 2;
-    return countedGamesBySeriesType[Number(seriesType)] ?? 2;
+    return useTiBestOfFiveScoring && Number(seriesType) === 2 ? 3 : 2;
   }
 
-  function aggregateMapResults(mapResults, mode) {
+  function aggregateMapResults(mapResults, mode, scoringOptions = {}) {
     if (!scoreModes.includes(mode)) {
       throw new Error(`未知的积分方式：${mode}`);
     }
@@ -552,7 +549,10 @@
       const ranked = [...series].sort((left, right) => right.score - left.score);
       const counted = ranked.slice(
         0,
-        countedGamesForSeries(series[0].seriesType),
+        countedGamesForSeries(
+          series[0].seriesType,
+          scoringOptions.useTiBestOfFiveScoring === true,
+        ),
       );
       const score = counted.reduce((sum, result) => sum + result.score, 0);
       return {
@@ -587,6 +587,7 @@
     mode = "average",
     titles = {},
     customMultipliers = null,
+    scoringOptions = {},
   ) {
     const maps = Array.isArray(player.maps) ? player.maps : [];
     if (!maps.length) {
@@ -603,6 +604,7 @@
         scoreMap(map, emblems, titles, customMultipliers),
       ),
       mode,
+      scoringOptions,
     );
   }
 
@@ -613,6 +615,7 @@
     mode = "average",
     titles = {},
     customMultipliers = null,
+    scoringOptions = {},
   ) {
     const firstMaps = Array.isArray(first.maps) ? first.maps : [];
     const secondMaps = Array.isArray(second.maps) ? second.maps : [];
@@ -623,6 +626,7 @@
         mode,
         titles,
         customMultipliers,
+        scoringOptions,
       );
       const secondScore = scorePlayer(
         second,
@@ -630,6 +634,7 @@
         mode,
         titles,
         customMultipliers,
+        scoringOptions,
       );
       const complete =
         firstScore.score !== null && secondScore.score !== null;
@@ -705,7 +710,7 @@
       };
     }
 
-    return aggregateMapResults(sharedResults, mode);
+    return aggregateMapResults(sharedResults, mode, scoringOptions);
   }
 
   function sortRankings(a, b) {
@@ -724,6 +729,7 @@
     mode = "average",
     titles = {},
     customMultipliers = null,
+    scoringOptions = {},
   ) {
     const eligible = players.filter((player) => player.role === role);
 
@@ -736,6 +742,7 @@
             mode,
             titles,
             customMultipliers,
+            scoringOptions,
           );
           return {
             key: `mid:${player.id}`,
@@ -776,6 +783,7 @@
             mode,
             titles,
             customMultipliers,
+            scoringOptions,
           );
           const orderedIds = [first.id, second.id].sort();
 
