@@ -3,7 +3,7 @@
     "schemaVersion": 11,
     "leagueId": 19719,
     "leagueName": "The International 2026",
-    "generatedAt": "2026-08-21T15:57:03.027041Z",
+    "generatedAt": "2026-08-21T17:34:18.033432Z",
     "eventStartUtc": "2026-08-13T03:24:05Z",
     "eventEndUtc": "2026-08-16T11:49:11Z",
     "sources": {
@@ -124,9 +124,9 @@
         "incompleteSeries": 0
       },
       "international": {
-        "matches": 20,
-        "parsedMatches": 20,
-        "playerGameRows": 200,
+        "matches": 21,
+        "parsedMatches": 21,
+        "playerGameRows": 210,
         "teams": 8,
         "players": 40,
         "allMatchesHaveTenPlayers": true,
