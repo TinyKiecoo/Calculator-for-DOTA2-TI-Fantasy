@@ -1307,5 +1307,16 @@
       "http://replay413.dota2.com.cn/570/8956096810_84702993.dem.bz2",
       "http://replay413.valve.net/570/8956096810_84702993.dem.bz2"
     ]
+  },
+  {
+    "matchId": 8956780728,
+    "cluster": 413,
+    "replaySalt": 1186941514,
+    "filename": "8956780728_1186941514.dem.bz2",
+    "replayUrl": "http://replay413.dota2.com.cn/570/8956780728_1186941514.dem.bz2",
+    "replayUrls": [
+      "http://replay413.dota2.com.cn/570/8956780728_1186941514.dem.bz2",
+      "http://replay413.valve.net/570/8956780728_1186941514.dem.bz2"
+    ]
   }
 ]
