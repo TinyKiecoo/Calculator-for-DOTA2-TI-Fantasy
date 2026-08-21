@@ -76,9 +76,6 @@
       rankingScore: "评分",
       averageContribution: "场均贡献",
       bestSeriesContribution: "最高系列赛贡献",
-      teamfightContributionHint: "参与团战的基础得分上限为 2124。如果想押注超长局带来的更高上限，建议考虑本组下方其他没有固定得分上限的统计数据。",
-      deathsContributionHint: "死亡徽标得分通常与游戏时长呈负相关。如果同时选择正反补等与时长明显正相关的统计数据，各徽标偏好的系列赛可能不一致，进而影响整面战旗的综合表现。",
-      stunContributionHint: "眩晕时间受英雄选择和阵容搭配影响极大，历史高分可能集中在特定控制英雄或阵容中，实际表现波动较大。",
       playerMapSamples: "{count} 条选手逐场记录",
       roleCandidateSamples: "{count} 个定位候选项",
       rankingUnavailable: "数据不足",
@@ -206,9 +203,6 @@
       rankingScore: "Rating",
       averageContribution: "Avg. contribution",
       bestSeriesContribution: "Best-series contribution",
-      teamfightContributionHint: "Teamfight Participation base points are capped at 2,124. If you want to bet on the higher ceiling of exceptionally long games, consider the uncapped statistics below it.",
-      deathsContributionHint: "Deaths emblem points generally decrease as game length increases. Pairing it with strongly duration-positive statistics such as Creep Score may make the emblems favor different series and weaken the banner's combined performance.",
-      stunContributionHint: "Stun Duration depends heavily on hero picks and team composition. Historical highs may be concentrated in specific control-heavy heroes or lineups, so actual results can vary considerably.",
       playerMapSamples: "{count} player-map records",
       roleCandidateSamples: "{count} role candidates",
       rankingUnavailable: "Insufficient data",
@@ -480,12 +474,6 @@
     tormentor_kills: "tormentors_killed",
     first_blood: "first_blood",
     courier_kills: "couriers_killed",
-  };
-
-  const statContributionHintKeys = {
-    deaths: "deathsContributionHint",
-    teamfight_participation: "teamfightContributionHint",
-    stun_seconds: "stunContributionHint",
   };
 
   const statIconPaths = {
@@ -1398,19 +1386,6 @@
         const rankingScore = entry.rankingScore === null
           ? "—"
           : String(entry.rankingScore);
-        const hintKey = statContributionHintKeys[entry.stat];
-        const hint = hintKey ? text(hintKey) : "";
-        const infoMarkup = hint
-          ? `
-                <span
-                  class="emblem-ranking-info emblem-ranking-info--${entry.stat}"
-                  tabindex="0"
-                  aria-label="${escapeHtml(hint)}"
-                >
-                  <img src="fantasy-assets/icon_info.png" alt="" aria-hidden="true">
-                  <span class="emblem-ranking-tooltip" aria-hidden="true">${escapeHtml(hint)}</span>
-                </span>`
-          : "";
         return `
           <li class="emblem-ranking-row">
             <span class="emblem-ranking-place" aria-hidden="true">${index + 1}</span>
@@ -1418,7 +1393,6 @@
               <span class="emblem-ranking-stat-name">
                 <span class="emblem-ranking-icon" aria-hidden="true">${statIconMarkup(entry.stat)}</span>
                 ${escapeHtml(statDefinition(entry.stat).label)}
-                ${infoMarkup}
               </span>
               <small>${escapeHtml(contributionLabel)}: ${escapeHtml(contribution)}</small>
             </span>
